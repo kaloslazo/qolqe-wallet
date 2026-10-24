@@ -39,9 +39,39 @@ npm run contrato                       # terminal 2
 
 El reporte queda en `reportes/schemathesis/`. No correr `npm test` y `npm run contrato` al mismo tiempo.
 
+## Pruebas E2E con Selenium + BDD
+
+15 escenarios de la interfaz web del G5 (`features/ui/limites_ui.feature`, Gherkin en español) automatizados con Selenium 4, pytest-bdd y el patrón Page Object. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
+
+```bash
+pip install -r requirements-e2e.txt
+scripts/selenium.sh todo          # 15 escenarios en Chrome sin ventana + reportes/selenium/reporte.html
+scripts/selenium.sh demo          # flujo feliz con Chrome visible, resaltando cada elemento
+```
+
+Resultado esperado: `16 passed, 3 xfailed` (15 escenarios BDD + 1 ejemplo con el patrón Screenplay; los 3 xfailed son defectos conocidos de `features/ui/defectos_ui.feature`). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
+
+| Modo | Qué hace |
+|---|---|
+| `scripts/selenium.sh preparar` | Antes de la demo: levanta el Grid y calienta navegadores |
+| `scripts/selenium.sh defectos` | Los 3 defectos conocidos como fallas reales (rojo) y abre el reporte |
+| `scripts/selenium.sh navegadores` | La suite en Chrome, Edge y Firefox |
+| `scripts/selenium.sh movil` | Flujo feliz emulando un iPhone 12 Pro |
+| `scripts/selenium.sh grid` | Levanta Selenium Grid 4 en Docker (`docker-compose.grid.yml`) y corre en Chromium y Firefox remotos. Consola: http://localhost:4444/ui |
+| `scripts/selenium.sh romper` | Rompe a propósito un localizador: el flujo feliz falla |
+| `scripts/selenium.sh ia` | El mismo localizador roto, reparado por Claude (requiere `ANTHROPIC_API_KEY`); queda registro en `reportes/selenium/sanaciones.json` |
+| `scripts/selenium.sh reporte` | Abre `reportes/selenium/reporte-bdd.html`: cada escenario con sus pasos, una captura por paso, el error en una frase y la consola del navegador |
+
+Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox|safari`, `--headless`, `--movil`, `--grid URL`, `--demo`, `--sanar`, `--romper`, `--url-app`, `--url-navegador`. Para filtrar por etiqueta de Gherkin: `-m happy`, `-m bidi`, `-m HU-G5-03`.
+
+Glosario, cómo armar una prueba nueva y guion de la demo: [`docs/guia-selenium.md`](docs/guia-selenium.md).
+
+Safari necesita habilitarse una vez: `sudo safaridriver --enable` y, en Safari, Desarrollo › Permitir automatización remota. Safari no implementa WebDriver BiDi, así que el escenario `@bidi` se omite allí.
+
 ## Contenido
 
-- `features/`: escenarios en Gherkin
+- `features/`: escenarios en Gherkin (`features/ui/`: interfaz web con Selenium)
+- `tests/e2e/`: pasos (`test_limites_ui.py`), Page Objects (`pages/`) y soporte (`soporte/`: navegadores, BiDi, API, IA)
 - `tests/api-playwright/`: pasos en TypeScript
 - `docs/informe.md` y `docs/defectos.md`
 - `docs/evidencia/`: reportes de la última corrida

@@ -1,0 +1,8 @@
+-r requirements-pruebas.txt
+selenium>=4.27
+pytest>=8.0
+pytest-bdd>=8.1
+pytest-html>=4.1
+requests>=2.32
+# solo para la reparación de localizadores con IA (--sanar)
+anthropic>=0.70

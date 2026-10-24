@@ -1,0 +1,39 @@
+# Selenium Grid 4: un hub y nodos de Chromium y Firefox (imágenes multi-arquitectura, sirven en Mac M1/M2).
+#   docker compose -f docker-compose.grid.yml up -d
+#   consola del Grid: http://localhost:4444/ui
+# Los navegadores corren dentro de Docker: ven la app en host.docker.internal, no en localhost.
+services:
+  hub:
+    image: selenium/hub:latest
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+  chromium:
+    image: selenium/node-chromium:latest
+    shm_size: 2gb
+    ports:
+      - "7900:7900"   # noVNC: ver el navegador del contenedor en vivo
+    depends_on: [hub]
+    environment:
+      SE_EVENT_BUS_HOST: hub
+      SE_NODE_MAX_SESSIONS: 2
+      SE_NODE_GRID_URL: http://localhost:4444   # para que BiDi/CDP salgan por el hub
+      SE_VNC_NO_PASSWORD: "true"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  firefox:
+    image: selenium/node-firefox:latest
+    shm_size: 2gb
+    ports:
+      - "7901:7900"
+    depends_on: [hub]
+    environment:
+      SE_EVENT_BUS_HOST: hub
+      SE_NODE_MAX_SESSIONS: 2
+      SE_NODE_GRID_URL: http://localhost:4444   # para que BiDi/CDP salgan por el hub
+      SE_VNC_NO_PASSWORD: "true"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
