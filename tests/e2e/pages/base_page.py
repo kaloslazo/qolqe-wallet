@@ -18,6 +18,7 @@ class BasePage:
     url_base = "http://localhost:8000"
     demo = False
     sanador = None
+    reparados: dict = {}  # localizador roto -> selector que propuso la IA (se pregunta una sola vez)
 
     def __init__(self, driver):
         self.driver = driver
@@ -29,11 +30,14 @@ class BasePage:
 
     # ---- búsqueda de elementos
     def visible(self, localizador, intencion: str | None = None):
+        if localizador in self.reparados:
+            localizador = (By.CSS_SELECTOR, self.reparados[localizador])
         try:
             elemento = self.espera.until(EC.visibility_of_element_located(localizador))
-        except TimeoutException:
+        except TimeoutException as error:
             if not (self.sanador and intencion):
-                raise
+                quien = f" ({intencion})" if intencion else ""
+                raise TimeoutException(f"No apareció el elemento {localizador[1]}{quien} en {self.ESPERA} s") from error
             elemento = self._sanar(localizador, intencion)
         self._resaltar(elemento)
         return elemento
@@ -46,7 +50,8 @@ class BasePage:
         if not propuesta:
             raise TimeoutException(f"No se encontró {localizador} y la IA no propuso un reemplazo")
         selector, razon = propuesta
-        print(f"\n[IA] {localizador[1]} -> {selector} ({razon})")
+        BasePage.reparados[localizador] = selector
+        print(f"\n[IA · {self.sanador.proveedor}] {localizador[1]} -> {selector} ({razon})")
         return self.espera.until(EC.visibility_of_element_located((By.CSS_SELECTOR, selector)))
 
     def texto(self, localizador) -> str:

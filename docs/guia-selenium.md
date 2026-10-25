@@ -106,7 +106,7 @@ Esta guía explica, en palabras simples, todo lo que se menciona en la presentac
 | Término | Qué es |
 |---|---|
 | **Self-healing** (auto-reparación) | Cuando un localizador deja de funcionar, la herramienta busca uno nuevo sola en vez de fallar. |
-| **Sanador** | Nuestro módulo (`tests/e2e/soporte/sanador.py`): manda a Claude la intención del localizador y los elementos visibles de la página, recibe un selector CSS nuevo, verifica que encuentre **un solo** elemento y deja registro en `reportes/selenium/sanaciones.json`. |
+| **Sanador** | Nuestro módulo (`tests/e2e/soporte/sanador.py`): manda a la IA (Gemini si existe `GEMINI_API_KEY`, si no Claude) la intención del localizador y los elementos visibles de la página, recibe un selector CSS nuevo, verifica que encuentre **un solo** elemento y deja registro en `reportes/selenium/sanaciones.json`. |
 | **Claude API** | La API de Anthropic para usar el modelo Claude desde código. Necesita la variable `ANTHROPIC_API_KEY`. |
 | **Healenium** | Una herramienta open source de auto-reparación para Selenium en Java. Es el equivalente "de mercado" de nuestro sanador. |
 
@@ -261,7 +261,7 @@ Comandos (`scripts/selenium.sh <modo>`):
 | `navegadores` | Todo en Chrome, Edge y Firefox |
 | `movil` | El flujo feliz emulando un iPhone |
 | `grid` | Todo en el Grid (Chromium y Firefox en Docker). Acepta filtros: `grid -m happy --demo` |
-| `romper` / `ia` | Un localizador roto: sin IA falla; con IA, Claude lo repara |
+| `romper` / `ia` | Un localizador roto: sin IA falla; con IA (Gemini o Claude) se repara |
 | `reporte` | Abre `reportes/selenium/reporte-bdd.html` |
 | `grid-parar` | Apaga los contenedores |
 
@@ -280,7 +280,7 @@ scripts/selenium.sh todo                             # debe decir: 16 passed, 3 
 
 - Abrir **Docker Desktop**, esperar a que diga *Engine running* y correr `scripts/selenium.sh grid -m happy`: la primera vez descarga las imágenes de Docker y tarda varios minutos.
 - **Grabar un video** de respaldo de la demo completa (con QuickTime: Archivo › Nueva grabación de pantalla).
-- Si van a mostrar la IA: conseguir una clave en console.anthropic.com y guardarla con `export ANTHROPIC_API_KEY=...` en la terminal de la demo. Probar `scripts/selenium.sh ia` antes.
+- Si van a mostrar la IA: en la terminal de la demo, `export GEMINI_API_KEY=...` (clave de Google AI Studio). Nunca la guarden en un archivo del repo. Probar `scripts/selenium.sh ia` antes: tarda unos 25 s.
 
 ### 10 minutos antes
 

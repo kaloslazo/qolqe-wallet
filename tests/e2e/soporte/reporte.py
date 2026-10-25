@@ -21,6 +21,7 @@ class Paso:
     estado: str = "pendiente"  # ok | mal | pendiente
     captura: str | None = None  # ruta relativa al reporte
     error: str | None = None
+    traza: str | None = None  # archivo, línea y código de nuestro proyecto donde ocurrió el error
 
 
 @dataclass
@@ -42,6 +43,8 @@ def _e(texto) -> str:
 def _paso(p: Paso) -> str:
     icono = {"ok": "✓", "mal": "✗"}.get(p.estado, "–")
     error = f'<pre class="error">{_e(p.error)}</pre>' if p.error else ""
+    if p.traza:
+        error += f'<details class="traza"><summary>Ver traza técnica</summary><pre>{_e(p.traza)}</pre></details>'
     captura = (f'<a href="{_e(p.captura)}" target="_blank"><img loading="lazy" src="{_e(p.captura)}" alt="captura: {_e(p.texto)}"></a>'
                if p.captura else "")
     return f'<li class="paso {p.estado}"><span class="icono">{icono}</span><div><p>{_e(p.texto)}</p>{error}</div>{captura}</li>'
@@ -113,6 +116,8 @@ summary {{ cursor:pointer; padding:12px 16px; display:flex; gap:12px; align-item
 .paso.mal img {{ outline:3px solid var(--mal); }}
 pre {{ white-space:pre-wrap; word-break:break-word; font:13px/1.4 ui-monospace,Menlo,monospace; margin:6px 0 0; }}
 pre.error {{ color:var(--mal); background:var(--mal-bg); padding:8px 10px; border-radius:8px; }}
+.traza summary, .consola summary {{ padding:6px 0; color:var(--suave); font-size:14px; }}
+.traza pre {{ background:var(--bg); padding:8px 10px; border-radius:8px; }}
 .consola {{ margin-top:12px; }} .consola summary {{ padding:6px 0; color:var(--suave); font-size:14px; }}
 @media (max-width:640px) {{ .tarjetas {{ grid-template-columns:repeat(2,1fr); }} .paso {{ grid-template-columns:24px 1fr; }} .paso img {{ grid-column:2; width:100%; }} }}
 </style></head>

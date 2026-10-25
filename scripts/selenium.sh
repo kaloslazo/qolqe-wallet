@@ -21,7 +21,7 @@ case "$modo" in
   preparar)
     docker compose -f docker-compose.grid.yml up -d
     for _ in $(seq 1 60); do curl -sf "$GRID/status" | grep -q '"ready": *true' && break; sleep 2; done
-    pytest_e2e --headless -m happy -q "$@"
+    pytest_e2e --headless -m happy -q --reporte-bdd reporte-bdd-preparar.html "$@"
     echo "Listo. Grid: $GRID/ui · navegador de Docker en vivo: http://localhost:7900 (Chromium) y :7901 (Firefox)" ;;
 
   # los 15 escenarios + los 3 defectos conocidos (fallos esperados) en Chrome sin ventana, con reporte HTML
@@ -30,23 +30,23 @@ case "$modo" in
 
   # flujo feliz con Chrome visible, resaltando cada elemento antes de usarlo
   demo)
-    pytest_e2e -m happy --demo --html="$REPORTES/reporte.html" --self-contained-html "$@" ;;
+    pytest_e2e -m happy --demo --reporte-bdd reporte-bdd-demo.html "$@" ;;
 
   # los defectos conocidos como fallas reales (rojo), con Chrome visible: así se ve cuando algo se rompe
   defectos)
-    pytest_e2e -m defecto --runxfail --demo --html="$REPORTES/reporte-defectos.html" --self-contained-html "$@" || true
-    open "$REPORTES/reporte-bdd.html" 2>/dev/null || true ;;
+    pytest_e2e -m defecto --runxfail --demo --reporte-bdd reporte-bdd-defectos.html "$@" || true
+    open "$REPORTES/reporte-bdd-defectos.html" 2>/dev/null || true ;;
 
   # la misma suite en cada navegador instalado (Selenium Manager descarga lo que falte)
   navegadores)
     for navegador in chrome edge firefox; do
       echo "== $navegador"
-      pytest_e2e --headless --navegador "$navegador" -q --html="$REPORTES/reporte-$navegador.html" --self-contained-html "$@"
+      pytest_e2e --headless --navegador "$navegador" -q --reporte-bdd "reporte-bdd-$navegador.html" "$@"
     done ;;
 
   # emulación de iPhone 12 Pro en Chrome
   movil)
-    pytest_e2e --movil --demo -m happy "$@" ;;
+    pytest_e2e --movil --demo -m happy --reporte-bdd reporte-bdd-movil.html "$@" ;;
 
   # Selenium Grid 4 en Docker: Chromium y Firefox remotos (consola en http://localhost:4444/ui;
   # el navegador del contenedor se ve en vivo en http://localhost:7900 y :7901)
@@ -56,17 +56,17 @@ case "$modo" in
     for navegador in chrome firefox; do
       echo "== grid · $navegador"
       pytest_e2e --grid "$GRID" --navegador "$navegador" --url-navegador http://host.docker.internal:8000 -q \
-        --html="$REPORTES/reporte-grid-$navegador.html" --self-contained-html "$@"
+        --reporte-bdd "reporte-bdd-grid-$navegador.html" "$@"
     done ;;
 
   grid-parar)
     docker compose -f docker-compose.grid.yml down ;;
 
-  # IA: primero falla con un localizador roto, luego Claude lo repara (requiere ANTHROPIC_API_KEY)
+  # IA: primero falla con un localizador roto, luego la IA lo repara (requiere GEMINI_API_KEY o ANTHROPIC_API_KEY)
   romper)
-    pytest_e2e -m happy --romper --html="$REPORTES/reporte-romper.html" --self-contained-html "$@" || true ;;
+    pytest_e2e -m happy --romper --reporte-bdd reporte-bdd-romper.html "$@" || true ;;
   ia)
-    pytest_e2e -m happy --romper --sanar -s "$@"
+    pytest_e2e -m happy --romper --sanar --demo -s --reporte-bdd reporte-bdd-ia.html "$@"
     echo "Reparaciones registradas en $REPORTES/sanaciones.json" ;;
 
   reporte)

@@ -59,7 +59,7 @@ Resultado esperado: `16 passed, 3 xfailed` (15 escenarios BDD + 1 ejemplo con el
 | `scripts/selenium.sh movil` | Flujo feliz emulando un iPhone 12 Pro |
 | `scripts/selenium.sh grid` | Levanta Selenium Grid 4 en Docker (`docker-compose.grid.yml`) y corre en Chromium y Firefox remotos. Consola: http://localhost:4444/ui |
 | `scripts/selenium.sh romper` | Rompe a propósito un localizador: el flujo feliz falla |
-| `scripts/selenium.sh ia` | El mismo localizador roto, reparado por Claude (requiere `ANTHROPIC_API_KEY`); queda registro en `reportes/selenium/sanaciones.json` |
+| `scripts/selenium.sh ia` | El mismo localizador roto, reparado por IA: Gemini con `GEMINI_API_KEY` o Claude con `ANTHROPIC_API_KEY`; queda registro en `reportes/selenium/sanaciones.json` |
 | `scripts/selenium.sh reporte` | Abre `reportes/selenium/reporte-bdd.html`: cada escenario con sus pasos, una captura por paso, el error en una frase y la consola del navegador |
 
 Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox|safari`, `--headless`, `--movil`, `--grid URL`, `--demo`, `--sanar`, `--romper`, `--url-app`, `--url-navegador`. Para filtrar por etiqueta de Gherkin: `-m happy`, `-m bidi`, `-m HU-G5-03`.

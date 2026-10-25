@@ -11,6 +11,7 @@ import re
 import subprocess
 import sys
 import time
+import traceback
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -37,6 +38,7 @@ def pytest_addoption(parser):
     grupo.addoption("--romper", action="store_true", help="rompe el localizador del nuevo límite (demo de --sanar)")
     grupo.addoption("--url-app", default="http://localhost:8000")
     grupo.addoption("--url-navegador", default=None, help="por defecto, la misma que --url-app")
+    grupo.addoption("--reporte-bdd", default="reporte-bdd.html", help="nombre del reporte BDD en reportes/selenium/")
 
 
 def pytest_configure(config):
@@ -105,6 +107,7 @@ def driver(request, app, config_navegador, pytestconfig, monkeypatch):
     if pytestconfig.getoption("--sanar"):
         from tests.e2e.soporte.sanador import Sanador
         monkeypatch.setattr(BasePage, "sanador", Sanador())
+        monkeypatch.setattr(BasePage, "reparados", {})
     if pytestconfig.getoption("--romper"):
         monkeypatch.setattr(LimitesPage, "NUEVO_LIMITE", tid("input-limite-nuevo"))
 
@@ -152,6 +155,18 @@ def _mensaje(error: BaseException) -> str:
     return f"{type(error).__name__}: {texto}"[:600]
 
 
+def _traza(error: BaseException) -> str:
+    """Solo los pasos por nuestro código (pasos, páginas, soporte): archivo, línea, función y la línea de código."""
+    raiz = str(Path.cwd())
+    lineas = []
+    for marco in traceback.extract_tb(error.__traceback__):
+        if marco.filename.startswith(raiz) and "/.venv/" not in marco.filename:
+            archivo = os.path.relpath(marco.filename, raiz)
+            lineas.append(f"{archivo}:{marco.lineno} en {marco.name}()\n    {marco.line}")
+    lineas.append(f"{type(error).__name__}: {str(error).split('Stacktrace:')[0].strip()}")
+    return "\n".join(lineas)
+
+
 def pytest_bdd_before_scenario(request, feature, scenario):
     esc = reporte_bdd.Escenario(
         caracteristica=feature.name, nombre=scenario.name, etiquetas=sorted(scenario.tags),
@@ -184,6 +199,7 @@ def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func
     captura = _capturar(request, f"FALLÓ · {step.keyword} {step.name}")
     if paso:
         paso.estado, paso.captura, paso.error = "mal", captura, _mensaje(exception)
+        paso.traza = _traza(exception)
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -227,4 +243,4 @@ def pytest_sessionfinish(session):
             "Vista": "móvil (iPhone 12 Pro)" if config.getoption("--movil") else "escritorio",
             "Escenarios": len(ESCENARIOS)}
     CARPETA.mkdir(parents=True, exist_ok=True)
-    reporte_bdd.escribir(ESCENARIOS, meta, CARPETA / "reporte-bdd.html")
+    reporte_bdd.escribir(ESCENARIOS, meta, CARPETA / config.getoption("--reporte-bdd"))
