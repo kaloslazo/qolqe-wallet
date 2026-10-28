@@ -1,275 +1,71 @@
-# Pruebas de API · G5 Límites
+# Qolqe Wallet · G5 Límites
 
-[![Pruebas de API](https://github.com/kaloslazo/qolqe-g5-limites/actions/workflows/pruebas.yml/badge.svg)](https://github.com/kaloslazo/qolqe-g5-limites/actions/workflows/pruebas.yml)
+[![Pruebas de API](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml/badge.svg)](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml)
 
-Grupo 5: Kalos · Gianpier. Pruebas del módulo G5 y del núcleo con Playwright + playwright-bdd, y contrato con Schemathesis. La app (`qolqe/`) no tiene cambios.
+Qolqe es una billetera digital ficticia: registro, transferencias, recargas, pago de servicios, contactos y seguridad. Acá la probamos, no la reparamos. Nos toca el módulo G5, límites y alertas de consumo, más el núcleo de la cuenta: cuánto puedes gastar al día, cuándo entra en vigencia un cambio de límite y cuándo te avisa una alerta.
 
-## Requisitos
+```gherkin
+Scenario: Una reducción cancela el aumento pendiente
+  Given que inicié sesión como Diego
+  And que solicité aumentar mi límite diario a S/ 1500
+  When cambio mi límite diario a S/ 500
+  And pasan 1500 minutos
+  Then mi límite diario vigente es S/ 500.00
+  And no tengo un aumento pendiente
+```
 
-Python 3.11 o superior, Node.js 20 o superior y Git.
+Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y una reducción debería cancelarlo. La app no lo cancela: al día siguiente Diego queda con S/ 1,500. Es uno de los 9 defectos que encontramos, documentados en [`docs/defectos.md`](docs/defectos.md).
 
-## Instalación
+## Cómo lo probamos
+
+| capa | herramienta | qué cubre |
+|---|---|---|
+| API | Playwright + playwright-bdd | 108 escenarios en Gherkin del G5 y del núcleo |
+| Contrato | Schemathesis | que cada endpoint responda lo que dice su OpenAPI |
+| Interfaz web | Selenium 4 + pytest-bdd | la pantalla de límites, con Page Objects, Grid, móvil y reparación de localizadores con IA |
+| Rendimiento | por definir | Parte 3 |
+
+Cada push corre la suite de API en GitHub Actions.
+
+## Correrlo en local
+
+Hace falta Python 3.11+ y Node 20+.
 
 ```bash
-git clone https://github.com/kaloslazo/qolqe-g5-limites.git
-cd qolqe-g5-limites
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements-pruebas.txt
 npm install
+
+npm test                           # levanta la app y corre la suite de API
 ```
 
-## Pruebas
+Resultado esperado: `107 passed, 1 skipped`. El contrato, Selenium y sus modos de demo están en [`docs/pruebas.md`](docs/pruebas.md).
 
-```bash
-npm test
-npx playwright show-report
-```
+Para usar la app a mano: `uvicorn qolqe.main:app --reload` y abre `localhost:8000` (Swagger en `/docs`). Usuarios, datos semilla y la API de soporte para pruebas están en [`docs/qolqe.md`](docs/qolqe.md).
 
-`npm test` levanta la app y corre los 108 escenarios. Resultado esperado: `107 passed, 1 skipped`. Los escenarios `@fail` detectan los defectos de `docs/defectos.md` y cuentan como passed; el omitido es de rendimiento (Parte 3).
-
-## Contrato
-
-En una terminal se levanta la app y en otra se corre el contrato, ambas con el `.venv` activo (en Windows, desde Git Bash):
-
-```bash
-uvicorn qolqe.main:app --port 8000     # terminal 1
-npm run contrato                       # terminal 2
-```
-
-El reporte queda en `reportes/schemathesis/`. No correr `npm test` y `npm run contrato` al mismo tiempo.
-
-## Pruebas E2E con Selenium + BDD
-
-15 escenarios de la interfaz web del G5 (`features/ui/limites_ui.feature`, Gherkin en español) automatizados con Selenium 4, pytest-bdd y el patrón Page Object. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
-
-```bash
-pip install -r requirements-e2e.txt
-scripts/selenium.sh todo          # 15 escenarios en Chrome sin ventana + reportes/selenium/reporte.html
-scripts/selenium.sh demo          # flujo feliz con Chrome visible, resaltando cada elemento
-```
-
-Resultado esperado: `16 passed, 3 xfailed` (15 escenarios BDD + 1 ejemplo con el patrón Screenplay; los 3 xfailed son defectos conocidos de `features/ui/defectos_ui.feature`). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
-
-| Modo | Qué hace |
-|---|---|
-| `scripts/selenium.sh preparar` | Antes de la demo: levanta el Grid y calienta navegadores |
-| `scripts/selenium.sh defectos` | Los 3 defectos conocidos como fallas reales (rojo) y abre el reporte |
-| `scripts/selenium.sh navegadores` | La suite en Chrome, Edge y Firefox |
-| `scripts/selenium.sh movil` | Flujo feliz emulando un iPhone 12 Pro |
-| `scripts/selenium.sh grid` | Levanta Selenium Grid 4 en Docker (`docker-compose.grid.yml`) y corre en Chromium y Firefox remotos. Consola: http://localhost:4444/ui |
-| `scripts/selenium.sh romper` | Rompe a propósito un localizador: el flujo feliz falla |
-| `scripts/selenium.sh ia` | El mismo localizador roto, reparado por IA: Gemini con `GEMINI_API_KEY` o Claude con `ANTHROPIC_API_KEY`; queda registro en `reportes/selenium/sanaciones.json` |
-| `scripts/selenium.sh reporte` | Abre `reportes/selenium/reporte-bdd.html`: cada escenario con sus pasos, una captura por paso, el error en una frase y la consola del navegador |
-
-Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox|safari`, `--headless`, `--movil`, `--grid URL`, `--demo`, `--sanar`, `--romper`, `--url-app`, `--url-navegador`. Para filtrar por etiqueta de Gherkin: `-m happy`, `-m bidi`, `-m HU-G5-03`.
-
-Glosario, cómo armar una prueba nueva y guion de la demo: [`docs/guia-selenium.md`](docs/guia-selenium.md).
-
-Safari necesita habilitarse una vez: `sudo safaridriver --enable` y, en Safari, Desarrollo › Permitir automatización remota. Safari no implementa WebDriver BiDi, así que el escenario `@bidi` se omite allí.
-
-## Contenido
-
-- `features/`: escenarios en Gherkin (`features/ui/`: interfaz web con Selenium)
-- `tests/e2e/`: pasos (`test_limites_ui.py`), Page Objects (`pages/`) y soporte (`soporte/`: navegadores, BiDi, API, IA)
-- `tests/api-playwright/`: pasos en TypeScript
-- `docs/informe.md` y `docs/defectos.md`
-- `docs/evidencia/`: reportes de la última corrida
-
----
-
-# Qolqe Wallet
-
-Billetera digital **ficticia** usada como sistema bajo prueba (SUT) en el Proyecto 2 del curso **CS5383 Pruebas y Verificación de Software**.
-
-> ⚠️ **Antes de empezar:**
-> - **No modifiquen el código de la carpeta `qolqe/`.** Su trabajo es probarlo, no repararlo.
-> - Todos los datos son ficticios.
-
----
-
-## 1. Requisitos
-
-- Python **3.11 o superior** (recomendado 3.12)
-- Git
-
-## 2. Instalación y ejecución
-
-```bash
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn qolqe.main:app --reload
-```
-
-| Recurso | URL |
-|---|---|
-| Interfaz web | http://localhost:8000 |
-| Documentación de la API (Swagger / OpenAPI) | http://localhost:8000/docs |
-| Contrato OpenAPI en JSON | http://localhost:8000/openapi.json |
-| Estado del servicio | http://localhost:8000/api/salud |
-
-La primera vez la app crea la base de datos en `datos/` (tarda unos segundos porque genera los usuarios de carga). Para empezar desde cero, borren la carpeta `datos/` o usen `POST /api/pruebas/reiniciar`.
-
-> Ejecuten **un solo proceso** de uvicorn (sin `--workers`). El reloj de pruebas vive en memoria.
-
-### Variables de entorno (opcionales)
-
-| Variable | Por defecto | Uso |
-|---|---|---|
-| `QOLQE_BD` | `datos/qolqe.db` | Ruta de la base de datos |
-| `QOLQE_MODO_PRUEBA` | `1` | `1` habilita la API de soporte para pruebas (`/api/pruebas/*`) |
-| `QOLQE_MINUTOS_TOKEN` | `30` | Vigencia del token JWT |
-| `QOLQE_CLAVE_SECRETA` | clave de desarrollo | Firma de los tokens |
-
----
-
-## 3. Funcionalidades
-
-| Módulo | Pantalla | Endpoints principales |
-|---|---|---|
-| **Núcleo:** registro, sesión, perfil, saldo y transferencias | `/registro`, `/login`, `/inicio`, `/perfil`, `/transferir` | `POST /api/usuarios` · `POST /api/auth/login` · `POST /api/auth/logout` · `GET/PUT /api/cuentas/me` · `POST /api/cuentas/me/cierre` · `GET /api/cuentas/me/saldo` · `POST /api/transferencias` · `GET /api/transferencias/comision` |
-| **G1** Recargas y recargas programadas | `/recargas` | `GET /api/recargas/configuracion` · `GET/POST /api/recargas` · `GET/POST /api/recargas/programadas` · `PUT/DELETE /api/recargas/programadas/{id}` · `POST /api/recargas/programadas/{id}/pausar` · `POST .../reanudar` |
-| **G2** Pago de servicios y afiliaciones | `/servicios` | `GET /api/servicios/empresas` · `GET /api/servicios/deudas` · `GET/POST /api/servicios/pagos` · `GET /api/servicios/pagos/{codigo}` · `GET/POST /api/servicios/afiliaciones` · `PUT/DELETE /api/servicios/afiliaciones/{id}` |
-| **G3** Historial y categorías | `/historial` | `GET /api/movimientos` · `GET /api/movimientos/recientes` · `GET /api/movimientos/{codigo}` · `PUT /api/movimientos/{codigo}/clasificacion` · `GET /api/movimientos/exportar` · `GET/POST /api/categorias` · `PUT/DELETE /api/categorias/{id}` |
-| **G4** Contactos y solicitudes de dinero | `/contactos`, `/solicitudes` | `GET/POST /api/contactos` · `PUT/DELETE /api/contactos/{id}` · `GET/POST /api/solicitudes` · `POST /api/solicitudes/{id}/aceptar` · `.../rechazar` · `.../cancelar` |
-| **G5** Límites y alertas de consumo | `/limites` | `GET/PUT /api/limites` · `GET/POST /api/limites/alertas` · `PUT/DELETE /api/limites/alertas/{id}` |
-| **G6** Seguridad, dispositivos y sesiones | `/seguridad`, `/desbloqueo` | `PUT /api/seguridad/pin` · `POST /api/seguridad/desbloqueo/solicitar` · `.../confirmar` · `GET/POST /api/seguridad/dispositivos` · `PUT/DELETE /api/seguridad/dispositivos/{id}` · `GET/DELETE /api/seguridad/sesiones` · `DELETE /api/seguridad/sesiones/{id}` |
-
-Las **historias de usuario, criterios de aceptación y reglas de negocio** están en `docs/requisitos.md`. Las funciones que las implementan, sin base de datos ni red, están en `qolqe/reglas/`:
+## El repo
 
 ```
-qolqe/reglas/nucleo.py      qolqe/reglas/servicios.py   qolqe/reglas/contactos.py
-qolqe/reglas/recargas.py    qolqe/reglas/historial.py   qolqe/reglas/limites.py
-qolqe/reglas/seguridad.py
-```
-
-### Autenticación
-
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{"celular": "987654321", "pin": "4826"}
-```
-
-Opcionalmente se envía `"dispositivo_id"` (identificador de un dispositivo de confianza, ver G6). La respuesta incluye `access_token` y `sesion_id`. Envíen el token en cada solicitud protegida:
-
-```http
-Authorization: Bearer <access_token>
-```
-
-- Cada inicio de sesión crea una **sesión**; el token vence a los **30 minutos**.
-- `POST /api/auth/logout` cierra la sesión. Las sesiones activas se consultan y cierran en `/api/seguridad/sesiones`.
-- Tras **3 intentos fallidos** consecutivos, la cuenta se bloquea 15 minutos (`423`).
-
-### Convenciones de la API
-
-- **Montos:** se envían como número o texto decimal (`100`, `"100.50"`) y se devuelven como texto con 2 decimales (`"100.50"`).
-- **Fechas:** hora de Lima, formato `AAAA-MM-DDTHH:MM:SS`.
-- **Errores:** todos responden con un código estable y un mensaje:
-
-```json
-{"codigo": "SALDO_INSUFICIENTE", "detail": "Saldo insuficiente para realizar la operación"}
-```
-
-| HTTP | Significado | Ejemplos de `codigo` |
-|---|---|---|
-| 204 | Eliminación o cierre correcto, sin contenido | |
-| 401 | Sin token, token inválido, vencido o de una sesión cerrada, o credenciales incorrectas | `NO_AUTENTICADO`, `CREDENCIALES_INVALIDAS`, `CUENTA_CERRADA` |
-| 404 | Recurso inexistente **o de otro usuario** | `DESTINO_NO_REGISTRADO`, `CONTACTO_NO_ENCONTRADO`, `SIN_DEUDA_PENDIENTE` |
-| 409 | Conflicto con el estado actual | `CELULAR_REGISTRADO`, `ALIAS_DUPLICADO`, `DEUDA_YA_PAGADA`, `ESTADO_INVALIDO` |
-| 422 | Regla de negocio o datos inválidos | `MONTO_INVALIDO`, `SALDO_INSUFICIENTE`, `LIMITE_DIARIO_EXCEDIDO`, `FILTRO_INVALIDO`, `SOLICITUD_INVALIDA` |
-| 423 | Cuenta bloqueada | `CUENTA_BLOQUEADA` |
-
-El contrato completo está en `/docs` (Swagger) y en `/openapi.json`. Cada operación indica su historia de usuario, los esquemas de entrada y salida con sus restricciones, y todos los códigos de error que puede devolver, con un ejemplo por código.
-
----
-
-## 4. Datos de prueba
-
-Se restauran con `POST /api/pruebas/reiniciar`. Las fechas de las deudas y algunos movimientos se calculan **respecto del día actual** del reloj de la app.
-
-### Usuarios
-
-| Usuario | Celular | PIN | Correo | Saldo | Notas |
-|---|---|---|---|---|---|
-| Ana Torres Quispe | 987654321 | 4826 | ana.torres@correo.pe | S/ 1,500.00 | Usuario principal de ejemplo (ver abajo). Ha usado otros PIN antes |
-| Bruno Díaz Mendoza | 912345678 | 7391 | bruno.diaz@correo.pe | S/ 800.00 | Tiene a Ana como contacto |
-| Carla Ramos Huamán | 956781234 | 5917 | carla.ramos@correo.pe | S/ 50.00 | Saldo bajo. Tiene a Ana como contacto |
-| Diego Salas Paredes | 998877665 | 3604 | diego.salas@correo.pe | S/ 2,500.00 | Límite diario configurado en S/ 1,000. Tiene a Fabián como contacto |
-| Elena Vargas Ccori | 923456789 | 8152 | elena.vargas@correo.pe | S/ 300.00 | **Cuenta bloqueada** al reiniciar (para probar el desbloqueo) |
-| Fabián Rojas Núñez | 934567812 | 6029 | fabian.rojas@correo.pe | S/ 0.00 | **Cuenta cerrada** |
-
-### Datos de Ana por módulo
-
-| Módulo | Datos |
-|---|---|
-| G1 | Programada "Mamá" (987111222, S/ 20, día 15, ACTIVA) y "Trabajo" (999000111, S/ 10, día 5, PAUSADA). Una recarga de hoy al 999000111 |
-| G2 | Afiliaciones "Luz casa" (ELECTRO 10000001), "Agua depa" (AGUA 2000000008, **débito automático activo**) e "Internet casa" (INTERNET 300000000007) |
-| G3 | Historial de unos 60 días. Categorías Comida, Familia y Servicios, con movimientos asignados y una nota |
-| G4 | Contactos "Bruno" (favorito) y "Prima Carla". Solicitudes: Bruno le pide S/ 45.00 (pendiente), Carla le pidió S/ 30.00 hace más de 48 horas, y Ana le pide S/ 20.00 a Bruno (pendiente) |
-| G5 | Alerta de TRANSFERENCIAS con umbral S/ 300 |
-| G6 | Dispositivo de confianza "Celular de Ana" con identificador `a1b2c3d4e5f60718` |
-
-### Usuarios de carga (pruebas de rendimiento)
-
-- Celulares **900000001** a **900000200**, todos con PIN **2580**.
-- Saldo S/ 10,000.00 y unos 1,000 movimientos de los últimos 120 días cada uno.
-
-### Deudas de servicios
-
-| Empresa | Suministro | Vencimiento (respecto de hoy) |
-|---|---|---|
-| ELECTRO | 10000001 | Vence en 10 días |
-| ELECTRO | 10000002 | Vence hoy |
-| ELECTRO | 10000003 | Venció ayer |
-| ELECTRO | 100000009 | Dos periodos: uno venció hace 5 días y otro vence en 25 |
-| AGUA | 20000004 | Venció hace 10 días |
-| AGUA | 20000005 | Venció hace 30 días |
-| AGUA | 2000000008 | Vence en 3 días |
-| INTERNET | 300000000006 | Venció hace 60 días |
-| INTERNET | 300000000007 | Venció hace 61 días |
-| AGUA | 4000000001 a 4000000200 | Venció hace 5 días (para pruebas de carga) |
-
-### Transferencias interbancarias
-
-Usen cualquier CCI de 20 dígitos, por ejemplo `00219300123456789012`.
-
----
-
-## 5. API de soporte para pruebas
-
-Disponible solo con `QOLQE_MODO_PRUEBA=1`. **No forma parte del producto**: existe para que las pruebas automatizadas sean repetibles.
-
-| Endpoint | Para qué |
-|---|---|
-| `POST /api/pruebas/reiniciar` | Restaura todos los datos semilla |
-| `GET /api/pruebas/reloj` | Ver la fecha y hora de la app |
-| `PUT /api/pruebas/reloj` | Fijar (`{"ahora": "2026-11-15T10:00:00"}`) o adelantar (`{"avanzar_minutos": 60}`) el reloj |
-| `DELETE /api/pruebas/reloj` | Volver a la hora real |
-| `GET /api/pruebas/notificaciones?celular=...` | Ver los SMS simulados enviados a un celular (por ejemplo, el código de desbloqueo) |
-| `PUT /api/pruebas/saldo` | Fijar el saldo de un usuario: `{"celular": "...", "saldo": "100.00"}` |
-| `POST /api/pruebas/procesar-diario` | Ejecutar el proceso diario (recargas programadas y débitos automáticos) con la fecha del reloj de la app |
-
-> 💡 Para probar el proceso diario: fijen o adelanten el reloj al día que necesiten y luego llamen a `POST /api/pruebas/procesar-diario`.
->
-> 💡 Si sus pruebas modifican datos (transferencias, bloqueos, límites), reinicien los datos antes de cada prueba o diseñen datos independientes. Así cumplen la propiedad *Independent* de FIRST.
-
----
-
-## 6. Estructura sugerida del repositorio del grupo
-
-```
-qolqe/                    # App (NO modificar)
-features/                 # Casos del módulo en Gherkin
+qolqe/              la app bajo prueba (sin cambios)
+features/           escenarios en Gherkin; ui/ para los de interfaz
 tests/
-  api/                    # Parte 1
-  e2e/pages/              # Parte 2 (Page Objects)
-  performance/            # Parte 3
-docs/                     # Herramienta, trazabilidad, rendimiento, defectos
-.github/workflows/        # Pipeline (Parte 2)
-IA.md                     # Declaración de uso de IA
+  api-playwright/   pasos de los escenarios de API (TypeScript)
+  e2e/              Selenium: pasos, Page Objects, Screenplay y soporte
+  performance/      Parte 3
+scripts/            contrato, demo y modos de Selenium
+docs/
+  qolqe.md          la app: instalación, endpoints, datos de prueba
+  requisitos.md     historias de usuario y reglas de negocio
+  pruebas.md        cómo correr cada suite
+  defectos.md       los defectos encontrados
+  informe.md        informe del proyecto
+  guia-selenium.md  glosario y guion de la demo
+  evidencia/        reportes de la última corrida
+  expo/             diapositivas de la exposición
+IA.md               declaración de uso de IA
 ```
 
-En `docs/` encontrarán la especificación de requisitos, la plantilla del informe del proyecto y la plantilla del reporte de defectos; en la raíz, la plantilla de `IA.md`.
+## Contexto
+
+Proyecto 2 del curso CS5383 Pruebas y Verificación de Software (UTEC, 2026-2). Grupo 5: Kalos y Gianpier. La app la entrega el curso; todos los datos son ficticios.
