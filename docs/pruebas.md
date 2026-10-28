@@ -60,3 +60,43 @@ Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox
 Safari necesita habilitarse una vez: `sudo safaridriver --enable` y, en Safari, Desarrollo › Permitir automatización remota. Safari no implementa WebDriver BiDi, así que el escenario `@bidi` se omite allí.
 
 Glosario, cómo armar una prueba nueva y guion de la demo: [`guia-selenium.md`](guia-selenium.md).
+
+## Pipeline
+
+`.github/workflows/pruebas.yml` corre en cada push, en cada pull request y a mano desde la pestaña Actions (`workflow_dispatch`).
+
+```
+push / PR ─▶ api ─┬─▶ contrato ────────┐
+                  └─▶ web (chrome)     ├─▶ reportes ─▶ GitHub Pages   (solo main)
+                      web (firefox) ───┘
+```
+
+| Job | Qué hace | ¿Bloquea? |
+|---|---|---|
+| `api` | `npm test`: los 108 escenarios de API | sí |
+| `contrato` | Schemathesis contra el OpenAPI | no: sus hallazgos son defectos de contrato ya analizados en el informe |
+| `web (chrome)`, `web (firefox)` | los escenarios de interfaz con Selenium | sí |
+| `reportes` | arma el sitio con los reportes y la matriz de trazabilidad y lo publica en Pages | — |
+
+Lo rápido va primero: si la API falla, la interfaz no se prueba y sus jobs quedan como skipped.
+
+Cada job deja tres cosas: un resumen en la página del run (`.github/scripts/resumen.py` lee el JUnit XML o el JSON de Playwright), el reporte HTML como artefacto y, desde `main`, el reporte publicado en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
+
+### Quality gate
+
+Un cambio pasa si:
+
+- todas las pruebas de `api` y `web` pasan, salvo los fallos esperados: escenarios `@fail` en Playwright y `@defecto` en Selenium, cada uno con el `@DEF-NN` de [`defectos.md`](defectos.md). Si un fallo esperado empieza a pasar, también falla: el defecto se corrigió y hay que actualizar el escenario;
+- no hay escenarios flaky: en CI Playwright reintenta una vez y, si al reintentar pasa, el pipeline falla igual (`failOnFlakyTests`);
+- no hay un `test.only` olvidado (`forbidOnly`).
+
+Para que GitHub no deje fusionar un PR con el pipeline en rojo: Settings › Branches › regla para `main` › *Require status checks to pass* con `api`, `web (chrome)` y `web (firefox)`.
+
+### Trazabilidad
+
+Cada escenario lleva `@CP-NN` y las `@HU` que cubre. `.github/scripts/trazabilidad.py` cruza los `.feature` con los resultados del run (el JSON de Playwright y la propiedad `etiquetas` que el conftest escribe en el JUnit de pytest) y genera la matriz HU → caso → resultado. El pipeline la publica en Pages y en el resumen del job `reportes`. Para actualizar [`trazabilidad.md`](trazabilidad.md) en cada entrega, se baja `trazabilidad.md` del sitio publicado o se genera en local:
+
+```bash
+python .github/scripts/trazabilidad.py --api reportes/resultados-api.json \
+  --web chrome=reportes/selenium/junit.xml --md docs/trazabilidad.md
+```

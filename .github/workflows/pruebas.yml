@@ -1,40 +1,88 @@
-name: Pruebas de API
+# Pipeline de pruebas: api -> (contrato, web) -> reportes en GitHub Pages.
+# Quality gate: api y web deben pasar; los fallos esperados (@fail, @defecto) son defectos reportados
+# en docs/defectos.md. El contrato es informativo: sus hallazgos están en el informe.
+name: Pipeline
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   api:
-    runs-on: ubuntu-latest
+    name: api
+    runs-on: ubuntu-24.04
+    env:
+      CI: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements*.txt
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: python -m venv .venv && .venv/bin/pip install -r requirements-pruebas.txt
-      - run: npm ci
+          cache: npm
+      - name: Instalar dependencias
+        run: |
+          python -m venv .venv && .venv/bin/pip install -r requirements-pruebas.txt
+          npm ci
       - name: Escenarios Gherkin (Playwright + playwright-bdd)
         run: npm test
-      - name: Contrato (Schemathesis)
-        run: |
-          .venv/bin/python -m uvicorn qolqe.main:app --port 8000 &
-          sleep 10
-          PATH="$PWD/.venv/bin:$PATH" npm run contrato
-        continue-on-error: true
+      - name: Resumen
+        if: ${{ !cancelled() }}
+        run: python .github/scripts/resumen.py "API · Playwright" reportes/resultados-api.json
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ !cancelled() }}
         with:
-          name: reportes
+          name: api
           path: |
             playwright-report/
-            reportes/
+            reportes/junit-api.xml
+            reportes/resultados-api.json
 
-  e2e-selenium:
-    runs-on: ubuntu-latest
+  contrato:
+    name: contrato
+    needs: api
+    runs-on: ubuntu-24.04
+    # Schemathesis encuentra defectos de contrato ya reportados: el job no bloquea el pipeline,
+    # pero deja su reporte y su resumen.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Instalar dependencias
+        run: python -m venv .venv && .venv/bin/pip install -r requirements-pruebas.txt
+      - name: Levantar la app
+        run: |
+          .venv/bin/python -m uvicorn qolqe.main:app --port 8000 > uvicorn.log 2>&1 &
+          for _ in $(seq 1 60); do curl -sf http://localhost:8000/api/salud > /dev/null && exit 0; sleep 2; done
+          cat uvicorn.log; exit 1
+      - name: Contrato (Schemathesis)
+        run: PATH="$PWD/.venv/bin:$PATH" bash scripts/contrato.sh
+      - name: Resumen
+        if: ${{ !cancelled() }}
+        run: python .github/scripts/resumen.py "Contrato · Schemathesis" reportes/schemathesis/junit-*.xml
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: contrato
+          path: reportes/schemathesis/
+
+  web:
+    name: web (${{ matrix.navegador }})
+    needs: api
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -44,11 +92,65 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m venv .venv && .venv/bin/pip install -r requirements-e2e.txt
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Instalar dependencias
+        run: python -m venv .venv && .venv/bin/pip install -r requirements-e2e.txt
       - name: Escenarios Gherkin de la UI (Selenium + pytest-bdd)
-        run: scripts/selenium.sh todo --navegador ${{ matrix.navegador }}
+        run: scripts/selenium.sh todo --navegador ${{ matrix.navegador }} --junitxml=reportes/selenium/junit.xml
+      - name: Resumen
+        if: ${{ !cancelled() }}
+        run: python .github/scripts/resumen.py "Web · ${{ matrix.navegador }}" reportes/selenium/junit.xml
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ !cancelled() }}
         with:
-          name: reporte-selenium-${{ matrix.navegador }}
-          path: reportes/selenium/
+          name: web-${{ matrix.navegador }}
+          path: |
+            reportes/selenium/
+            !reportes/selenium/*.db*
+
+  reportes:
+    name: reportes
+    needs: [api, contrato, web]
+    # se publica también cuando algo falla: es justo cuando más hace falta ver el reporte
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          path: descargas
+      - name: Armar el sitio
+        env:
+          ESTADO_API: ${{ needs.api.result }}
+          ESTADO_CONTRATO: ${{ needs.contrato.result }}
+          ESTADO_WEB: ${{ needs.web.result }}
+        run: |
+          mkdir -p sitio
+          if [ -d descargas/api ]; then
+            mkdir -p sitio/api
+            cp -R descargas/api/playwright-report/. sitio/api/
+            cp descargas/api/reportes/*.xml descargas/api/reportes/*.json sitio/api/
+          fi
+          if [ -d descargas/contrato ]; then cp -R descargas/contrato sitio/contrato; fi
+          for d in descargas/web-*; do
+            if [ -d "$d" ]; then cp -R "$d" "sitio/$(basename "$d")"; fi
+          done
+          python .github/scripts/portada.py sitio
+          cat sitio/trazabilidad.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: sitio
+      - id: despliegue
+        uses: actions/deploy-pages@v4

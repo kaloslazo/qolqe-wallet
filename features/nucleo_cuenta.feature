@@ -9,44 +9,44 @@ Feature: Mi cuenta: saldo, perfil y cierre
     Given que los datos de prueba están restaurados
     And que la fecha de la app es "2026-11-10T10:00:00"
 
-  @HU-N-04 @api
+  @HU-N-04 @api @CP-41
   Scenario: Consulto mi saldo en soles
     Given que inicié sesión como Ana
     When consulto mi saldo
     Then mi saldo es S/ 1500.00
     And la moneda es "PEN"
 
-  @HU-N-04 @api
+  @HU-N-04 @api @CP-42
   Scenario: Mi perfil muestra el DNI enmascarado
     Given que inicié sesión como Ana
     When consulto mi perfil
     Then el DNI se muestra con solo los últimos 4 dígitos
 
-  @HU-N-04 @api
+  @HU-N-04 @api @CP-43
   Scenario: Sin token no puedo consultar mi saldo
     When consulto el saldo sin token
     Then el resultado es "NO_AUTENTICADO"
 
-  @HU-N-05 @api
+  @HU-N-05 @api @CP-44
   Scenario: Cambiar el correo envía un SMS de aviso
     Given que inicié sesión como Ana
     When cambio mi correo a "ana.nueva@correo.pe"
     Then el resultado es "exitosa"
     And el celular 987654321 recibe un SMS que contiene "ana.nueva@correo.pe"
 
-  @HU-N-05 @api
+  @HU-N-05 @api @CP-45
   Scenario: El correo de otra cuenta activa no se puede usar
     Given que inicié sesión como Ana
     When cambio mi correo a "Bruno.Diaz@correo.pe"
     Then el resultado es "CORREO_REGISTRADO"
 
-  @HU-N-05 @api
+  @HU-N-05 @api @CP-46
   Scenario: El DNI y el celular no se pueden modificar
     Given que inicié sesión como Ana
     When intento cambiar mi celular a "999999999"
     Then mi perfil sigue con el celular 987654321
 
-  @HU-N-06 @api
+  @HU-N-06 @api @CP-47
   Scenario Outline: Reglas para cerrar mi cuenta
     Given que inicié sesión como <usuario>
     And que mi saldo es S/ <saldo>
@@ -60,7 +60,7 @@ Feature: Mi cuenta: saldo, perfil y cierre
       | Ana     | 0.00  | 4826 | SOLICITUDES_PENDIENTES |
       | Carla   | 0.00  | 5917 | exitosa                |
 
-  @HU-N-06 @api @DEF-06 @fail
+  @HU-N-06 @api @DEF-06 @fail @CP-48
   Scenario: Tras cerrar la cuenta nadie puede transferirme
     Given que inicié sesión como Carla
     And que mi saldo es S/ 0.00

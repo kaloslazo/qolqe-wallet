@@ -10,7 +10,7 @@ Feature: Límites y alertas de consumo
     And que la fecha de la app es "2026-11-10T10:00:00"
 
   # ------------------------------------------------------------------ HU-G5-01
-  @HU-G5-01 @api
+  @HU-G5-01 @api @CP-01
   Scenario: Veo mis límites con lo usado y lo disponible del día
     Given que inicié sesión como Diego
     And que ya transferí S/ 300.00 hoy al celular 912345678
@@ -21,7 +21,7 @@ Feature: Límites y alertas de consumo
     And lo disponible hoy es S/ 700.00
 
   # ------------------------------------------------------------------ HU-G5-02 (R-G5-01: rango y múltiplos)
-  @HU-G5-02 @api
+  @HU-G5-02 @api @CP-02
   Scenario Outline: Validación del nuevo límite diario (valores límite de R-G5-01)
     Given que inicié sesión como Ana
     When cambio mi límite diario a S/ <limite>
@@ -39,7 +39,7 @@ Feature: Límites y alertas de consumo
       | 2050    | LIMITE_INVALIDO |
 
   # ------------------------------------------------------------------ HU-G5-02 (R-G5-02: reducción vs aumento)
-  @HU-G5-02 @api
+  @HU-G5-02 @api @CP-03
   Scenario: Una reducción del límite es inmediata
     Given que inicié sesión como Diego
     When cambio mi límite diario a S/ 500
@@ -47,7 +47,7 @@ Feature: Límites y alertas de consumo
     And mi límite diario vigente es S/ 500.00
     And recibo un SMS que contiene "Tu límite diario ahora es S/ 500"
 
-  @HU-G5-02 @api
+  @HU-G5-02 @api @CP-04
   Scenario: Un aumento del límite queda programado para 24 horas después
     Given que inicié sesión como Diego
     When cambio mi límite diario a S/ 1500
@@ -56,7 +56,7 @@ Feature: Límites y alertas de consumo
     And tengo un aumento pendiente de S/ 1500.00
     And recibo un SMS que contiene "estará vigente desde"
 
-  @HU-G5-02 @api
+  @HU-G5-02 @api @CP-05
   Scenario Outline: El aumento entra en vigencia exactamente a las 24 horas
     Given que inicié sesión como Diego
     And que solicité aumentar mi límite diario a S/ 1500
@@ -68,7 +68,7 @@ Feature: Límites y alertas de consumo
       | 1439    | 1000.00 |
       | 1440    | 1500.00 |
 
-  @HU-G5-02 @api @DEF-01 @fail
+  @HU-G5-02 @api @DEF-01 @fail @CP-06
   Scenario: Una reducción cancela el aumento pendiente
     Given que inicié sesión como Diego
     And que solicité aumentar mi límite diario a S/ 1500
@@ -77,14 +77,14 @@ Feature: Límites y alertas de consumo
     Then mi límite diario vigente es S/ 500.00
     And no tengo un aumento pendiente
 
-  @HU-G5-02 @api
+  @HU-G5-02 @api @CP-07
   Scenario: Reducir el límite por debajo del umbral pausa la alerta de transferencias
     Given que inicié sesión como Ana
     When cambio mi límite diario a S/ 250
     Then la alerta de TRANSFERENCIAS con umbral S/ 300 está PAUSADA
 
   # ------------------------------------------------------------------ HU-G5-03 (RN-06)
-  @HU-G5-03 @api
+  @HU-G5-03 @api @CP-08
   Scenario Outline: Transferir respetando el límite diario vigente
     Given que inicié sesión como Diego
     And que ya transferí S/ 500.00 hoy al celular 912345678
@@ -97,7 +97,7 @@ Feature: Límites y alertas de consumo
       | 500.00 | exitosa                |
       | 500.01 | MONTO_INVALIDO         |
 
-  @HU-G5-03 @api
+  @HU-G5-03 @api @CP-09
   Scenario: La transferencia que supera el límite diario por un céntimo se rechaza
     Given que inicié sesión como Diego
     And que ya transferí S/ 500.00 hoy al celular 912345678
@@ -105,7 +105,7 @@ Feature: Límites y alertas de consumo
     When transfiero S/ 0.01 al celular 912345678
     Then el resultado es "LIMITE_DIARIO_EXCEDIDO"
 
-  @HU-G5-03 @api @DEF-02 @fail
+  @HU-G5-03 @api @DEF-02 @fail @CP-10
   Scenario: Las transferencias interbancarias también cuentan para el límite diario
     Given que inicié sesión como Diego
     And que ya transferí S/ 500.00 hoy a otro banco
@@ -114,7 +114,7 @@ Feature: Límites y alertas de consumo
     Then el resultado es "LIMITE_DIARIO_EXCEDIDO"
 
   # ------------------------------------------------------------------ HU-G5-04 (R-G5-03, R-G5-04)
-  @HU-G5-04 @api
+  @HU-G5-04 @api @CP-11
   Scenario Outline: Validación del umbral de una alerta (valores límite de R-G5-03)
     Given que inicié sesión como Ana
     When creo una alerta de <tipo> con umbral S/ <umbral>
@@ -130,7 +130,7 @@ Feature: Límites y alertas de consumo
       | RECARGAS | 2010   | ALERTA_INVALIDA |
       | AHORROS  | 100    | ALERTA_INVALIDA |
 
-  @HU-G5-04 @api
+  @HU-G5-04 @api @CP-12
   Scenario Outline: El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente
     Given que inicié sesión como Diego
     When creo una alerta de <tipo> con umbral S/ <umbral>
@@ -143,13 +143,13 @@ Feature: Límites y alertas de consumo
       | TODAS          | 1010   | ALERTA_INVALIDA |
       | PAGOS          | 1010   | ACTIVA          |
 
-  @HU-G5-04 @api
+  @HU-G5-04 @api @CP-13
   Scenario: No se permiten dos alertas con el mismo tipo y umbral
     Given que inicié sesión como Ana
     When creo una alerta de TRANSFERENCIAS con umbral S/ 300
     Then el resultado es "ALERTA_DUPLICADA"
 
-  @HU-G5-04 @api
+  @HU-G5-04 @api @CP-14
   Scenario: No se puede crear una sexta alerta
     Given que inicié sesión como Ana
     And que tengo 5 alertas
@@ -157,7 +157,7 @@ Feature: Límites y alertas de consumo
     Then el resultado es "LIMITE_ALERTAS"
 
   # ------------------------------------------------------------------ HU-G5-06
-  @HU-G5-06 @api
+  @HU-G5-06 @api @CP-15
   Scenario: No se puede reanudar una alerta cuyo umbral supera el límite vigente
     Given que inicié sesión como Ana
     And que mi límite diario es S/ 250
@@ -165,7 +165,7 @@ Feature: Límites y alertas de consumo
     Then el resultado es "ALERTA_INVALIDA"
 
   # ------------------------------------------------------------------ HU-G5-08 (R-G5-05)
-  @HU-G5-08 @api
+  @HU-G5-08 @api @CP-16
   Scenario Outline: La alerta notifica al alcanzar o superar el umbral
     Given que inicié sesión como Ana
     When transfiero S/ <monto> al celular 912345678
@@ -177,14 +177,14 @@ Feature: Límites y alertas de consumo
       | 300.00 | 1   |
       | 300.01 | 1   |
 
-  @HU-G5-08 @api @DEF-03 @fail
+  @HU-G5-08 @api @DEF-03 @fail @CP-17
   Scenario: Cada alerta notifica como máximo una vez por día
     Given que inicié sesión como Ana
     When transfiero S/ 300.00 al celular 912345678
     And transfiero S/ 10.00 al celular 912345678
     Then recibo 1 SMS de alerta de consumo
 
-  @HU-G5-08 @api
+  @HU-G5-08 @api @CP-18
   Scenario: Una alerta pausada no notifica
     Given que inicié sesión como Ana
     And que pausé la alerta de TRANSFERENCIAS con umbral S/ 300
@@ -192,7 +192,7 @@ Feature: Límites y alertas de consumo
     Then recibo 0 SMS de alerta de consumo
 
   # ------------------------------------------------------------------ HU-G5-05
-  @HU-G5-05 @api
+  @HU-G5-05 @api @CP-19
   Scenario: Veo mis alertas con su gasto de hoy
     Given que inicié sesión como Ana
     And que ya transferí S/ 120.00 hoy al celular 912345678
@@ -201,7 +201,7 @@ Feature: Límites y alertas de consumo
     And la alerta de TRANSFERENCIAS con umbral S/ 300 tiene un gasto de hoy de S/ 120.00
 
   # ------------------------------------------------------------------ HU-G5-07
-  @HU-G5-07 @api
+  @HU-G5-07 @api @CP-20
   Scenario: Una alerta eliminada deja de notificar
     Given que inicié sesión como Ana
     And que eliminé la alerta de TRANSFERENCIAS con umbral S/ 300
@@ -209,19 +209,19 @@ Feature: Límites y alertas de consumo
     Then recibo 0 SMS de alerta de consumo
 
   # ------------------------------------------------------------------ Casos técnicos (autenticación, cuerpo, sin efecto, propiedad de los datos)
-  @HU-G5-01 @api @tecnico
+  @HU-G5-01 @api @tecnico @CP-21
   Scenario: Sin token no puedo consultar mis límites
     When consulto mis límites sin token
     Then la respuesta tiene el código HTTP 401
     And el resultado es "NO_AUTENTICADO"
 
-  @HU-G5-02 @api @tecnico
+  @HU-G5-02 @api @tecnico @CP-22
   Scenario: Con un token inválido no puedo cambiar mi límite
     When cambio mi límite diario a S/ 500 con el token "token-invalido"
     Then la respuesta tiene el código HTTP 401
     And el resultado es "NO_AUTENTICADO"
 
-  @HU-G5-02 @api @tecnico
+  @HU-G5-02 @api @tecnico @CP-23
   Scenario Outline: Un cuerpo vacío o con un tipo inválido se rechaza sin cambiar el límite
     Given que inicié sesión como Diego
     When envío el cambio de límite con el cuerpo '<cuerpo>'
@@ -236,7 +236,7 @@ Feature: Límites y alertas de consumo
       | {"limite_diario": "abc"} |
       | {"limite_diario": null}  |
 
-  @HU-G5-02 @api @tecnico
+  @HU-G5-02 @api @tecnico @CP-24
   Scenario: Un cambio rechazado por regla de negocio no tiene efecto
     Given que inicié sesión como Diego
     When cambio mi límite diario a S/ 2050
@@ -245,7 +245,7 @@ Feature: Límites y alertas de consumo
     And mi límite diario vigente es S/ 1000.00
     And no tengo un aumento pendiente
 
-  @api @tecnico
+  @api @tecnico @CP-25
   Scenario Outline: La alerta de otro usuario responde como si no existiera
     Given que inicié sesión como Diego
     When intento <accion> la alerta de TRANSFERENCIAS con umbral S/ 300 de Ana

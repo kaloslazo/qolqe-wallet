@@ -1,6 +1,6 @@
 # Qolqe Wallet · G5 Límites
 
-[![Pruebas de API](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml/badge.svg)](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml)
+[![Pipeline](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml/badge.svg)](https://github.com/kaloslazo/qolqe-wallet/actions/workflows/pruebas.yml)
 
 Qolqe es una billetera digital ficticia: registro, transferencias, recargas, pago de servicios, contactos y seguridad. Acá la probamos, no la reparamos. Nos toca el módulo G5, límites y alertas de consumo, más el núcleo de la cuenta: cuánto puedes gastar al día, cuándo entra en vigencia un cambio de límite y cuándo te avisa una alerta.
 
@@ -25,7 +25,7 @@ Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y un
 | Interfaz web | Selenium 4 + pytest-bdd | la pantalla de límites, con Page Objects, Grid, móvil y reparación de localizadores con IA |
 | Rendimiento | por definir | Parte 3 |
 
-Cada push corre la suite de API en GitHub Actions.
+Cada push y cada pull request corren el pipeline en GitHub Actions: primero la API y, si pasa, el contrato y la interfaz en Chrome y Firefox. Los fallos esperados son los defectos ya reportados; cualquier otro fallo, o un escenario que pasa solo al reintentar, deja el pipeline en rojo. Desde `main`, los reportes y la [matriz de trazabilidad](docs/trazabilidad.md) se publican en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
 
 ## Correrlo en local
 
@@ -48,17 +48,21 @@ Para usar la app a mano: `uvicorn qolqe.main:app --reload` y abre `localhost:800
 
 ```
 qolqe/              la app bajo prueba (sin cambios)
-features/           escenarios en Gherkin; ui/ para los de interfaz
+features/           escenarios en Gherkin con @HU y @CP; ui/ para los de interfaz
 tests/
   api-playwright/   pasos de los escenarios de API (TypeScript)
   e2e/              Selenium: pasos, Page Objects, Screenplay y soporte
   performance/      Parte 3
 scripts/            contrato, demo y modos de Selenium
+.github/
+  workflows/        el pipeline
+  scripts/          resumen del run, matriz de trazabilidad y portada de Pages
 docs/
   qolqe.md          la app: instalación, endpoints, datos de prueba
   requisitos.md     historias de usuario y reglas de negocio
-  pruebas.md        cómo correr cada suite
+  pruebas.md        cómo correr cada suite y cómo funciona el pipeline
   defectos.md       los defectos encontrados
+  trazabilidad.md   HU → casos → resultado de un run del pipeline
   informe.md        informe del proyecto
   guia-selenium.md  glosario y guion de la demo
   evidencia/        reportes de la última corrida

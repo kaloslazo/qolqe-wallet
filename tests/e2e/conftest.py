@@ -43,14 +43,19 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     for marca in ("G5", "ui", "happy", "demo", "reloj", "e2e", "ventanas", "dialogos", "datos", "bidi", "red",
-                  "R-G5-04", "defecto", "screenplay", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-0{n}" for n in range(1, 4))):
+                  "R-G5-04", "defecto", "screenplay", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-0{n}" for n in range(1, 4)),
+                  *(f"CP-{n:02d}" for n in range(1, 100))):
         config.addinivalue_line("markers", f"{marca}: etiqueta Gherkin")
 
 
 def pytest_collection_modifyitems(items):
     """Los escenarios @defecto describen el comportamiento correcto y fallan mientras el defecto exista:
-    se marcan como fallo esperado (xfail estricto). Con --runxfail se ven en rojo, como fallas reales."""
+    se marcan como fallo esperado (xfail estricto). Con --runxfail se ven en rojo, como fallas reales.
+    Las etiquetas HU, CP y DEF van al JUnit XML como propiedades: de ahí sale la matriz de trazabilidad."""
     for item in items:
+        etiquetas = sorted({m.name for m in item.iter_markers() if m.name.startswith(("HU-", "CP-", "DEF-"))})
+        if etiquetas:
+            item.user_properties.append(("etiquetas", " ".join(etiquetas)))
         if item.get_closest_marker("defecto"):
             ids = [m.name for m in item.iter_markers() if m.name.startswith("DEF-")]
             item.add_marker(pytest.mark.xfail(reason=f"Defecto conocido {', '.join(ids)} (docs/defectos.md)", strict=True))

@@ -8,7 +8,7 @@ Característica: Defectos conocidos del G5 vistos desde la interfaz web
     Dado que los datos de prueba están restaurados
     Y que la fecha de la app es "2026-11-10T10:00:00"
 
-  @DEF-01 @HU-G5-02
+  @DEF-01 @HU-G5-02 @CP-67
   Escenario: Una reducción del límite cancela el aumento programado
     Dado que Diego tiene la sesión iniciada
     Y que está en la página de límites
@@ -18,7 +18,7 @@ Característica: Defectos conocidos del G5 vistos desde la interfaz web
     Entonces su límite diario vigente es "S/ 500.00"
     Y ya no ve un aumento programado
 
-  @DEF-02 @HU-G5-03
+  @DEF-02 @HU-G5-03 @CP-68
   Escenario: Las transferencias a otro banco cuentan para el límite diario
     Dado que Diego tiene la sesión iniciada
     Cuando transfiere S/ 500 a otro banco a la cuenta 00219300123456789012
@@ -26,7 +26,7 @@ Característica: Defectos conocidos del G5 vistos desde la interfaz web
     Y abre la página de límites
     Entonces lo usado hoy es "S/ 1,000.00"
 
-  @DEF-03 @HU-G5-08
+  @DEF-03 @HU-G5-08 @CP-69
   Escenario: Una alerta avisa como máximo una vez por día
     Dado que Ana tiene la sesión iniciada
     Cuando transfiere S/ 300 al celular 912345678

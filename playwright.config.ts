@@ -14,7 +14,12 @@ export default defineConfig({
   // Los escenarios comparten una sola BD y un solo reloj: se ejecutan en serie.
   workers: 1,
   fullyParallel: false,
-  reporter: [['list'], ['html', { open: 'never' }], ['junit', { outputFile: 'reportes/junit-api.xml' }]],
+  // En CI: un test.only olvidado rompe el pipeline, y un escenario que falla y pasa al reintentar (flaky)
+  // también: el quality gate pide investigarlo, no dejarlo pasar en verde.
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  failOnFlakyTests: !!process.env.CI,
+  reporter: [['list'], ['html', { open: 'never' }], ['junit', { outputFile: 'reportes/junit-api.xml' }], ['json', { outputFile: 'reportes/resultados-api.json' }]],
   use: {
     baseURL: process.env.QOLQE_URL ?? `http://localhost:${PUERTO}`,
     extraHTTPHeaders: { 'Content-Type': 'application/json' },
