@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G5 · Límites · Parte 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff; --ink: #121316; --muted: #5d6068; --line: #dcdde2; --soft: #f0f1f3;
+    --code: #1e1f24; --code-hl: #2b3142;
+    --red: #d9483f; --yellow: #a87c00; --blue: #2f6fd1; --green: #2f8f5b;
+    --dot-red: #e5534b; --dot-yellow: #f2c230; --dot-blue: #3b7ddd; --dot-green: #4cae72;
+    --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #e9eaed; font-family: var(--sans); color: var(--ink); }
+  body { overflow: hidden; }
+  .deck { position: absolute; top: 50%; left: 50%; width: 1600px; height: 900px; transform-origin: center center; }
+  .slide { position: absolute; inset: 0; width: 1600px; height: 900px; background: var(--bg); padding: 80px 96px 96px; display: none; flex-direction: column; }
+  .slide.activa { display: flex; }
+  .pie { position: absolute; left: 96px; right: 96px; bottom: 40px; display: flex; justify-content: space-between; font-size: 18px; color: var(--muted); }
+
+  .seccion { font-size: 22px; font-weight: 600; margin-bottom: 14px; }
+  .s1 { color: var(--blue); } .s2 { color: var(--green); } .s3 { color: var(--yellow); } .s4 { color: var(--red); }
+  h1 { font-size: 60px; line-height: 1.08; font-weight: 600; letter-spacing: -0.02em; }
+  h2 { font-size: 30px; font-weight: 600; margin-bottom: 14px; }
+  .cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+  p, li { font-size: 27px; line-height: 1.42; }
+  .tenue { color: var(--muted); }
+  .nota { font-size: 23px; color: var(--muted); line-height: 1.4; }
+  ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  ul li { position: relative; padding-left: 30px; }
+  ul li::before { content: "–"; color: var(--muted); position: absolute; left: 0; }
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  .col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .col3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; align-items: stretch; }
+  .tarjeta { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 30px 32px; }
+  .tarjeta li, .tarjeta p { font-size: 24px; }
+  .tinte-azul { background: #edf3fc; border-color: #d3e1f6; }
+  .tinte-verde { background: #edf6f0; border-color: #d2e8da; }
+  .tinte-rojo { background: #fbefee; border-color: #f1d6d3; }
+  .tinte-amarillo { background: #fbf5e3; border-color: #efe2b8; }
+
+  table.compacta th, table.compacta td { padding: 10px 18px; font-size: 21px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
+  th, td { text-align: left; padding: 14px 20px; font-size: 22px; line-height: 1.3; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--soft); font-weight: 600; }
+  tr > :last-child { border-right: 0; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.n { white-space: nowrap; }
+  .ok { color: var(--green); font-weight: 500; }
+  .mal { color: var(--red); font-weight: 500; }
+
+  pre { background: var(--code); color: #e8e9ee; border-radius: 16px; padding: 26px 28px; font-family: var(--mono); font-size: 22px; line-height: 1.6; white-space: pre; overflow: hidden; }
+  pre .l { display: block; padding: 0 10px; margin: 0 -10px; border-radius: 6px; }
+  pre .hl { background: var(--code-hl); }
+  .k { color: #ff7a72; } .t { color: #6fd39b; } .s { color: #f5cd5b; } .v { color: #b9a3ff; } .f { color: #86b4ff; } .c { color: #8b8e99; }
+  .etiqueta-archivo { font-size: 20px; color: var(--muted); margin-bottom: 10px; }
+
+  .cadena { display: flex; align-items: stretch; gap: 0; }
+  .eslabon { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .eslabon small { display: block; font-size: 17px; color: var(--muted); margin-bottom: 6px; }
+  .eslabon b { display: block; font-size: 21px; font-weight: 600; line-height: 1.3; }
+  .eslabon span { display: block; font-size: 19px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+  .flecha { display: flex; align-items: center; padding: 0 10px; font-size: 26px; color: var(--muted); }
+  .fila-titulo { font-size: 21px; font-weight: 600; margin-bottom: 12px; }
+
+  .cifras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .cifra { border-radius: 16px; padding: 34px 36px; border: 1px solid var(--line); background: var(--card); }
+  .cifra b { display: block; font-size: 110px; line-height: 1; font-weight: 600; letter-spacing: -0.03em; }
+  .cifra span { display: block; font-size: 25px; margin-top: 14px; line-height: 1.35; }
+
+  .pasos { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+  .paso { display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 28px; }
+  .paso .num { font-size: 40px; font-weight: 600; line-height: 1; }
+  .paso h2 { margin-bottom: 8px; }
+  .paso p { font-size: 24px; }
+  .paso pre { font-size: 21px; padding: 12px 18px; margin: 6px 0 8px; display: inline-block; }
+
+  .portada { justify-content: space-between; }
+  .puntos { display: flex; gap: 12px; }
+  .puntos i { width: 16px; height: 16px; border-radius: 50%; display: block; }
+  .portada h1 { font-size: 132px; letter-spacing: -0.035em; margin: 10px 0 26px; }
+  .portada .sub { font-size: 36px; color: #3b3e45; line-height: 1.35; }
+
+  @media print {
+    @page { size: 1600px 900px; margin: 0; }
+    html, body { background: var(--bg); overflow: visible; }
+    .deck { position: static; transform: none !important; width: auto; height: auto; }
+    .slide { position: relative; display: flex !important; break-after: page; page-break-after: always; }
+  }
+
+  /* ---- Parte 2 */
+  .captura { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .captura img { display: block; width: 100%; height: auto; }
+  .captura .barra { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--soft); font-family: var(--mono); font-size: 16px; color: var(--muted); }
+  .captura .barra i { width: 11px; height: 11px; border-radius: 50%; display: block; background: var(--line); }
+  .tubo { display: grid; grid-template-columns: 1fr 56px 1.15fr 56px 1fr 56px 1fr; align-items: center; }
+  .tubo .flecha { justify-content: center; padding: 0; font-size: 34px; }
+  .job { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px 26px; }
+  .job small { display: block; font-size: 19px; color: var(--muted); margin-bottom: 4px; }
+  .job b { display: block; font-family: var(--mono); font-size: 30px; font-weight: 500; }
+  .job span { display: block; font-size: 22px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
+  .pila { display: flex; flex-direction: column; gap: 14px; }
+  .pila .tarjeta { padding: 22px 28px; }
+  .pila .tarjeta h2 { margin-bottom: 8px; }
+  .chip { display: inline-block; font-size: 18px; font-weight: 500; padding: 3px 12px; border-radius: 99px; border: 1px solid currentColor; margin-top: 10px; }
+  .amarillo { color: var(--yellow); font-weight: 500; }
+  .gris { color: var(--muted); }
+  .rubro { display: grid; grid-template-columns: 74px 1fr 300px; gap: 0; align-items: center; border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .rubro:last-child { border-bottom: 0; }
+  .rubro .pts { font-size: 40px; font-weight: 600; line-height: 1; }
+  .rubro p { font-size: 25px; }
+  .rubro .donde { font-size: 20px; color: var(--muted); text-align: right; }
+  .cifras.c4 { grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .cifras.c4 .cifra { padding: 28px 28px; }
+  .cifras.c4 .cifra b { font-size: 76px; }
+  .cifras.c4 .cifra span { font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 · portada -->
+<section class="slide portada">
+  <div class="puntos"><i style="background:var(--dot-red)"></i><i style="background:var(--dot-yellow)"></i><i style="background:var(--dot-blue)"></i><i style="background:var(--dot-green)"></i></div>
+  <div>
+    <p class="tenue" style="font-size:26px">CS5383 · Proyecto 2 · Parte 2</p>
+    <h1>G5 · Límites</h1>
+    <p class="sub">Pruebas E2E de la interfaz, un pipeline que las corre solo<br>y trazabilidad de cada historia hasta su ejecución</p>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:26px"><b style="font-weight:500">Kalos · Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
+</section>
+
+<!-- 2 · contexto -->
+<section class="slide">
+  <p class="seccion s1">Contexto</p>
+  <h1>Qolqe, el módulo G5 y lo que ya teníamos</h1>
+  <div class="cuerpo">
+    <div class="col3">
+      <div class="tarjeta">
+        <h2>La app</h2>
+        <p>Qolqe es una billetera digital ficticia que da el curso. La probamos sin tocar su código.</p>
+      </div>
+      <div class="tarjeta tinte-azul">
+        <h2>Nuestro módulo</h2>
+        <p>G5: el límite diario de transferencias y las alertas de consumo. 8 historias, más el núcleo de la cuenta.</p>
+      </div>
+      <div class="tarjeta tinte-verde">
+        <h2>Parte 1</h2>
+        <p>108 escenarios de API en Gherkin con Playwright, contrato con Schemathesis y 9 defectos reportados.</p>
+      </div>
+    </div>
+    <p class="nota">La Parte 2 agrega lo que faltaba: probar lo que ve el cliente en la pantalla y que todo corra solo en cada cambio.</p>
+  </div>
+</section>
+
+<!-- 3 · lo que pide -->
+<section class="slide">
+  <p class="seccion s1">Contexto</p>
+  <h1>Lo que pide la Parte 2, y dónde está</h1>
+  <div class="cuerpo" style="gap:0">
+    <div class="rubro"><span class="pts s1">5</span><p>Todos los criterios definidos como web, automatizados</p><span class="donde">Selenium + pytest-bdd · lámina 4</span></div>
+    <div class="rubro"><span class="pts s1">2</span><p>Patrón mantenible, sin esperas fijas; pasa 3 veces seguidas</p><span class="donde">Page Object · lámina 5</span></div>
+    <div class="rubro"><span class="pts s2">5</span><p>Pipeline en cada push o PR: API + web en verde, con reportes publicados (y Schemathesis)</p><span class="donde">GitHub Actions · láminas 6 a 9</span></div>
+    <div class="rubro"><span class="pts s3">4</span><p>Trazabilidad HU → casos → ejecución, con los resultados del pipeline</p><span class="donde">láminas 10 y 11</span></div>
+    <div class="rubro"><span class="pts s4">4</span><p>Exposición con demo en vivo: el run, el reporte y la matriz</p><span class="donde">lámina 13</span></div>
+  </div>
+</section>
+
+<!-- 4 · criterios web -->
+<section class="slide">
+  <p class="seccion s1">1 · Pruebas web</p>
+  <h1>Las historias del G5, probadas en la pantalla</h1>
+  <div class="cuerpo">
+    <table class="compacta">
+      <thead><tr><th>HU</th><th>Escenario de interfaz</th><th>Caso</th></tr></thead>
+      <tbody>
+        <tr><td class="n">G5-01 · 02 · 04</td><td>Ana baja su límite diario y crea una alerta de recargas (flujo feliz)</td><td class="n">CP-57</td></tr>
+        <tr><td class="n">G5-02</td><td>Un aumento entra en vigencia 24 horas después · bajar el límite pausa la alerta que queda encima</td><td class="n">CP-58 · 59</td></tr>
+        <tr><td class="n">G5-03</td><td>Una transferencia que supera el límite diario es rechazada</td><td class="n">CP-60</td></tr>
+        <tr><td class="n">G5-04</td><td>Validación del umbral al crear una alerta (6 ejemplos) · “Todos mis gastos” no supera el límite</td><td class="n">CP-64 · 65</td></tr>
+        <tr><td class="n">G5-06 · 07</td><td>Pausar, reanudar y eliminar una alerta · editar su umbral</td><td class="n">CP-62 · 63</td></tr>
+        <tr><td class="n">G5-08</td><td>Ana recibe un SMS al alcanzar el umbral de su alerta</td><td class="n">CP-61</td></tr>
+        <tr><td class="n amarillo">DEF-01 · 02 · 03</td><td>Los tres defectos del G5, vistos como los vería un cliente: fallan a propósito</td><td class="n">CP-67 a 69</td></tr>
+      </tbody>
+    </table>
+    <p class="nota">15 casos en <code>features/ui/limites_ui.feature</code>, Gherkin en español, más 3 de defectos conocidos. De las que el informe marcó como web, G5-06 y G5-07 están completas; G5-05 se ve en pantalla (tipo, umbral y estado), pero el gasto de hoy por alerta se verifica por API.</p>
+  </div>
+</section>
+
+<!-- 5 · patrón -->
+<section class="slide">
+  <p class="seccion s1">1 · Pruebas web</p>
+  <h1>Page Object, sin esperas fijas y estable</h1>
+  <div class="cuerpo">
+    <div class="col2" style="grid-template-columns:1.25fr 1fr; gap:36px; margin-top:28px">
+      <div>
+        <p class="etiqueta-archivo">tests/e2e/pages/limites_page.py · test_limites_ui.py</p>
+<pre><span class="l"><span class="k">class</span> <span class="f">LimitesPage</span>(BasePage):</span><span class="l">  LIMITE_DIARIO = tid(<span class="s">"limite-diario"</span>)</span><span class="l">  NUEVO_LIMITE = tid(<span class="s">"input-nuevo-limite"</span>)</span><span class="l"> </span><span class="l hl">  <span class="k">def</span> <span class="f">esperar_carga</span>(self):</span><span class="l hl">    self.espera.until(<span class="k">lambda</span> d: ...text)</span><span class="l"> </span><span class="l"><span class="c"># el paso solo dice la intención</span></span><span class="l"><span class="f">@when</span>(<span class="s">"cambia su límite diario a S/ {monto}"</span>)</span><span class="l"><span class="k">def</span> <span class="f">cambia_limite</span>(driver, monto):</span><span class="l">  LimitesPage(driver).cambiar_limite(monto)</span></pre>
+      </div>
+      <div class="pila">
+        <div class="tarjeta tinte-azul"><h2>Mantenible</h2><p>Una clase por pantalla. Los selectores (<code>data-testid</code>) viven en un solo lugar: si cambia un botón, se arregla una línea.</p></div>
+        <div class="tarjeta tinte-verde"><h2>Sin esperas fijas</h2><p><code>WebDriverWait</code> espera a que la pantalla muestre el dato. No hay <code>sleep</code> en ningún paso.</p></div>
+        <div class="tarjeta tinte-amarillo"><h2>Estable</h2><p>Runs #21, #22 y #23 seguidas en verde, en Chrome y en Firefox.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · pipeline -->
+<section class="slide">
+  <p class="seccion s2">2 · Pipeline</p>
+  <h1>Lo rápido primero; cada etapa da más confianza</h1>
+  <div class="cuerpo">
+    <div class="tubo">
+      <div class="job"><small>evento</small><b>push · PR</b><span>o a mano desde Actions</span></div>
+      <div class="flecha">→</div>
+      <div class="job tinte-azul"><small>job · ~1.5 min</small><b>api</b><span>108 escenarios con Playwright</span></div>
+      <div class="flecha">→</div>
+      <div class="pila">
+        <div class="job tinte-verde"><small>needs: api</small><b>web (chrome)</b><b>web (firefox)</b><span>Selenium + pytest-bdd</span></div>
+        <div class="job tinte-amarillo"><small>needs: api</small><b>contrato</b><span>Schemathesis</span></div>
+      </div>
+      <div class="flecha">→</div>
+      <div class="job"><small>solo main</small><b>reportes</b><span>sitio en GitHub Pages</span></div>
+    </div>
+    <p class="nota">Si la API falla, no se gasta en la interfaz: web y contrato quedan como <i>skipped</i>. Archivo: <code>.github/workflows/pruebas.yml</code>.</p>
+  </div>
+</section>
+
+<!-- 7 · cada job -->
+<section class="slide">
+  <p class="seccion s2">2 · Pipeline</p>
+  <h1>Cada job deja evidencia que cualquiera puede abrir</h1>
+  <div class="cuerpo">
+    <table>
+      <thead><tr><th>Job</th><th>Qué corre</th><th>Qué deja</th><th>¿Bloquea?</th></tr></thead>
+      <tbody>
+        <tr><td class="n"><code>api</code></td><td>Escenarios Gherkin de API</td><td>Reporte HTML, JUnit XML y JSON</td><td class="ok">Sí</td></tr>
+        <tr><td class="n"><code>web</code> × 2</td><td>Escenarios de interfaz en Chrome y Firefox, sin ventana</td><td>Reporte BDD con captura por paso, pytest-html y JUnit</td><td class="ok">Sí</td></tr>
+        <tr><td class="n"><code>contrato</code></td><td>Schemathesis contra <code>/openapi.json</code></td><td>Reporte HTML y JUnit</td><td class="amarillo">No: sus hallazgos ya están analizados</td></tr>
+        <tr><td class="n"><code>reportes</code></td><td>Junta todo y arma la portada y la matriz</td><td>Sitio en Pages y la matriz en el resumen</td><td class="gris">—</td></tr>
+      </tbody>
+    </table>
+    <p class="nota">Además, cada job escribe una tabla en la página del run (<code>$GITHUB_STEP_SUMMARY</code>): se ve qué pasó sin descargar nada.</p>
+  </div>
+</section>
+
+<!-- 8 · reportes publicados -->
+<section class="slide">
+  <p class="seccion s2">2 · Pipeline</p>
+  <h1>Los reportes, publicados en cada push a main</h1>
+  <div class="cuerpo">
+    <div class="col2" style="grid-template-columns:1.9fr 1fr; gap:40px; align-items:center">
+      <div class="captura"><div class="barra"><i></i><i></i><i></i>&nbsp;kaloslazo.github.io/qolqe-wallet</div><img src="img/p2-portada.png" alt="Portada de los reportes en GitHub Pages"></div>
+      <ul>
+        <li>Estado de cada job y sus cifras</li>
+        <li>Reporte de Playwright, de Schemathesis y de Selenium en cada navegador</li>
+        <li>La matriz de trazabilidad del mismo run</li>
+        <li>Se publica también cuando algo falla: es cuando más hace falta</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · quality gate -->
+<section class="slide">
+  <p class="seccion s2">2 · Pipeline</p>
+  <h1>Quality gate: verde no significa “sin problemas”</h1>
+  <div class="cuerpo">
+    <table>
+      <thead><tr><th>Condición</th><th>Cómo se automatiza</th></tr></thead>
+      <tbody>
+        <tr><td>Todas las pruebas de API y web pasan</td><td>El step termina con error si alguna falla</td></tr>
+        <tr><td>Los fallos conocidos están reportados</td><td><code>@fail</code> en Playwright y <code>xfail</code> estricto en pytest, cada uno con su <code>@DEF-NN</code>. Si un defecto se arregla, la prueba también falla y avisa</td></tr>
+        <tr><td>No hay pruebas frágiles sin investigar</td><td>En CI, Playwright reintenta una vez; si al reintentar pasa, falla igual (<code>failOnFlakyTests</code>)</td></tr>
+        <tr><td>Nadie deja un <code>test.only</code> olvidado</td><td><code>forbidOnly</code> en CI</td></tr>
+        <tr><td>Un PR en rojo no entra a main</td><td>Protección de rama con <code>api</code>, <code>web (chrome)</code> y <code>web (firefox)</code> obligatorios</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 10 · trazabilidad cadena -->
+<section class="slide">
+  <p class="seccion s3">3 · Trazabilidad</p>
+  <h1>De la historia al resultado, sin llenar nada a mano</h1>
+  <div class="cuerpo">
+    <div class="cadena">
+      <div class="eslabon"><small>requisito</small><b>HU-G5-02</b><span>docs/requisitos.md</span></div>
+      <div class="flecha">→</div>
+      <div class="eslabon"><small>etiquetas en el .feature</small><b>@HU-G5-02 @CP-06</b><span>69 casos, CP-01 a CP-69</span></div>
+      <div class="flecha">→</div>
+      <div class="eslabon"><small>pipeline</small><b>JSON y JUnit XML</b><span>las etiquetas viajan con el resultado</span></div>
+      <div class="flecha">→</div>
+      <div class="eslabon"><small>matriz</small><b>run #23</b><span>Pages y docs/trazabilidad.md</span></div>
+    </div>
+    <ul>
+      <li>Playwright guarda las etiquetas de cada test en su reporte JSON</li>
+      <li>En Selenium, el <code>conftest.py</code> las escribe como propiedad del JUnit XML</li>
+      <li><code>.github/scripts/trazabilidad.py</code> cruza los <code>.feature</code> con esos resultados: cada run produce su propio ciclo de ejecución, con fecha, commit y evidencia</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11 · matriz -->
+<section class="slide">
+  <p class="seccion s3">3 · Trazabilidad</p>
+  <h1>Cada caso, con su resultado del run</h1>
+  <div class="cuerpo">
+    <table class="compacta">
+      <thead><tr><th>HU</th><th>Caso</th><th>Nivel</th><th>Resultado (run #23)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">HU-G5-01</td><td>CP-01 Veo mis límites con lo usado y lo disponible del día</td><td>api</td><td class="ok">passed</td></tr>
+        <tr><td class="n">HU-G5-02</td><td>CP-02 Validación del nuevo límite diario (valores límite)</td><td>api</td><td class="ok">passed 8/8</td></tr>
+        <tr><td class="n">HU-G5-02</td><td>CP-06 Una reducción cancela el aumento pendiente</td><td>api</td><td class="amarillo">xfailed → DEF-01</td></tr>
+        <tr><td class="n">HU-G5-02</td><td>CP-67 Una reducción del límite cancela el aumento programado</td><td>web</td><td class="amarillo">chrome · firefox: xfailed → DEF-01</td></tr>
+        <tr><td class="n">HU-G5-04</td><td>CP-64 Validación del umbral al crear una alerta</td><td>web</td><td class="ok">chrome 6/6 · firefox 6/6</td></tr>
+        <tr><td class="n">HU-N-07</td><td>CP-50 Validación del monto por operación (RN-05)</td><td>api</td><td class="ok">passed 5/5</td></tr>
+      </tbody>
+    </table>
+    <p class="nota">Extracto. La matriz completa (núcleo y G5, 72 filas) está publicada en Pages y en <code>docs/trazabilidad.md</code>. Amarillo: falla por un defecto ya reportado.</p>
+  </div>
+</section>
+
+<!-- 12 · resultados -->
+<section class="slide">
+  <p class="seccion s4">4 · Resultados</p>
+  <h1>Run #23: API y web en verde</h1>
+  <div class="cuerpo">
+    <div class="cifras c4">
+      <div class="cifra tinte-azul"><b>97</b><span>passed en API<br><span class="amarillo">+ 10 defectos conocidos</span></span></div>
+      <div class="cifra tinte-verde"><b>16</b><span>passed en Chrome<br><span class="amarillo">+ 3 defectos conocidos</span></span></div>
+      <div class="cifra tinte-verde"><b>16</b><span>passed en Firefox<br><span class="amarillo">+ 3 defectos conocidos</span></span></div>
+      <div class="cifra tinte-amarillo"><b>10</b><span>operaciones con hallazgos de contrato<br><span class="gris">informativos</span></span></div>
+    </div>
+    <p class="nota">El 1 escenario omitido en API es de concurrencia y va a la Parte 3 (rendimiento). Tres runs seguidos en verde: #21, #22 y #23.</p>
+  </div>
+</section>
+
+<!-- 13 · demo -->
+<section class="slide">
+  <p class="seccion s4">5 · Demo en vivo</p>
+  <h1>Cuatro cosas, tres minutos</h1>
+  <div class="pasos">
+    <div class="paso"><span class="num s2">1</span><div><h2>Un run real del pipeline</h2><p class="tenue">Actions › Pipeline › <i>Run workflow</i>. Se ven los jobs por etapas y el resumen de cada uno.</p></div></div>
+    <div class="paso"><span class="num s1">2</span><div><h2>El reporte abierto</h2><p class="tenue">kaloslazo.github.io/qolqe-wallet → reporte BDD de Chrome: pasos, captura por paso y los 3 defectos en amarillo.</p></div></div>
+    <div class="paso"><span class="num s3">3</span><div><h2>La matriz de trazabilidad</h2><p class="tenue">En la misma portada: cobertura por historia y el resultado de cada caso en ese run.</p></div></div>
+    <div class="paso"><span class="num s4">4</span><div><h2>La automatización, en vivo</h2><pre>scripts/selenium.sh demo</pre><p class="tenue">Chrome hace el flujo feliz solo, resaltando cada elemento.</p></div></div>
+  </div>
+</section>
+
+<!-- 14 · lo que aprendimos -->
+<section class="slide">
+  <p class="seccion s4">6 · Cierre</p>
+  <h1>La alarma sonó sin que cambiáramos nada</h1>
+  <div class="cuerpo">
+    <div class="col2">
+      <div class="tarjeta tinte-rojo">
+        <h2>Qué pasó</h2>
+        <p>Salió pytest 9.2 y rompió pytest-bdd: los 15 escenarios web cayeron en CI con nuestro código intacto. En local seguía todo verde.</p>
+      </div>
+      <div class="tarjeta tinte-verde">
+        <h2>Qué hicimos</h2>
+        <p>Lo vimos en el primer push, fijamos <code>pytest &lt; 9.2</code> con el motivo en un comentario y el pipeline volvió a verde.</p>
+      </div>
+    </div>
+    <ul>
+      <li>El pipeline es la referencia, no la máquina de nadie</li>
+      <li>Fijar versiones también es parte de que una prueba sea repetible</li>
+      <li>Siguiente paso, Parte 3: rendimiento, con la concurrencia que hoy queda omitida</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 15 · cierre -->
+<section class="slide portada">
+  <div class="puntos"><i style="background:var(--dot-red)"></i><i style="background:var(--dot-yellow)"></i><i style="background:var(--dot-blue)"></i><i style="background:var(--dot-green)"></i></div>
+  <div>
+    <h1 style="font-size:110px">¿Preguntas?</h1>
+    <p class="sub">github.com/kaloslazo/qolqe-wallet<br>kaloslazo.github.io/qolqe-wallet</p>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:26px"><b style="font-weight:500">Kalos · Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
+</section>
+
+</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  slides.forEach((s, i) => {
+    const pie = document.createElement('div');
+    pie.className = 'pie';
+    pie.innerHTML = (i === 0 || i === total - 1) ? '' : '<span>G5 · Límites</span><span>' + (i + 1) + ' / ' + total + '</span>';
+    s.appendChild(pie);
+  });
+  let actual = Math.min(Math.max(parseInt(location.hash.slice(1), 10) || 1, 1), total) - 1;
+  function mostrar(n) {
+    actual = Math.min(Math.max(n, 0), total - 1);
+    slides.forEach((s, i) => s.classList.toggle('activa', i === actual));
+    history.replaceState(null, '', '#' + (actual + 1));
+  }
+  function escalar() {
+    const k = Math.min(innerWidth / 1600, innerHeight / 900);
+    document.getElementById('deck').style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === 'Home') mostrar(0);
+    if (e.key === 'End') mostrar(total - 1);
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('click', (e) => mostrar(actual + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  addEventListener('resize', escalar);
+  escalar();
+  mostrar(actual);
+</script>
+</body>
+</html>

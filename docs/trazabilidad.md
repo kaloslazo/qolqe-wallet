@@ -1,6 +1,6 @@
 # Matriz de trazabilidad · G5 Límites y núcleo
 
-Generada por `.github/scripts/trazabilidad.py` con los resultados de [run #21](https://github.com/kaloslazo/qolqe-wallet/actions/runs/40687722858) · commit `424f0f0` · 2026-10-28 07:30 (hora de Lima).
+Generada por `.github/scripts/trazabilidad.py` con los resultados de [run #23](https://github.com/kaloslazo/qolqe-wallet/actions/runs/40698739828) · commit `01c9a02` · 2026-10-28 08:45 (hora de Lima).
 
 Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` es un fallo esperado: el escenario describe el comportamiento correcto y falla por un defecto reportado en [`defectos.md`](defectos.md).
 
@@ -28,7 +28,7 @@ Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` e
 
 ## Casos y resultados
 
-| HU | Caso | Nivel | Resultado (run #21) |
+| HU | Caso | Nivel | Resultado (run #23) |
 |---|---|---|---|
 | HU-N-01 | CP-26 Registro exitoso con saldo cero, límite por defecto y SMS de bienvenida | api | passed |
 | HU-N-01 | CP-27 Validación del DNI (RN-01) | api | passed 4/4 |
