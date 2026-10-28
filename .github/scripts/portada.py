@@ -52,8 +52,9 @@ def main():
         tarjeta("API", "Playwright + playwright-bdd: escenarios Gherkin del G5 y del núcleo.", estados["api"],
                 contar([sitio / "api/resultados-api.json"]),
                 [("Reporte HTML", "api/index.html")] if (sitio / "api/index.html").exists() else []),
+        # el job no bloquea (continue-on-error), así que GitHub lo reporta como success aunque haya hallazgos
         tarjeta("Contrato", "Schemathesis contra el OpenAPI. Informativo: sus hallazgos están en el informe.",
-                estados["contrato"], contar(contrato_junit[-1:]),
+                "con hallazgos" if contar(contrato_junit[-1:])["failed"] else estados["contrato"], contar(contrato_junit[-1:]),
                 [("Reporte HTML", p.relative_to(sitio).as_posix()) for p in contrato_html[-1:]]),
     ]
     for nav in navegadores:
@@ -102,7 +103,7 @@ def main():
   .tarjeta nav a {{ margin-right:12px; font-size:14px; }}
   .job {{ font-size:12px; padding:2px 8px; border-radius:99px; border:1px solid currentColor; }}
   .success, .passed {{ color:var(--ok); }} .failure, .failed {{ color:var(--mal); }}
-  .xfailed, .flaky {{ color:var(--aviso); }} .skipped, .sin, .cancelled {{ color:var(--gris); }}
+  .xfailed, .flaky, .con {{ color:var(--aviso); }} .skipped, .sin, .cancelled {{ color:var(--gris); }}
   .tabla {{ overflow-x:auto; }}
   table {{ border-collapse:collapse; width:100%; font-size:14px; margin-bottom:24px; }}
   th, td {{ text-align:left; padding:6px 10px; border-bottom:1px solid var(--borde); vertical-align:top; }}
