@@ -1,6 +1,7 @@
 -r requirements-pruebas.txt
 selenium>=4.27
-pytest>=8.0
+# pytest 9.2 quito FixtureManager._arg2fixturedefs y pytest-bdd 9.0 todavia lo usa
+pytest>=8.0,<9.2
 pytest-bdd>=8.1
 pytest-html>=4.1
 requests>=2.32
