@@ -20,7 +20,7 @@ Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y un
 
 | capa | herramienta | qué cubre |
 |---|---|---|
-| API | Playwright + playwright-bdd | 108 escenarios en Gherkin del G5 y del núcleo |
+| API | Playwright + playwright-bdd | 133 escenarios en Gherkin del G5 y del núcleo |
 | Contrato | Schemathesis | que cada endpoint responda lo que dice su OpenAPI |
 | Interfaz web | Selenium 4 + pytest-bdd | la pantalla de límites, con Page Objects, Grid, móvil y reparación de localizadores con IA |
 | Rendimiento | por definir | Parte 3 |
@@ -40,7 +40,7 @@ npm install
 npm test                           # levanta la app y corre la suite de API
 ```
 
-Resultado esperado: `107 passed, 1 skipped`. El contrato, Selenium y sus modos de demo están en [`docs/pruebas.md`](docs/pruebas.md).
+Resultado esperado: `132 passed, 1 skipped`. El contrato, Selenium y sus modos de demo están en [`docs/pruebas.md`](docs/pruebas.md).
 
 Para usar la app a mano: `uvicorn qolqe.main:app --reload` y abre `localhost:8000` (Swagger en `/docs`). Usuarios, datos semilla y la API de soporte para pruebas están en [`docs/qolqe.md`](docs/qolqe.md).
 

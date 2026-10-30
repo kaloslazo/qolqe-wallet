@@ -20,7 +20,7 @@ npm test
 npx playwright show-report
 ```
 
-`npm test` genera los pasos desde `features/`, levanta la app y corre los 108 escenarios. Resultado esperado: `107 passed, 1 skipped`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; el omitido es de rendimiento (Parte 3).
+`npm test` genera los pasos desde `features/`, levanta la app y corre los 133 escenarios. Resultado esperado: `132 passed, 1 skipped`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; el omitido es de rendimiento (Parte 3).
 
 ## Contrato con Schemathesis
 
@@ -32,6 +32,25 @@ npm run contrato                       # terminal 2
 ```
 
 El reporte queda en `reportes/schemathesis/`. No correr `npm test` y `npm run contrato` al mismo tiempo: comparten el puerto y la base de datos.
+
+### Cobertura frente a Schemathesis
+
+¿Qué prueban nuestros escenarios que Schemathesis no, y al revés? Se responde con el log de la app: cada línea (`"PUT /api/limites/alertas/7 HTTP/1.1" 422`) se lleva a su operación del OpenAPI y se cuentan los códigos HTTP que provocó cada suite. Luego se cruzan con los hallazgos del JUnit de Schemathesis.
+
+```bash
+scripts/cobertura.sh      # levanta la app, corre npm test y el contrato, y escribe docs/cobertura-contrato.md
+```
+
+Por operación, la tabla dice:
+
+| Lectura | Significa |
+|---|---|
+| cubierto | Nuestros escenarios la prueban y Schemathesis no encontró nada nuevo |
+| hallazgo ya cubierto | Schemathesis reporta algo, pero ya tenemos un escenario que provoca ese mismo código |
+| faltan casos: 422, … | Schemathesis provocó esos códigos y ningún escenario nuestro lo hace: candidatos a escenario nuevo |
+| sin escenarios nuestros | Solo la prueba Schemathesis |
+
+En el pipeline, los jobs `api` y `contrato` guardan el log de su app, y `reportes` publica la tabla en Pages (debajo de la matriz) y en el resumen del run. El script es `.github/scripts/cobertura_contrato.py`. De esta tabla salió, por ejemplo, el CP-82: Schemathesis borraba alertas con un id que no cabe en un entero (422) y ningún escenario nuestro lo hacía.
 
 ## Interfaz web con Selenium + pytest-bdd
 
@@ -73,10 +92,10 @@ push / PR ─▶ api ─┬─▶ contrato ────────┐
 
 | Job | Qué hace | ¿Bloquea? |
 |---|---|---|
-| `api` | `npm test`: los 108 escenarios de API | sí |
+| `api` | `npm test`: los 133 escenarios de API | sí |
 | `contrato` | Schemathesis contra el OpenAPI | no: sus hallazgos son defectos de contrato ya analizados en el informe |
 | `web (chrome)`, `web (firefox)` | los escenarios de interfaz con Selenium | sí |
-| `reportes` | arma el sitio con los reportes y la matriz de trazabilidad y lo publica en Pages | — |
+| `reportes` | arma el sitio con los reportes, la matriz de trazabilidad y la cobertura frente a Schemathesis, y lo publica en Pages | — |
 
 Lo rápido va primero: si la API falla, la interfaz no se prueba y sus jobs quedan como skipped.
 

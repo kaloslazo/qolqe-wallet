@@ -58,6 +58,16 @@ Given('que pausé la alerta de {word} con umbral S\\/ {word}', async ({ sesion }
   expect((await sesion.api('put', `/api/limites/alertas/${a.id}`, { estado: 'PAUSADA' })).ok()).toBeTruthy();
 });
 
+Given('que creé una alerta de {word} con umbral S\\/ {word}', async ({ sesion }, tipo: string, umbral: string) => {
+  const r = await sesion.api('post', '/api/limites/alertas', { tipo, umbral });
+  expect(r.status(), await r.text()).toBe(201);
+});
+
+Given('que ya recargué S\\/ {word} hoy al celular {word}', async ({ sesion }, monto: string, celular: string) => {
+  const r = await sesion.api('post', '/api/recargas', { celular, monto });
+  expect(r.status(), await r.text()).toBe(201);
+});
+
 // ------------------------------------------------------------------------------------- When
 When('consulto mis límites', async ({ sesion }) => {
   sesion.respuesta = await sesion.api('get', '/api/limites');
@@ -88,7 +98,32 @@ When('reanudo la alerta de {word} con umbral S\\/ {word}', async ({ sesion }, ti
   sesion.respuesta = await sesion.api('put', `/api/limites/alertas/${a.id}`, { estado: 'ACTIVA' });
 });
 
+When(
+  'edito el umbral de la alerta de {word} con umbral S\\/ {word} a S\\/ {word}',
+  async ({ sesion }, tipo: string, umbral: string, nuevo: string) => {
+    const a = await sesion.alerta(tipo, umbral);
+    sesion.respuesta = await sesion.api('put', `/api/limites/alertas/${a.id}`, { umbral: nuevo });
+  },
+);
+
+When(
+  'cambio el estado de la alerta de {word} con umbral S\\/ {word} a {word}',
+  async ({ sesion }, tipo: string, umbral: string, estado: string) => {
+    const a = await sesion.alerta(tipo, umbral);
+    sesion.respuesta = await sesion.api('put', `/api/limites/alertas/${a.id}`, { estado });
+  },
+);
+
 // ------------------------------------------------------------------------------------- When (casos técnicos)
+When('envío {word} {word} sin token', async ({ sesion }, metodo: string, ruta: string) => {
+  sesion.respuesta = await sesion.cruda(metodo.toLowerCase() as 'get' | 'post' | 'put' | 'delete', ruta);
+});
+
+// el id va tal cual en la ruta: así se prueban los que no existen o no caben en un entero (hallazgo de Schemathesis)
+When('elimino la alerta con el identificador {word}', async ({ sesion }, id: string) => {
+  sesion.respuesta = await sesion.api('delete', `/api/limites/alertas/${id}`);
+});
+
 When('consulto mis límites sin token', async ({ sesion }) => {
   sesion.respuesta = await sesion.cruda('get', '/api/limites');
 });

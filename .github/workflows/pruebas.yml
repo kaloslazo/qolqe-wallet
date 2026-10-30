@@ -33,7 +33,16 @@ jobs:
         run: |
           python -m venv .venv && .venv/bin/pip install -r requirements-pruebas.txt
           npm ci
+      # la app se levanta aparte para guardar su log: de ahí sale la cobertura frente a Schemathesis
+      - name: Levantar la app
+        run: |
+          mkdir -p reportes
+          .venv/bin/python -m uvicorn qolqe.main:app --port 8000 > reportes/log-api.txt 2>&1 &
+          for _ in $(seq 1 60); do curl -sf http://localhost:8000/api/salud > /dev/null && exit 0; sleep 2; done
+          cat reportes/log-api.txt; exit 1
       - name: Escenarios Gherkin (Playwright + playwright-bdd)
+        env:
+          QOLQE_URL: http://localhost:8000
         run: npm test
       - name: Resumen
         if: ${{ !cancelled() }}
@@ -46,6 +55,7 @@ jobs:
             playwright-report/
             reportes/junit-api.xml
             reportes/resultados-api.json
+            reportes/log-api.txt
 
   contrato:
     name: contrato
@@ -65,9 +75,14 @@ jobs:
         run: python -m venv .venv && .venv/bin/pip install -r requirements-pruebas.txt
       - name: Levantar la app
         run: |
-          .venv/bin/python -m uvicorn qolqe.main:app --port 8000 > uvicorn.log 2>&1 &
-          for _ in $(seq 1 60); do curl -sf http://localhost:8000/api/salud > /dev/null && exit 0; sleep 2; done
-          cat uvicorn.log; exit 1
+          mkdir -p reportes/schemathesis
+          .venv/bin/python -m uvicorn qolqe.main:app --port 8000 > reportes/schemathesis/log-contrato.txt 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -sf http://localhost:8000/api/salud > /dev/null \
+              && curl -sf http://localhost:8000/openapi.json -o reportes/schemathesis/openapi.json && exit 0
+            sleep 2
+          done
+          cat reportes/schemathesis/log-contrato.txt; exit 1
       - name: Contrato (Schemathesis)
         run: PATH="$PWD/.venv/bin:$PATH" bash scripts/contrato.sh
       - name: Resumen
@@ -140,7 +155,7 @@ jobs:
           if [ -d descargas/api ]; then
             mkdir -p sitio/api
             cp -R descargas/api/playwright-report/. sitio/api/
-            cp descargas/api/reportes/*.xml descargas/api/reportes/*.json sitio/api/
+            cp descargas/api/reportes/*.xml descargas/api/reportes/*.json descargas/api/reportes/*.txt sitio/api/
           fi
           if [ -d descargas/contrato ]; then cp -R descargas/contrato sitio/contrato; fi
           for d in descargas/web-*; do
@@ -148,6 +163,7 @@ jobs:
           done
           python .github/scripts/portada.py sitio
           cat sitio/trazabilidad.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -f sitio/cobertura-contrato.md ]; then cat sitio/cobertura-contrato.md >> "$GITHUB_STEP_SUMMARY"; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

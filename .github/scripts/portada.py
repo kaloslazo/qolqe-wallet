@@ -15,6 +15,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import cobertura_contrato  # noqa: E402
 import resumen  # noqa: E402
 import trazabilidad  # noqa: E402
 
@@ -74,6 +75,13 @@ def main():
     matriz = trazabilidad.a_html(filas, cobertura, historias, ctx)
     (sitio / "trazabilidad.md").write_text(trazabilidad.a_markdown(filas, cobertura, historias, ctx), encoding="utf-8")
 
+    cobertura = ""
+    if (sitio / "contrato/openapi.json").exists():
+        filas_cob, meta = cobertura_contrato.analizar(
+            sitio / "contrato/openapi.json", sitio / "api/log-api.txt", sitio / "contrato/log-contrato.txt", contrato_junit[-1:])
+        cobertura = cobertura_contrato.a_html(filas_cob, meta)
+        (sitio / "cobertura-contrato.md").write_text(cobertura_contrato.a_markdown(filas_cob, meta), encoding="utf-8")
+
     origen = f'<a href="{e(ctx["url"])}">{e(ctx["run"])}</a>' if ctx["url"] else e(ctx["run"])
     (sitio / "index.html").write_text(f"""<!doctype html>
 <html lang="es">
@@ -122,6 +130,9 @@ def main():
 {matriz}
   </div>
   <p class="sub">La misma matriz en Markdown: <a href="trazabilidad.md">trazabilidad.md</a></p>
+  <div class="tabla">
+{cobertura}
+  </div>
 </main>
 </body>
 </html>
