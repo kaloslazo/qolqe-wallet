@@ -1,6 +1,6 @@
 # Matriz de trazabilidad · G5 Límites y núcleo
 
-Generada por `.github/scripts/trazabilidad.py` con los resultados de [run #23](https://github.com/kaloslazo/qolqe-wallet/actions/runs/40698739828) · commit `01c9a02` · 2026-10-28 08:45 (hora de Lima).
+Generada por `.github/scripts/trazabilidad.py` con los resultados de [run #26](https://github.com/kaloslazo/qolqe-wallet/actions/runs/41146539677) · commit `48e5ee8` · 2026-10-30 18:52 (hora de Lima).
 
 Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` es un fallo esperado: el escenario describe el comportamiento correcto y falla por un defecto reportado en [`defectos.md`](defectos.md).
 
@@ -17,18 +17,18 @@ Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` e
 | HU-N-07 | Transferir a otro usuario Qolqe | CP-49, CP-50, CP-51, CP-52, CP-53 |
 | HU-N-08 | Transferir a otro banco | CP-54, CP-55 |
 | HU-N-09 | Simular la comisión | CP-56 |
-| HU-G5-01 | Ver mis límites | CP-01, CP-21, CP-57 |
-| HU-G5-02 | Cambiar mi límite diario | CP-02, CP-03, CP-04, CP-05, CP-06, CP-07, CP-22, CP-23, CP-24, CP-57, CP-58, CP-59, CP-67 |
-| HU-G5-03 | Respetar el límite al transferir | CP-08, CP-09, CP-10, CP-60, CP-68 |
-| HU-G5-04 | Crear una alerta de consumo | CP-11, CP-12, CP-13, CP-14, CP-57, CP-64, CP-65 |
-| HU-G5-05 | Ver mis alertas | CP-19 |
-| HU-G5-06 | Editar, pausar o reanudar una alerta | CP-15, CP-62, CP-63 |
-| HU-G5-07 | Eliminar una alerta | CP-20, CP-62 |
-| HU-G5-08 | Recibir la notificación de la alerta | CP-16, CP-17, CP-18, CP-61, CP-69 |
+| HU-G5-01 | Ver mis límites | CP-01, CP-21, CP-57, CP-70 |
+| HU-G5-02 | Cambiar mi límite diario | CP-02, CP-03, CP-04, CP-05, CP-06, CP-07, CP-22, CP-23, CP-24, CP-57, CP-58, CP-59, CP-67, CP-71, CP-72, CP-73, CP-74 |
+| HU-G5-03 | Respetar el límite al transferir | CP-08, CP-09, CP-10, CP-60, CP-68, CP-73, CP-75 |
+| HU-G5-04 | Crear una alerta de consumo | CP-11, CP-12, CP-13, CP-14, CP-57, CP-64, CP-65, CP-74, CP-85 |
+| HU-G5-05 | Ver mis alertas | CP-19, CP-85 |
+| HU-G5-06 | Editar, pausar o reanudar una alerta | CP-15, CP-62, CP-63, CP-76, CP-77, CP-78, CP-79, CP-80, CP-85 |
+| HU-G5-07 | Eliminar una alerta | CP-20, CP-62, CP-81, CP-82, CP-85 |
+| HU-G5-08 | Recibir la notificación de la alerta | CP-16, CP-17, CP-18, CP-61, CP-69, CP-83, CP-84 |
 
 ## Casos y resultados
 
-| HU | Caso | Nivel | Resultado (run #23) |
+| HU | Caso | Nivel | Resultado (run #26) |
 |---|---|---|---|
 | HU-N-01 | CP-26 Registro exitoso con saldo cero, límite por defecto y SMS de bienvenida | api | passed |
 | HU-N-01 | CP-27 Validación del DNI (RN-01) | api | passed 4/4 |
@@ -64,6 +64,7 @@ Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` e
 | HU-G5-01 | CP-01 Veo mis límites con lo usado y lo disponible del día | api | passed |
 | HU-G5-01 | CP-21 Sin token no puedo consultar mis límites | api | passed |
 | HU-G5-01 | CP-57 Ana baja su límite diario y crea una alerta de recargas | web | chrome: passed · firefox: passed |
+| HU-G5-01 | CP-70 Lo disponible hoy se recalcula al bajar el límite y nunca es negativo | api | passed 3/3 |
 | HU-G5-02 | CP-02 Validación del nuevo límite diario (valores límite de R-G5-01) | api | passed 8/8 |
 | HU-G5-02 | CP-03 Una reducción del límite es inmediata | api | passed |
 | HU-G5-02 | CP-04 Un aumento del límite queda programado para 24 horas después | api | passed |
@@ -77,11 +78,17 @@ Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` e
 | HU-G5-02 | CP-58 Un aumento del límite entra en vigencia 24 horas después | web | chrome: passed · firefox: passed |
 | HU-G5-02 | CP-59 Bajar el límite pausa la alerta que queda por encima | web | chrome: passed · firefox: passed |
 | HU-G5-02 | CP-67 Una reducción del límite cancela el aumento programado | web | chrome: xfailed → DEF-01 · firefox: xfailed → DEF-01 |
+| HU-G5-02 | CP-71 Pedir el mismo límite vigente no programa un aumento | api | passed |
+| HU-G5-02 | CP-72 Un segundo aumento reemplaza al aumento pendiente | api | passed |
+| HU-G5-02 | CP-73 Mientras el aumento está pendiente, al transferir rige el límite anterior | api | passed |
+| HU-G5-02 | CP-74 Con un aumento pendiente, el umbral se compara con el límite vigente | api | passed |
 | HU-G5-03 | CP-08 Transferir respetando el límite diario vigente | api | passed 3/3 |
 | HU-G5-03 | CP-09 La transferencia que supera el límite diario por un céntimo se rechaza | api | passed |
 | HU-G5-03 | CP-10 Las transferencias interbancarias también cuentan para el límite diario | api | xfailed → DEF-02 |
 | HU-G5-03 | CP-60 Una transferencia que supera el límite diario es rechazada | web | chrome: passed · firefox: passed |
 | HU-G5-03 | CP-68 Las transferencias a otro banco cuentan para el límite diario | web | chrome: xfailed → DEF-02 · firefox: xfailed → DEF-02 |
+| HU-G5-03 | CP-73 Mientras el aumento está pendiente, al transferir rige el límite anterior | api | passed |
+| HU-G5-03 | CP-75 El límite diario se reinicia al día siguiente | api | passed |
 | HU-G5-04 | CP-11 Validación del umbral de una alerta (valores límite de R-G5-03) | api | passed 7/7 |
 | HU-G5-04 | CP-12 El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente | api | passed 4/4 |
 | HU-G5-04 | CP-13 No se permiten dos alertas con el mismo tipo y umbral | api | passed |
@@ -89,16 +96,30 @@ Cada escenario lleva una etiqueta `@CP-NN` y las `@HU` que cubre. Un `xfailed` e
 | HU-G5-04 | CP-57 Ana baja su límite diario y crea una alerta de recargas | web | chrome: passed · firefox: passed |
 | HU-G5-04 | CP-64 Validación del umbral al crear una alerta | web | chrome: passed 6/6 · firefox: passed 6/6 |
 | HU-G5-04 | CP-65 El umbral de TODAS no puede superar el límite diario vigente | web | chrome: passed · firefox: passed |
+| HU-G5-04 | CP-74 Con un aumento pendiente, el umbral se compara con el límite vigente | api | passed |
+| HU-G5-04 | CP-85 Sin token no puedo usar mis alertas | api | passed 4/4 |
 | HU-G5-05 | CP-19 Veo mis alertas con su gasto de hoy | api | passed |
+| HU-G5-05 | CP-85 Sin token no puedo usar mis alertas | api | passed 4/4 |
 | HU-G5-06 | CP-15 No se puede reanudar una alerta cuyo umbral supera el límite vigente | api | passed |
 | HU-G5-06 | CP-62 Pausar, reanudar y eliminar una alerta | web | chrome: passed · firefox: passed |
 | HU-G5-06 | CP-63 Editar el umbral de una alerta | web | chrome: passed · firefox: passed |
+| HU-G5-06 | CP-76 Validación del nuevo umbral al editar una alerta | api | passed 4/4 |
+| HU-G5-06 | CP-77 El umbral editado no puede superar el límite diario vigente | api | passed |
+| HU-G5-06 | CP-78 Editar el umbral a uno que ya existe se rechaza | api | passed |
+| HU-G5-06 | CP-79 Reanudar una alerta pausada que cabe en el límite | api | passed |
+| HU-G5-06 | CP-80 Un estado que no es ACTIVA ni PAUSADA se rechaza | api | passed |
+| HU-G5-06 | CP-85 Sin token no puedo usar mis alertas | api | passed 4/4 |
 | HU-G5-07 | CP-20 Una alerta eliminada deja de notificar | api | passed |
 | HU-G5-07 | CP-62 Pausar, reanudar y eliminar una alerta | web | chrome: passed · firefox: passed |
+| HU-G5-07 | CP-81 Eliminar una alerta libera un cupo | api | passed |
+| HU-G5-07 | CP-82 Eliminar una alerta con un identificador que no existe | api | passed 2/2 |
+| HU-G5-07 | CP-85 Sin token no puedo usar mis alertas | api | passed 4/4 |
 | HU-G5-08 | CP-16 La alerta notifica al alcanzar o superar el umbral | api | passed 3/3 |
 | HU-G5-08 | CP-17 Cada alerta notifica como máximo una vez por día | api | xfailed → DEF-03 |
 | HU-G5-08 | CP-18 Una alerta pausada no notifica | api | passed |
 | HU-G5-08 | CP-61 Ana recibe un SMS al alcanzar el umbral de su alerta | web | chrome: passed · firefox: passed |
 | HU-G5-08 | CP-69 Una alerta avisa como máximo una vez por día | web | chrome: xfailed → DEF-03 · firefox: xfailed → DEF-03 |
+| HU-G5-08 | CP-83 Una transferencia a otro banco cuenta para la alerta por su monto, sin la comisión | api | passed |
+| HU-G5-08 | CP-84 La alerta TODAS suma recargas y transferencias | api | passed |
 | — | CP-25 La alerta de otro usuario responde como si no existiera | api | passed 2/2 |
 | — | CP-66 La interfaz avisa si el servidor falla al guardar el límite | web | chrome: passed · firefox: passed |

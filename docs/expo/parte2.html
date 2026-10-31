@@ -168,7 +168,8 @@
     <div class="rubro"><span class="pts s1">2</span><p>Patrón mantenible, sin esperas fijas; pasa 3 veces seguidas</p><span class="donde">Page Object · lámina 5</span></div>
     <div class="rubro"><span class="pts s2">5</span><p>Pipeline en cada push o PR: API + web en verde, con reportes publicados (y Schemathesis)</p><span class="donde">GitHub Actions · láminas 6 a 9</span></div>
     <div class="rubro"><span class="pts s3">4</span><p>Trazabilidad HU → casos → ejecución, con los resultados del pipeline</p><span class="donde">láminas 10 y 11</span></div>
-    <div class="rubro"><span class="pts s4">4</span><p>Exposición con demo en vivo: el run, el reporte y la matriz</p><span class="donde">lámina 13</span></div>
+    <div class="rubro"><span class="pts s4">+</span><p>Pedido en clase: más casos de límites y ver qué prueba Schemathesis que nosotros no</p><span class="donde">láminas 13 y 14</span></div>
+    <div class="rubro"><span class="pts s4">4</span><p>Exposición con demo en vivo: el run, el reporte y la matriz</p><span class="donde">lámina 15</span></div>
   </div>
 </section>
 
@@ -206,7 +207,7 @@
       <div class="pila">
         <div class="tarjeta tinte-azul"><h2>Mantenible</h2><p>Una clase por pantalla. Los selectores (<code>data-testid</code>) viven en un solo lugar: si cambia un botón, se arregla una línea.</p></div>
         <div class="tarjeta tinte-verde"><h2>Sin esperas fijas</h2><p><code>WebDriverWait</code> espera a que la pantalla muestre el dato. No hay <code>sleep</code> en ningún paso.</p></div>
-        <div class="tarjeta tinte-amarillo"><h2>Estable</h2><p>Runs #21, #22 y #23 seguidas en verde, en Chrome y en Firefox.</p></div>
+        <div class="tarjeta tinte-amarillo"><h2>Estable</h2><p>Seis runs seguidos en verde (#21 a #26), en Chrome y en Firefox.</p></div>
       </div>
     </div>
   </div>
@@ -220,7 +221,7 @@
     <div class="tubo">
       <div class="job"><small>evento</small><b>push · PR</b><span>o a mano desde Actions</span></div>
       <div class="flecha">→</div>
-      <div class="job tinte-azul"><small>job · ~1.5 min</small><b>api</b><span>108 escenarios con Playwright</span></div>
+      <div class="job tinte-azul"><small>job · ~1.5 min</small><b>api</b><span>133 escenarios con Playwright</span></div>
       <div class="flecha">→</div>
       <div class="pila">
         <div class="job tinte-verde"><small>needs: api</small><b>web (chrome)</b><b>web (firefox)</b><span>Selenium + pytest-bdd</span></div>
@@ -294,11 +295,11 @@
     <div class="cadena">
       <div class="eslabon"><small>requisito</small><b>HU-G5-02</b><span>docs/requisitos.md</span></div>
       <div class="flecha">→</div>
-      <div class="eslabon"><small>etiquetas en el .feature</small><b>@HU-G5-02 @CP-06</b><span>69 casos, CP-01 a CP-69</span></div>
+      <div class="eslabon"><small>etiquetas en el .feature</small><b>@HU-G5-02 @CP-06</b><span>85 casos, CP-01 a CP-85</span></div>
       <div class="flecha">→</div>
       <div class="eslabon"><small>pipeline</small><b>JSON y JUnit XML</b><span>las etiquetas viajan con el resultado</span></div>
       <div class="flecha">→</div>
-      <div class="eslabon"><small>matriz</small><b>run #23</b><span>Pages y docs/trazabilidad.md</span></div>
+      <div class="eslabon"><small>matriz</small><b>run #26</b><span>Pages y docs/trazabilidad.md</span></div>
     </div>
     <ul>
       <li>Playwright guarda las etiquetas de cada test en su reporte JSON</li>
@@ -314,36 +315,75 @@
   <h1>Cada caso, con su resultado del run</h1>
   <div class="cuerpo">
     <table class="compacta">
-      <thead><tr><th>HU</th><th>Caso</th><th>Nivel</th><th>Resultado (run #23)</th></tr></thead>
+      <thead><tr><th>HU</th><th>Caso</th><th>Nivel</th><th>Resultado (run #26)</th></tr></thead>
       <tbody>
         <tr><td class="n">HU-G5-01</td><td>CP-01 Veo mis límites con lo usado y lo disponible del día</td><td>api</td><td class="ok">passed</td></tr>
         <tr><td class="n">HU-G5-02</td><td>CP-02 Validación del nuevo límite diario (valores límite)</td><td>api</td><td class="ok">passed 8/8</td></tr>
         <tr><td class="n">HU-G5-02</td><td>CP-06 Una reducción cancela el aumento pendiente</td><td>api</td><td class="amarillo">xfailed → DEF-01</td></tr>
         <tr><td class="n">HU-G5-02</td><td>CP-67 Una reducción del límite cancela el aumento programado</td><td>web</td><td class="amarillo">chrome · firefox: xfailed → DEF-01</td></tr>
         <tr><td class="n">HU-G5-04</td><td>CP-64 Validación del umbral al crear una alerta</td><td>web</td><td class="ok">chrome 6/6 · firefox 6/6</td></tr>
-        <tr><td class="n">HU-N-07</td><td>CP-50 Validación del monto por operación (RN-05)</td><td>api</td><td class="ok">passed 5/5</td></tr>
+        <tr><td class="n">HU-G5-02</td><td>CP-72 Un segundo aumento reemplaza al aumento pendiente</td><td>api</td><td class="ok">passed</td></tr>
+        <tr><td class="n">HU-G5-07</td><td>CP-82 Eliminar una alerta con un identificador que no existe</td><td>api</td><td class="ok">passed 2/2</td></tr>
       </tbody>
     </table>
-    <p class="nota">Extracto. La matriz completa (núcleo y G5, 72 filas) está publicada en Pages y en <code>docs/trazabilidad.md</code>. Amarillo: falla por un defecto ya reportado.</p>
+    <p class="nota">Extracto. La matriz completa (núcleo y G5, 93 filas) está publicada en Pages y en <code>docs/trazabilidad.md</code>. Amarillo: falla por un defecto ya reportado.</p>
   </div>
 </section>
 
 <!-- 12 · resultados -->
 <section class="slide">
   <p class="seccion s4">4 · Resultados</p>
-  <h1>Run #23: API y web en verde</h1>
+  <h1>Run #26: API y web en verde</h1>
   <div class="cuerpo">
     <div class="cifras c4">
-      <div class="cifra tinte-azul"><b>97</b><span>passed en API<br><span class="amarillo">+ 10 defectos conocidos</span></span></div>
+      <div class="cifra tinte-azul"><b>122</b><span>passed en API<br><span class="amarillo">+ 10 defectos conocidos</span></span></div>
       <div class="cifra tinte-verde"><b>16</b><span>passed en Chrome<br><span class="amarillo">+ 3 defectos conocidos</span></span></div>
       <div class="cifra tinte-verde"><b>16</b><span>passed en Firefox<br><span class="amarillo">+ 3 defectos conocidos</span></span></div>
-      <div class="cifra tinte-amarillo"><b>10</b><span>operaciones con hallazgos de contrato<br><span class="gris">informativos</span></span></div>
+      <div class="cifra tinte-amarillo"><b>9</b><span>operaciones con hallazgos de contrato<br><span class="gris">informativos</span></span></div>
     </div>
-    <p class="nota">El 1 escenario omitido en API es de concurrencia y va a la Parte 3 (rendimiento). Tres runs seguidos en verde: #21, #22 y #23.</p>
+    <p class="nota">El 1 escenario omitido en API es de concurrencia y va a la Parte 3 (rendimiento). Seis runs seguidos en verde: #21 a #26.</p>
   </div>
 </section>
 
-<!-- 13 · demo -->
+<!-- 13 · casos nuevos -->
+<section class="slide">
+  <p class="seccion s4">4 · Resultados</p>
+  <h1>Más casos de límites: de 108 a 133 escenarios</h1>
+  <div class="cuerpo">
+    <table class="compacta">
+      <thead><tr><th>Caso</th><th>Regla que prueba</th><th>Resultado (run #26)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">CP-72</td><td>Un segundo aumento reemplaza al aumento pendiente (R-G5-02)</td><td class="ok">passed</td></tr>
+        <tr><td class="n">CP-73</td><td>Mientras el aumento está pendiente, al transferir rige el límite anterior</td><td class="ok">passed</td></tr>
+        <tr><td class="n">CP-75</td><td>El límite diario se reinicia al día siguiente, con el reloj de la app</td><td class="ok">passed</td></tr>
+        <tr><td class="n">CP-76 a 80</td><td>Editar el umbral, reanudar y pausar una alerta por API (HU-G5-06)</td><td class="ok">passed 8/8</td></tr>
+        <tr><td class="n">CP-83 · 84</td><td>Interbancaria cuenta sin comisión · la alerta TODAS suma recargas y transferencias (R-G5-05)</td><td class="ok">passed</td></tr>
+        <tr><td class="n">CP-82 · 85</td><td>Id que no existe o fuera de rango · alertas sin token. <b>Salieron de Schemathesis</b></td><td class="ok">passed 6/6</td></tr>
+      </tbody>
+    </table>
+    <p class="nota">CP-70 a CP-85 en <code>features/limites.feature</code>: 16 escenarios, 25 casos con sus ejemplos. Todos pasan: la app cumple esas reglas.</p>
+  </div>
+</section>
+
+<!-- 14 · cobertura frente a schemathesis -->
+<section class="slide">
+  <p class="seccion s4">4 · Resultados</p>
+  <h1>Qué prueba Schemathesis que nosotros no</h1>
+  <div class="cuerpo">
+    <table class="compacta">
+      <thead><tr><th>Operación</th><th>Nuestros escenarios</th><th>Schemathesis</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td class="n"><code>GET /api/limites/alertas</code></td><td>200 · 401</td><td>200 · 401</td><td class="ok">cubierto (CP-85)</td></tr>
+        <tr><td class="n"><code>DELETE /api/limites/alertas/{id}</code></td><td>204 · 401 · 404 · 422</td><td>204 · 401 · 404 · 422</td><td class="ok">hallazgo ya cubierto (CP-82)</td></tr>
+        <tr><td class="n"><code>PUT /api/limites</code></td><td>200 · 401 · 422</td><td>200 · 401 · 422 · 405</td><td class="amarillo">falta 405: solo OPTIONS</td></tr>
+        <tr><td class="n"><code>GET /api/transferencias/comision</code></td><td>200</td><td>200 · 401 · 422</td><td class="amarillo">faltan 401 y 422 (núcleo)</td></tr>
+      </tbody>
+    </table>
+    <p class="nota">Sale de los logs de la app: cada solicitud se lleva a su operación del OpenAPI y se cuentan los códigos que provocó cada suite (<code>.github/scripts/cobertura_contrato.py</code>). Se publica en Pages en cada run de main. Los huecos del G5 se cerraron con <span style="white-space:nowrap">CP-82</span> y <span style="white-space:nowrap">CP-85</span>.</p>
+  </div>
+</section>
+
+<!-- 15 · demo -->
 <section class="slide">
   <p class="seccion s4">5 · Demo en vivo</p>
   <h1>Cuatro cosas, tres minutos</h1>
