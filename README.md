@@ -14,18 +14,18 @@ Scenario: Una reducción cancela el aumento pendiente
   And no tengo un aumento pendiente
 ```
 
-Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y una reducción debería cancelarlo. La app no lo cancela: al día siguiente Diego queda con S/ 1,500. Es uno de los 9 defectos que encontramos, documentados en [`docs/defectos.md`](docs/defectos.md).
+Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y una reducción debería cancelarlo. La app no lo cancela: al día siguiente Diego queda con S/ 1,500. Es uno de los 12 defectos que encontramos, documentados en [`docs/defectos.md`](docs/defectos.md).
 
 ## Cómo lo probamos
 
 | capa | herramienta | qué cubre |
 |---|---|---|
-| API | Playwright + playwright-bdd | 134 escenarios en Gherkin del G5 y del núcleo |
+| API | Playwright + playwright-bdd | 260 pruebas en Gherkin del G5 y del núcleo: cada criterio con casos funcionales y técnicos |
 | Contrato | Schemathesis | que cada endpoint responda lo que dice su OpenAPI |
 | Interfaz web | Selenium 4 + pytest-bdd | la pantalla de límites, con Page Objects, Grid, móvil y reparación de localizadores con IA |
 | Rendimiento | k6 | hora punta, campaña, estrés y resistencia sobre la API, con Qolqe en Docker ([resultados](docs/rendimiento.md)) |
 
-Cada push y cada pull request corren el pipeline en GitHub Actions: primero la API y, si pasa, el contrato y la interfaz en Chrome y Firefox. Los fallos esperados son los defectos ya reportados; cualquier otro fallo, o un escenario que pasa solo al reintentar, deja el pipeline en rojo. Desde `main`, los reportes y la [matriz de trazabilidad](docs/trazabilidad.md) se publican en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
+Cada push y cada pull request corren el pipeline en GitHub Actions por etapas: primero, en paralelo, la verificación de la trazabilidad y el gate del contrato; si pasan, la API y la interfaz en Chrome y Firefox, también en paralelo. Los fallos esperados son los defectos ya reportados; cualquier otro fallo, o un escenario que pasa solo al reintentar, deja el pipeline en rojo. Al correrlo a mano se elige la evidencia de los reportes: con capturas, solo de los fallos o sin capturas. Desde `main`, los reportes y la [matriz de trazabilidad](docs/trazabilidad.md) se publican en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
 
 ## Correrlo en local
 
@@ -40,7 +40,7 @@ npm install
 npm test                           # levanta la app y corre la suite de API
 ```
 
-Resultado esperado: `134 passed`. El contrato, Selenium y sus modos de demo están en [`docs/pruebas.md`](docs/pruebas.md).
+Resultado esperado: `260 passed`. El contrato, Selenium y sus modos de demo están en [`docs/pruebas.md`](docs/pruebas.md).
 
 Para usar la app a mano: `uvicorn qolqe.main:app --reload` y abre `localhost:8000` (Swagger en `/docs`). Usuarios, datos semilla y la API de soporte para pruebas están en [`docs/qolqe.md`](docs/qolqe.md).
 
@@ -48,7 +48,7 @@ Para usar la app a mano: `uvicorn qolqe.main:app --reload` y abre `localhost:800
 
 ```
 qolqe/              la app bajo prueba (sin cambios)
-features/           escenarios en Gherkin con @HU y @CP; ui/ para los de interfaz
+features/           escenarios en Gherkin con @HU, @CP y @CA; ui/ para los de interfaz
 tests/
   api-playwright/   pasos de los escenarios de API (TypeScript)
   e2e/              Selenium: pasos, Page Objects, Screenplay y soporte
@@ -56,13 +56,14 @@ tests/
 scripts/            contrato, demo y modos de Selenium
 .github/
   workflows/        el pipeline
-  scripts/          resumen del run, matriz de trazabilidad y portada de Pages
+  scripts/          verificación de etiquetas, resumen del run, trazabilidad, portada de Pages y Qase
 docs/
   qolqe.md          la app: instalación, endpoints, datos de prueba
   requisitos.md     historias de usuario y reglas de negocio
   pruebas.md        cómo correr cada suite y cómo funciona el pipeline
   defectos.md       los defectos encontrados
-  trazabilidad.md   HU → casos → resultado de un run del pipeline
+  trazabilidad.md   HU → criterio → casos → resultado, con el historial de corridas
+  gestion-casos.md  comparación de herramientas de gestión de casos y la integración con Qase
   rendimiento.md    Parte 3: hallazgos de rendimiento, con cifras y gráficos
   informe.md        informe del proyecto
   guia-selenium.md  glosario y guion de la demo

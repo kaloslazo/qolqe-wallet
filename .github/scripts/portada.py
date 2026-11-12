@@ -3,12 +3,13 @@
 Uso: python .github/scripts/portada.py SITIO
   SITIO ya tiene los reportes copiados por el job "reportes":
     api/          reporte HTML de Playwright, junit-api.xml y resultados-api.json
-    contrato/     reporte HTML y JUnit de Schemathesis
+    contrato/     gate/ y hallazgos/: reporte HTML y JUnit de cada pasada de Schemathesis
     web-chrome/   reporte.html (pytest-html), reporte-bdd.html, junit.xml
     web-firefox/  lo mismo en Firefox
 Escribe SITIO/index.html con el estado de cada job, los enlaces y la matriz de trazabilidad.
 """
 import html
+import json
 import os
 import sys
 from collections import Counter
@@ -31,8 +32,14 @@ def contar(rutas):
 
 
 def tarjeta(titulo, detalle, estado_job, conteo, enlaces):
-    cifras = " · ".join(f"{conteo[k]} {k}" for k in ("passed", "xfailed", "flaky", "skipped", "failed") if conteo[k])
+    conteo_ = conteo or Counter()
+    cifras = " · ".join(f"{conteo_[k]} {k}" for k in ("passed", "xfailed", "flaky", "skipped", "failed") if conteo_[k])
     links = " ".join(f'<a href="{e(href)}">{e(texto)}</a>' for texto, href in enlaces) or "<span>sin reporte</span>"
+    if conteo is None:  # jobs sin casos (verificar): solo el estado
+        return f"""<article class="tarjeta">
+  <header><h3>{e(titulo)}</h3><span class="job {e(estado_job)}">{e(estado_job)}</span></header>
+  <p>{e(detalle)}</p>
+</article>"""
     return f"""<article class="tarjeta">
   <header><h3>{e(titulo)}</h3><span class="job {e(estado_job)}">{e(estado_job)}</span></header>
   <p>{e(detalle)}</p>
@@ -43,20 +50,27 @@ def tarjeta(titulo, detalle, estado_job, conteo, enlaces):
 
 def main():
     sitio = Path(sys.argv[1])
-    estados = {job: os.environ.get(f"ESTADO_{job.upper()}", "—") for job in ("api", "contrato", "web")}
+    estados = {job: os.environ.get(f"ESTADO_{job.upper()}", "—") for job in ("verificar", "api", "contrato", "web")}
 
-    contrato_html = sorted(sitio.glob("contrato/html-*/index.html"))
-    contrato_junit = sorted(sitio.glob("contrato/junit-*.xml"))
+    def ultimo(patron):
+        return sorted(sitio.glob(patron))[-1:]
+
+    gate_junit, gate_html = ultimo("contrato/gate/junit-*.xml"), ultimo("contrato/gate/html-*/index.html")
+    hall_junit, hall_html = ultimo("contrato/hallazgos/junit-*.xml"), ultimo("contrato/hallazgos/html-*/index.html")
     navegadores = sorted(p.name.removeprefix("web-") for p in sitio.glob("web-*") if p.is_dir())
 
     tarjetas = [
+        tarjeta("Verificar", "Los .feature compilan y cada escenario tiene su HU, CP, criterio y DEF.",
+                estados["verificar"], None, []),
+        tarjeta("Contrato · gate", "Schemathesis: la API cumple su OpenAPI (sin 500, esquema, códigos, auth). Bloquea.",
+                estados["contrato"], contar(gate_junit),
+                [("Reporte HTML", p.relative_to(sitio).as_posix()) for p in gate_html]),
+        tarjeta("Contrato · hallazgos conocidos", "Reglas que el OpenAPI no declara. Analizados en el informe; no bloquean.",
+                "informativo", contar(hall_junit),
+                [("Reporte HTML", p.relative_to(sitio).as_posix()) for p in hall_html]),
         tarjeta("API", "Playwright + playwright-bdd: escenarios Gherkin del G5 y del núcleo.", estados["api"],
                 contar([sitio / "api/resultados-api.json"]),
                 [("Reporte HTML", "api/index.html")] if (sitio / "api/index.html").exists() else []),
-        # el job no bloquea (continue-on-error), así que GitHub lo reporta como success aunque haya hallazgos
-        tarjeta("Contrato", "Schemathesis contra el OpenAPI. Informativo: sus hallazgos están en el informe.",
-                "con hallazgos" if contar(contrato_junit[-1:])["failed"] else estados["contrato"], contar(contrato_junit[-1:]),
-                [("Reporte HTML", p.relative_to(sitio).as_posix()) for p in contrato_html[-1:]]),
     ]
     for nav in navegadores:
         base = sitio / f"web-{nav}"
@@ -68,17 +82,24 @@ def main():
     web = {nav: trazabilidad.resultados_junit(str(sitio / f"web-{nav}/junit.xml"))
            for nav in navegadores if (sitio / f"web-{nav}/junit.xml").exists()}
     api_json = sitio / "api/resultados-api.json"
-    historias = trazabilidad.leer_historias()
-    filas, cobertura = trazabilidad.armar(trazabilidad.leer_casos(), historias,
-                                          trazabilidad.resultados_api(str(api_json)) if api_json.exists() else None, web)
+    api = trazabilidad.resultados_api(str(api_json)) if api_json.exists() else None
+    casos, historias, textos = trazabilidad.leer_casos(), trazabilidad.leer_historias(), trazabilidad.leer_criterios()
     ctx = trazabilidad.contexto_run()
-    matriz = trazabilidad.a_html(filas, cobertura, historias, ctx)
-    (sitio / "trazabilidad.md").write_text(trazabilidad.a_markdown(filas, cobertura, historias, ctx), encoding="utf-8")
+    # historial.json: las corridas anteriores (el job lo baja de Pages) más esta
+    ruta_hist = sitio / "historial.json"
+    previo = json.loads(ruta_hist.read_text(encoding="utf-8")) if ruta_hist.exists() else []
+    historial = trazabilidad.actualizar_historial(previo, trazabilidad.estados_del_run(casos, api, web), ctx)
+    ruta_hist.write_text(json.dumps(historial, ensure_ascii=False), encoding="utf-8")
+    filas, cobertura, criterios = trazabilidad.armar(casos, historias, api, web, historial)
+    matriz = trazabilidad.a_html(filas, cobertura, historias, ctx, criterios, textos, historial)
+    (sitio / "trazabilidad.md").write_text(
+        trazabilidad.a_markdown(filas, cobertura, historias, ctx, criterios, textos, historial), encoding="utf-8")
 
     cobertura = ""
     if (sitio / "contrato/openapi.json").exists():
         filas_cob, meta = cobertura_contrato.analizar(
-            sitio / "contrato/openapi.json", sitio / "api/log-api.txt", sitio / "contrato/log-contrato.txt", contrato_junit[-1:])
+            sitio / "contrato/openapi.json", sitio / "api/log-api.txt", sitio / "contrato/log-contrato.txt",
+            gate_junit + hall_junit)
         cobertura = cobertura_contrato.a_html(filas_cob, meta)
         (sitio / "cobertura-contrato.md").write_text(cobertura_contrato.a_markdown(filas_cob, meta), encoding="utf-8")
 
@@ -111,7 +132,7 @@ def main():
   .tarjeta nav a {{ margin-right:12px; font-size:14px; }}
   .job {{ font-size:12px; padding:2px 8px; border-radius:99px; border:1px solid currentColor; }}
   .success, .passed {{ color:var(--ok); }} .failure, .failed {{ color:var(--mal); }}
-  .xfailed, .flaky, .con {{ color:var(--aviso); }} .skipped, .sin, .cancelled {{ color:var(--gris); }}
+  .xfailed, .flaky, .con, .informativo {{ color:var(--aviso); }} .skipped, .sin, .cancelled {{ color:var(--gris); }}
   .tabla {{ overflow-x:auto; }}
   table {{ border-collapse:collapse; width:100%; font-size:14px; margin-bottom:24px; }}
   th, td {{ text-align:left; padding:6px 10px; border-bottom:1px solid var(--borde); vertical-align:top; }}

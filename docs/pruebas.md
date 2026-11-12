@@ -20,7 +20,7 @@ npm test
 npx playwright show-report
 ```
 
-`npm test` genera los pasos desde `features/`, levanta la app y corre los 134 escenarios. Resultado esperado: `134 passed`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; entre ellos, CP-53 y CP-86 mandan transferencias simultáneas (DEF-11).
+`npm test` genera los pasos desde `features/`, levanta la app y corre las 260 pruebas (131 casos con sus ejemplos). Resultado esperado: `260 passed`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; entre ellos, CP-53 y CP-86 mandan transferencias simultáneas (DEF-11).
 
 ## Contrato con Schemathesis
 
@@ -31,7 +31,7 @@ uvicorn qolqe.main:app --port 8000     # terminal 1
 npm run contrato                       # terminal 2
 ```
 
-El reporte queda en `reportes/schemathesis/`. No correr `npm test` y `npm run contrato` al mismo tiempo: comparten el puerto y la base de datos.
+Corre dos pasadas. El **gate** revisa que la API cumpla lo que declara su OpenAPI (sin 500, esquema, códigos, cabeceras y autenticación) y, si algo falla, el script sale con error. Los **hallazgos conocidos** (reglas de negocio que el OpenAPI no declara y la cabecera `Allow` de los 405) se reportan aparte y no bloquean: están analizados en el informe. Los reportes quedan en `reportes/schemathesis/gate/` y `reportes/schemathesis/hallazgos/`. No correr `npm test` y `npm run contrato` al mismo tiempo: comparten el puerto y la base de datos.
 
 ### Cobertura frente a Schemathesis
 
@@ -74,7 +74,7 @@ Resultado esperado: `16 passed, 3 xfailed` (15 escenarios BDD + 1 ejemplo con el
 | `scripts/selenium.sh ia` | El mismo localizador roto, reparado por IA: Gemini con `GEMINI_API_KEY` o Claude con `ANTHROPIC_API_KEY`; queda registro en `reportes/selenium/sanaciones.json` |
 | `scripts/selenium.sh reporte` | Abre `reportes/selenium/reporte-bdd.html`: cada escenario con sus pasos, una captura por paso, el error en una frase y la consola del navegador |
 
-Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox|safari`, `--headless`, `--movil`, `--grid URL`, `--demo`, `--sanar`, `--romper`, `--url-app`, `--url-navegador`. Para filtrar por etiqueta de Gherkin: `-m happy`, `-m bidi`, `-m HU-G5-03`.
+Opciones de pytest (`pytest tests/e2e --help`): `--navegador chrome|edge|firefox|safari`, `--evidencia con|fallos|sin`, `--headless`, `--movil`, `--grid URL`, `--demo`, `--sanar`, `--romper`, `--url-app`, `--url-navegador`. Para filtrar por etiqueta de Gherkin: `-m happy`, `-m bidi`, `-m HU-G5-03`.
 
 Safari necesita habilitarse una vez: `sudo safaridriver --enable` y, en Safari, Desarrollo › Permitir automatización remota. Safari no implementa WebDriver BiDi, así que el escenario `@bidi` se omite allí.
 
@@ -93,38 +93,71 @@ El detalle de cada escenario está en [`tests/performance/README.md`](../tests/p
 
 ## Pipeline
 
-`.github/workflows/pruebas.yml` corre en cada push, en cada pull request y a mano desde la pestaña Actions (`workflow_dispatch`).
+`.github/workflows/pruebas.yml` corre en cada push a una rama, en cada pull request y a mano desde la pestaña Actions (`workflow_dispatch`). No corre al subir un tag ni cuando el cambio solo toca documentación (`docs/`, archivos `.md`) o los resultados de rendimiento: antes, cada entrega corría el pipeline dos veces (la rama y el tag).
 
 ```
-push / PR ─▶ api ─┬─▶ contrato ────────┐
-                  └─▶ web (chrome)     ├─▶ reportes ─▶ GitHub Pages   (solo main)
-                      web (firefox) ───┘
+           ┌─▶ verificar ─┐      ┌─▶ api ───────────┐
+push / PR ─┤              ├──────┼─▶ web (chrome)   ├─▶ reportes ─▶ GitHub Pages   (solo main)
+           └─▶ contrato ──┘      └─▶ web (firefox) ─┘
+              etapa 1 (~1 min)      etapa 2              etapa 3
 ```
 
-| Job | Qué hace | ¿Bloquea? |
+| Etapa | Job | Qué hace | Por qué ahí |
+|---|---|---|---|
+| 1 | `verificar` | Que cada escenario tenga su HU, CP y criterio, que cada fallo esperado tenga su DEF que Playwright tenga todos sus pasos (`bddgen` falla si falta uno) y que pytest pueda recolectar los escenarios de Selenium | No ejecuta nada contra la app: en menos de un minuto detecta un escenario mal escrito |
+| 1 | `contrato` | Gate de Schemathesis: la API cumple su OpenAPI | Si la interfaz de la API está rota, no tiene sentido correr los escenarios que la usan |
+| 2 | `api` | `npm test`: los escenarios de API con Playwright | Corre solo si la etapa 1 pasó |
+| 2 | `web (chrome)`, `web (firefox)` | Los escenarios de interfaz con Selenium | En paralelo con `api`: no depende de sus resultados y así el pipeline dura lo que la suite más lenta |
+| 3 | `reportes` | Publica en Pages la portada, la trazabilidad con el historial de corridas y la cobertura frente a Schemathesis | También cuando algo falla: es cuando más hace falta ver el reporte |
+
+Si falla la etapa 1, las suites largas no corren (quedan como skipped) y se ahorran unos 3 minutos de runner por corrida. En una rama o PR, un push nuevo cancela la corrida anterior; en `main` no, porque cada corrida queda en el historial. Cada job tiene un tiempo máximo (5 a 15 minutos) para que uno colgado no consuma minutos.
+
+Cada job deja un resumen en la página del run (`.github/scripts/resumen.py`), sus reportes como artefacto y, desde `main`, el sitio en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
+
+### Quality gates
+
+Un cambio pasa a `main` solo si pasa todos los gates bloqueantes:
+
+| Gate | Job | Criterio | Umbral | Bloquea |
+|---|---|---|---|---|
+| Trazabilidad | `verificar` | Escenarios con `@HU`, `@CP` único y `@CA`; criterios del núcleo y de G5 con al menos un escenario de API; fallos esperados con un `@DEF` que existe en `defectos.md` | 0 faltantes | sí |
+| Gherkin compila | `verificar` | Cada paso de los `.feature` de API tiene su implementación (`bddgen`) y los escenarios de Selenium se recolectan sin errores | 0 pasos sin definir · 0 errores de recolección | sí |
+| Contrato | `contrato` | Respuestas sin 500, con los códigos, tipos, esquema y cabeceras que declara el OpenAPI; ninguna ruta protegida responde sin token (checks `not_a_server_error`, `status_code_conformance`, `content_type_conformance`, `response_schema_conformance`, `response_headers_conformance`, `ignored_auth` y el resto, salvo los cuatro de la fila siguiente) | 0 fallos | sí |
+| Hallazgos de contrato conocidos | `contrato` | `positive_data_acceptance`, `negative_data_rejection`, `unsupported_method`, `allow_header_conformance`: reglas de negocio que el OpenAPI no declara y la cabecera `Allow` de los 405, analizados en el informe | se reportan | no |
+| Funcional API | `api` | Todos los escenarios pasan; un `@fail` solo puede fallar por su defecto y, si empieza a pasar, el job falla para actualizar el escenario | 0 failed · 0 flaky (`failOnFlakyTests`: si pasa al reintentar, falla igual) · 0 `test.only` (`forbidOnly`) | sí |
+| Funcional web | `web` | Lo mismo con `@defecto` (xfail estricto), en Chrome y en Firefox | 0 failed en los dos navegadores | sí |
+| Rendimiento | manual (`tests/performance/correr.sh`) | Umbrales del requerimiento en k6: p95 de consultas y login < 800 ms, p95 de dinero < 1500 ms, fallas < 1 %, dinero cuadrado | k6 sale con error si no se cumplen | antes de cada campaña; no en cada push, porque necesita el contenedor con CPU limitada y 20 minutos o más |
+
+Para que GitHub no deje fusionar un PR con el pipeline en rojo: Settings › Branches › regla para `main` › *Require status checks to pass* con `verificar`, `contrato`, `api`, `web (chrome)` y `web (firefox)`.
+
+### Evidencia con o sin capturas
+
+Al correr el pipeline a mano (Actions › Pipeline › *Run workflow*) se elige la evidencia de los reportes:
+
+| Opción | Web (Selenium) | API (Playwright) |
 |---|---|---|
-| `api` | `npm test`: los 134 escenarios de API | sí |
-| `contrato` | Schemathesis contra el OpenAPI | no: sus hallazgos son defectos de contrato ya analizados en el informe |
-| `web (chrome)`, `web (firefox)` | los escenarios de interfaz con Selenium | sí |
-| `reportes` | arma el sitio con los reportes, la matriz de trazabilidad y la cobertura frente a Schemathesis, y lo publica en Pages | — |
+| `con` | Una captura de pantalla por paso en el reporte BDD y en pytest-html | Traza de cada escenario: cada petición y respuesta, abrible desde el reporte HTML |
+| `fallos` | Solo la captura del paso que falla | Traza solo de los escenarios que fallan |
+| `sin` | Ninguna captura: el reporte más liviano | Sin trazas |
 
-Lo rápido va primero: si la API falla, la interfaz no se prueba y sus jobs quedan como skipped.
+En push y PR se usa `fallos`. En local es la variable `EVIDENCIA` o la opción `--evidencia` de pytest:
 
-Cada job deja tres cosas: un resumen en la página del run (`.github/scripts/resumen.py` lee el JUnit XML o el JSON de Playwright), el reporte HTML como artefacto y, desde `main`, el reporte publicado en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
-
-### Quality gate
-
-Un cambio pasa si:
-
-- todas las pruebas de `api` y `web` pasan, salvo los fallos esperados: escenarios `@fail` en Playwright y `@defecto` en Selenium, cada uno con el `@DEF-NN` de [`defectos.md`](defectos.md). Si un fallo esperado empieza a pasar, también falla: el defecto se corrigió y hay que actualizar el escenario;
-- no hay escenarios flaky: en CI Playwright reintenta una vez y, si al reintentar pasa, el pipeline falla igual (`failOnFlakyTests`);
-- no hay un `test.only` olvidado (`forbidOnly`).
-
-Para que GitHub no deje fusionar un PR con el pipeline en rojo: Settings › Branches › regla para `main` › *Require status checks to pass* con `api`, `web (chrome)` y `web (firefox)`.
+```bash
+EVIDENCIA=con npm test
+scripts/selenium.sh todo --evidencia sin
+```
 
 ### Trazabilidad
 
-Cada escenario lleva `@CP-NN` y las `@HU` que cubre. `.github/scripts/trazabilidad.py` cruza los `.feature` con los resultados del run (el JSON de Playwright y la propiedad `etiquetas` que el conftest escribe en el JUnit de pytest) y genera la matriz HU → caso → resultado. El pipeline la publica en Pages y en el resumen del job `reportes`. Para actualizar [`trazabilidad.md`](trazabilidad.md) en cada entrega, se baja `trazabilidad.md` del sitio publicado o se genera en local:
+Cada escenario lleva `@CP-NN`, las `@HU` que cubre y sus criterios: `@CA-N-07-3` es HU-N-07 CA3. `.github/scripts/trazabilidad.py` cruza los `.feature` con los resultados del run (el JSON de Playwright y la propiedad `etiquetas` que el conftest escribe en el JUnit de pytest) y genera:
+
+- la cobertura por historia, separando casos funcionales y técnicos (`@tecnico`), y cuántos criterios tienen caso;
+- la cobertura por criterio, con el texto del criterio y sus casos;
+- los casos con el resultado de esta corrida y el de las **últimas 30 corridas de `main`**: un caso estable sale como `passed 30`; uno inestable, como `passed 28 · failed 2 · último fallo run #45`.
+
+El historial vive en el sitio publicado (`historial.json`): el job `reportes` lo baja, le agrega la corrida y lo vuelve a publicar. Así la trazabilidad no se queda en el último run: muestra desde cuándo falla un caso, si un defecto se corrigió y qué casos son inestables.
+
+Para actualizar [`trazabilidad.md`](trazabilidad.md) en cada entrega, se baja `trazabilidad.md` del sitio publicado o se genera en local:
 
 ```bash
 python .github/scripts/trazabilidad.py --api reportes/resultados-api.json \

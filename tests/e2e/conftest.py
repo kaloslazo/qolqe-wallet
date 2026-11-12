@@ -25,6 +25,7 @@ from tests.e2e.soporte.bidi import Consola
 from tests.e2e.soporte.navegador import NAVEGADORES, ConfigNavegador, crear_driver
 
 CARPETA = Path("reportes/selenium")
+EVIDENCIA = ("con", "fallos", "sin")
 
 
 def pytest_addoption(parser):
@@ -39,12 +40,15 @@ def pytest_addoption(parser):
     grupo.addoption("--url-app", default="http://localhost:8000")
     grupo.addoption("--url-navegador", default=None, help="por defecto, la misma que --url-app")
     grupo.addoption("--reporte-bdd", default="reporte-bdd.html", help="nombre del reporte BDD en reportes/selenium/")
+    grupo.addoption("--evidencia", default=os.getenv("EVIDENCIA", "con"), choices=EVIDENCIA,
+                    help="con: captura en cada paso · fallos: solo el paso que falla · sin: ninguna captura")
 
 
 def pytest_configure(config):
     for marca in ("G5", "ui", "happy", "demo", "reloj", "e2e", "ventanas", "dialogos", "datos", "bidi", "red",
                   "R-G5-04", "defecto", "screenplay", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-0{n}" for n in range(1, 4)),
-                  *(f"CP-{n:02d}" for n in range(1, 100))):
+                  *(f"CP-{n:02d}" for n in range(1, 100)),
+                  *(f"CA-G5-0{h}-{c}" for h in range(1, 9) for c in range(1, 4))):
         config.addinivalue_line("markers", f"{marca}: etiqueta Gherkin")
 
 
@@ -194,14 +198,16 @@ def _paso_actual(request):
 
 def pytest_bdd_after_step(request, feature, scenario, step, step_func, step_func_args):
     paso = _paso_actual(request)
-    captura = _capturar(request, f"{step.keyword} {step.name}")
+    con_captura = request.config.getoption("--evidencia") == "con"
+    captura = _capturar(request, f"{step.keyword} {step.name}") if con_captura else None
     if paso:
         paso.estado, paso.captura = "ok", captura
 
 
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
     paso = _paso_actual(request)
-    captura = _capturar(request, f"FALLÓ · {step.keyword} {step.name}")
+    con_captura = request.config.getoption("--evidencia") != "sin"
+    captura = _capturar(request, f"FALLÓ · {step.keyword} {step.name}") if con_captura else None
     if paso:
         paso.estado, paso.captura, paso.error = "mal", captura, _mensaje(exception)
         paso.traza = _traza(exception)
@@ -246,6 +252,6 @@ def pytest_sessionfinish(session):
     modo = f"Grid {config.getoption('--grid')}" if config.getoption("--grid") else "local"
     meta = {"Navegador": config.getoption("--navegador"), "Ejecución": modo,
             "Vista": "móvil (iPhone 12 Pro)" if config.getoption("--movil") else "escritorio",
-            "Escenarios": len(ESCENARIOS)}
+            "Escenarios": len(ESCENARIOS), "Evidencia": config.getoption("--evidencia")}
     CARPETA.mkdir(parents=True, exist_ok=True)
     reporte_bdd.escribir(ESCENARIOS, meta, CARPETA / config.getoption("--reporte-bdd"))

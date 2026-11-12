@@ -7,6 +7,9 @@ const testDir = defineBddConfig({
 });
 
 const PUERTO = process.env.QOLQE_PUERTO ?? '8000';
+// evidencia: con = traza de cada petición y respuesta en el reporte; fallos = solo de los que fallan; sin = nada
+const EVIDENCIA = process.env.EVIDENCIA ?? 'fallos';
+const TRAZA = EVIDENCIA === 'con' ? 'on' : EVIDENCIA === 'sin' ? 'off' : 'retain-on-failure';
 const PYTHON = process.env.PYTHON ?? (process.platform === 'win32' ? '.venv\\Scripts\\python' : '.venv/bin/python');
 
 export default defineConfig({
@@ -23,6 +26,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.QOLQE_URL ?? `http://localhost:${PUERTO}`,
     extraHTTPHeaders: { 'Content-Type': 'application/json' },
+    trace: TRAZA,
   },
   webServer: process.env.QOLQE_URL
     ? undefined
