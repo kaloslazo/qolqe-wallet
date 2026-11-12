@@ -101,4 +101,4 @@ Hubo dos pausas breves, en los minutos 23 y 49: 15 de 25 034 peticiones tardaron
 | Resultados de cada prueba (reporte HTML de k6, CSV de recursos, gráficos, resumen) | [`tests/performance/resultados/`](../tests/performance/resultados/) |
 | Informe con la plantilla del curso | [`Informe_Rendimiento_G5.docx`](Informe_Rendimiento_G5.docx) · [PDF](Informe_Rendimiento_G5.pdf) |
 | Defectos | [`defectos.md`](defectos.md): DEF-10 y DEF-11 |
-| Diapositivas | [`expo/parte3.html`](expo/parte3.html) · [PDF](expo/G5-Limites-Parte3.pdf) |
+| Diapositivas | [`expo/parte3.html`](expo/parte3.html) · [PDF](expo/G5-Parte3.pdf) |

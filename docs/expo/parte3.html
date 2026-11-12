@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>G5 · Límites · Parte 3</title>
+<title>Grupo 5 · Parte 3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -112,7 +112,7 @@
     <h1>¿Aguanta Qolqe la Quincena Qolqe?</h1>
     <p class="sub">Carga, pico, estrés y resistencia con k6, a partir del requerimiento de la campaña.</p>
   </div>
-  <div style="display:flex;justify-content:space-between;font-size:24px"><b style="font-weight:500">G5 · Límites · Kalos y Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
+  <div style="display:flex;justify-content:space-between;font-size:24px"><b style="font-weight:500">Grupo 5 · Kalos y Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
   <aside class="notas"><b>Kalos.</b> Somos el grupo 5. Esta parte responde una pregunta del negocio: si Qolqe soporta la campaña de quincena y hasta dónde puede crecer. Primero el diseño, luego la demo y al final los resultados.</aside>
 </section>
 
@@ -409,7 +409,7 @@ k6 run tests/performance/escenarios/concurrencia.js</div>
     if (i === 0 || i === total - 1) return;
     const pie = document.createElement('div');
     pie.className = 'pie';
-    pie.innerHTML = '<span>G5 · Límites</span><span>' + (i + 1) + ' / ' + total + '</span>';
+    pie.innerHTML = '<span>Grupo 5</span><span>' + (i + 1) + ' / ' + total + '</span>';
     s.appendChild(pie);
   });
   let actual = Math.min(Math.max(parseInt(location.hash.slice(1), 10) || 1, 1), total) - 1;

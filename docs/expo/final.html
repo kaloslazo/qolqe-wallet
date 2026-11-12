@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grupo 5 · Presentación final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #fdfdfd; --paper: #f3f3f4; --paper-2: #ebebed; --line: #e6e6e9;
+    --ink: #101011; --copy: #424246; --muted: #66666c; --dark: #0b0b0c; --dark-card: #1d1d1f;
+    --red: #f45454; --yellow: #ffcb3d; --blue: #4487f6; --green: #2fa874; --purple: #9268f5;
+    --sans: "Archivo", "Archivo Variable", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #e9e9ec; font-family: var(--sans); color: var(--ink); }
+  body { overflow: hidden; }
+  .deck { position: absolute; top: 50%; left: 50%; width: 1600px; height: 900px; transform-origin: center center; }
+  .slide { position: absolute; inset: 0; background: var(--canvas); padding: 84px 104px 100px; display: none; flex-direction: column; }
+  .slide.activa { display: flex; }
+  .pie { position: absolute; left: 104px; right: 104px; bottom: 40px; display: flex; justify-content: space-between; font-size: 16px; color: var(--muted); }
+
+  .antetitulo { font-size: 20px; font-weight: 500; color: var(--muted); margin-bottom: 18px; }
+  h1 { font-size: 64px; font-weight: 500; line-height: 1.06; letter-spacing: -0.03em; max-width: 1300px; }
+  h2 { font-size: 30px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
+  p, li { font-size: 27px; line-height: 1.45; color: var(--copy); }
+  .cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 34px; }
+  .tenue { color: var(--muted); }
+  .nota { font-size: 22px; color: var(--muted); line-height: 1.45; max-width: 1300px; }
+  b, strong { font-weight: 600; color: var(--ink); }
+  code, .mono { font-family: var(--mono); font-size: 0.82em; }
+
+  .fila { display: grid; gap: 28px; }
+  .c2 { grid-template-columns: 1fr 1fr; } .c3 { grid-template-columns: repeat(3, 1fr); } .c4 { grid-template-columns: repeat(4, 1fr); }
+  .bloque { background: var(--paper); border-radius: 16px; padding: 30px 34px; }
+  .bloque h2 { margin-bottom: 10px; }
+  .bloque p, .bloque li { font-size: 23px; }
+  .bloque .dato { font-size: 15px; font-weight: 500; color: var(--muted); margin-bottom: 14px; letter-spacing: 0.01em; }
+
+  .cifra b { display: block; font-size: 96px; font-weight: 500; letter-spacing: -0.045em; line-height: 1; }
+  .cifra span { display: block; font-size: 21px; color: var(--copy); margin-top: 14px; line-height: 1.35; }
+  .cifra small { display: block; font-size: 17px; color: var(--muted); margin-top: 6px; }
+  .grande b { font-size: 200px; }
+
+  .medidor { height: 10px; background: var(--paper-2); border-radius: 999px; margin-top: 18px; overflow: hidden; }
+  .medidor i { display: block; height: 100%; border-radius: 999px; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
+  th, td { text-align: left; padding: 15px 22px; font-size: 21px; line-height: 1.3; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; color: var(--copy); }
+  th { background: var(--paper); font-weight: 500; color: var(--ink); font-size: 19px; }
+  tr > :last-child { border-right: 0; } tbody tr:last-child td { border-bottom: 0; }
+  td b { font-weight: 600; }
+  td.mono { font-size: 19px; }
+  .si { color: var(--green); font-weight: 600; } .no { color: var(--red); font-weight: 600; }
+
+  ol.pasos { list-style: none; counter-reset: paso; display: grid; gap: 0; }
+  ol.pasos li { counter-increment: paso; display: grid; grid-template-columns: 64px 1fr; padding: 18px 0; border-top: 1px solid var(--line); font-size: 25px; }
+  ol.pasos li:last-child { border-bottom: 1px solid var(--line); }
+  ol.pasos li::before { content: counter(paso); font-weight: 500; color: var(--muted); font-size: 25px; }
+  ul.lista { list-style: none; display: grid; gap: 12px; }
+  ul.lista li { position: relative; padding-left: 28px; }
+  ul.lista li::before { content: "–"; position: absolute; left: 0; color: var(--muted); }
+
+  .codigo { background: var(--dark); color: #e9e9ec; border-radius: 16px; padding: 28px 32px; font-family: var(--mono); font-size: 22px; line-height: 1.7; white-space: pre; }
+  .codigo .c { color: #8d8d93; } .codigo .k { color: #ffcb3d; } .codigo .s { color: #7fd3a8; } .codigo .v { color: #9fc0ff; }
+  .grafico svg { width: 100%; height: auto; display: block; }
+  .grafico.bajo svg { max-height: 330px; width: auto; max-width: 100%; }
+  .cifras-chicas .cifra b { font-size: 60px; }
+  .cifras-chicas .cifra span { font-size: 19px; margin-top: 10px; }
+  .grafico.marco { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 26px 10px; }
+  .leyenda-en-linea { display: inline-flex; align-items: center; gap: 10px; margin-right: 26px; font-size: 19px; color: var(--copy); }
+  .leyenda-en-linea i { width: 22px; height: 3px; border-radius: 3px; display: block; }
+
+  .oscura { background: var(--dark); }
+  .oscura h1, .oscura b { color: #f3f3f4; }
+  .oscura .antetitulo, .oscura .pie, .oscura .nota { color: #8d8d93; }
+  .oscura p, .oscura li { color: #c9c9ce; }
+  .oscura .bloque { background: var(--dark-card); }
+  .oscura .codigo { background: var(--dark-card); }
+
+  .portada { justify-content: space-between; }
+  .puntos { display: flex; gap: 12px; }
+  .puntos i { width: 18px; height: 18px; border-radius: 50%; display: block; }
+  .portada h1 { font-size: 112px; letter-spacing: -0.04em; line-height: 1.02; max-width: 1250px; }
+  .portada .sub { font-size: 30px; color: var(--copy); margin-top: 26px; max-width: 980px; line-height: 1.4; }
+
+  .notas { display: none; }
+  body.ver-notas .slide.activa .notas { display: block; position: absolute; left: 0; right: 0; bottom: 0; max-height: 46%; overflow: auto;
+    background: rgba(16,16,17,0.94); color: #f3f3f4; padding: 24px 104px 30px; font-size: 21px; line-height: 1.5; }
+  body.ver-notas .notas b { color: #ffcb3d; }
+
+  @media print {
+    @page { size: 1600px 900px; margin: 0; }
+    html, body { background: var(--canvas); overflow: visible; }
+    .deck { position: static; transform: none !important; width: auto; height: auto; }
+    .slide { position: relative; display: flex !important; break-after: page; page-break-after: always; width: 1600px; height: 900px; }
+    .notas { display: none !important; }
+  }
+  .tabla-chica th, .tabla-chica td { font-size: 18px; padding: 11px 16px; }
+  .tabla-chica th { font-size: 17px; }
+  .diap { color: var(--muted); font-size: 0.82em; white-space: nowrap; }
+  .dato, .paso-n { text-transform: uppercase; }
+  .paso-n { font-size: 15px; font-weight: 500; color: var(--muted); letter-spacing: 0.01em; margin-bottom: 10px; }
+  .c5 { grid-template-columns: repeat(5, 1fr); }
+  .parcial { color: #a86b00; font-weight: 600; }
+
+  /* etiqueta de sección con punto de color, como en plezgo.com */
+  .antetitulo { display: flex; align-items: center; gap: 14px; }
+  .tag { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; color: var(--ink);
+         background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 16px 6px 13px; }
+  .tag i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .oscura .tag { background: var(--dark-card); border-color: #2a2a2d; color: #f3f3f4; }
+
+  /* tarjetas con tono pastel */
+  .t-rojo { background: #fde9e9 !important; } .t-amarillo { background: #fff3d1 !important; } .t-azul { background: #e6eefe !important; }
+  .t-verde { background: #e1f4ea !important; } .t-morado { background: #eee8fd !important; } .t-blanco { background: #fff !important; border: 1px solid var(--line); }
+  .tarjeta { border-radius: 18px; padding: 28px 30px; display: flex; flex-direction: column; gap: 12px; }
+  .tarjeta h2 { font-size: 27px; }
+  .tarjeta p, .tarjeta li { font-size: 21px; line-height: 1.4; }
+  .tarjeta .grande { font-size: 54px; font-weight: 500; letter-spacing: -0.035em; line-height: 1; color: var(--ink); }
+  .tarjeta .grande small { font-size: 22px; letter-spacing: 0; color: var(--copy); font-weight: 400; margin-left: 6px; }
+  .ic { width: 56px; height: 56px; display: block; flex: none; }
+  .ic.g { width: 72px; height: 72px; } .ic.c { width: 40px; height: 40px; }
+  .fila-ic { display: flex; align-items: center; gap: 16px; }
+
+  /* gráficos */
+  .grafico svg { width: 100%; height: auto; display: block; }
+  .grafico.alto svg { max-height: 575px; width: auto; max-width: 100%; margin: 0 auto; }
+  .grafico.medio svg { max-height: 440px; width: auto; max-width: 100%; margin: 0 auto; }
+  .chips { display: flex; gap: 14px; flex-wrap: wrap; }
+  .chip { border-radius: 14px; padding: 14px 20px; font-size: 20px; color: var(--copy); line-height: 1.3; }
+  .chip b { display: block; font-size: 34px; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+
+  /* barra de mezcla de operaciones */
+  .mezcla { display: flex; gap: 3px; height: 64px; border-radius: 14px; overflow: hidden; }
+  .mezcla span { display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; }
+  .mezcla .con { background: var(--blue); } .mezcla .din { background: var(--green); }
+
+  /* línea de tiempo de una sesión */
+  .sesion { display: flex; align-items: center; gap: 10px; }
+  .sesion .op { border-radius: 12px; padding: 14px 16px; font-size: 19px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+  .sesion .pausa { flex: 1; text-align: center; font-size: 15px; color: var(--muted); border-top: 2px dashed #c9c9ce; padding-top: 6px; min-width: 60px; }
+
+  /* diagramas con flechas */
+  .flujo { display: grid; align-items: stretch; gap: 0; }
+  .flecha { display: flex; align-items: center; justify-content: center; font-size: 34px; color: var(--muted); }
+  .etapas { display: grid; grid-template-columns: 1fr 44px 1.25fr 44px 1fr; align-items: stretch; }
+  .job { display: flex; justify-content: space-between; gap: 12px; font-size: 21px; padding: 11px 0; border-top: 1px solid rgba(16,16,17,0.12); color: var(--copy); }
+  .job span:last-child { font-family: var(--mono); font-size: 17px; color: var(--muted); white-space: nowrap; }
+
+  /* regla de capacidad */
+  .regla { position: relative; height: 150px; margin: 10px 20px 0; }
+  .regla .barra { position: absolute; left: 0; right: 0; top: 64px; height: 22px; border-radius: 999px; display: flex; overflow: hidden; gap: 3px; }
+  .regla .marca { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font-size: 18px; color: var(--copy); white-space: nowrap; }
+  .regla .marca b { display: block; font-size: 26px; font-weight: 600; color: var(--ink); }
+  .regla .marca::after { content: ""; display: block; width: 2px; height: 30px; background: var(--ink); margin: 6px auto 0; }
+  .regla .eje { position: absolute; top: 96px; transform: translateX(-50%); font-size: 16px; color: var(--muted); }
+
+  /* bocetos chicos */
+  .boceto { width: 100%; height: 70px; display: block; }
+
+  /* preguntas */
+  .pregunta h2 { font-size: 24px; }
+  .pregunta p { font-size: 19px; }
+
+  .comparacion th, .comparacion td { padding: 10px 13px; font-size: 17px; }
+  .comparacion th.elegida, .comparacion td.elegida { background: #eee8fd; }
+  .comparacion td .si, .comparacion td .no, .comparacion td .parcial { margin-right: 6px; }
+  .nota b { color: var(--ink); }
+
+  /* tarjetas de lo que se espera: número, qué dice, qué significa, cómo se mide */
+  .espera { padding: 28px 32px; gap: 16px; }
+  .espera .cabeza { display: flex; align-items: baseline; gap: 18px; }
+  .espera .grande { font-size: 60px; }
+  .espera h2 { font-size: 27px; }
+  .espera p { font-size: 20px; line-height: 1.42; }
+  .espera p.et { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 3px; }
+  /* filas de la retroalimentación: tema, lo que pidió, qué hicimos, resultado */
+  .obs { display: grid; grid-template-columns: 1.05fr 1.45fr 1.5fr 0.95fr; gap: 22px; align-items: center; border-radius: 16px; padding: 14px 22px; }
+  .obs-cabeza { padding: 0 22px; }
+  .obs-cabeza p { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  .obs .obs-tema { display: flex; align-items: center; gap: 12px; }
+  .obs .obs-tema .dato { font-size: 12px; color: var(--muted); }
+  .obs h2 { font-size: 20px; line-height: 1.2; }
+  .obs p { font-size: 16.5px; line-height: 1.35; }
+  .obs .obs-pidio { font-style: italic; color: var(--copy); }
+  .obs .obs-res .grande { font-size: 38px; font-weight: 500; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+  .obs .obs-res .grande small { font-size: 17px; margin-left: 5px; letter-spacing: 0; color: var(--copy); font-weight: 400; }
+  .obs .obs-res p:last-child { font-size: 15px; color: var(--copy); margin-top: 4px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="trazo" fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></g>
+    <symbol id="i-reloj" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16" fill="#ffcb3d"/><path d="M24 17v9l6 4"/><path d="M20 5h8M24 5v5"/></g></symbol>
+    <symbol id="i-calendario" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="31" rx="4" fill="#fff"/><path d="M7 14a4 4 0 0 1 4-4h26a4 4 0 0 1 4 4v5H7z" fill="#f45454"/><path d="M16 6v8M32 6v8M14 26h4M22 26h4M30 26h4M14 33h4M22 33h4"/></g></symbol>
+    <symbol id="i-usuarios" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="15" r="5.5" fill="#39bf84"/><path d="M28 25c7 0 13 4 13 12h-9" fill="#39bf84"/><circle cx="18" cy="17" r="6.5" fill="#4487f6"/><path d="M5 40c0-8 6-12 13-12s13 4 13 12z" fill="#4487f6"/></g></symbol>
+    <symbol id="i-caja" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="32" height="32" rx="5" fill="#4487f6"/><path d="M8 19h32M8 30h32"/><path d="M14 13.5h5M14 24.5h5M14 35h5"/><path d="M33 13.5h.5M33 24.5h.5M33 35h.5"/></g></symbol>
+    <symbol id="i-laptop" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="9" width="28" height="21" rx="3" fill="#e1f4ea"/><path d="M4 35h40l-3 5H7z" fill="#fff"/><path d="M16 22l4-4 3 3 6-6"/></g></symbol>
+    <symbol id="i-rayo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M28 4L10 27h12l-3 17 19-24H26z" fill="#ffcb3d"/></g></symbol>
+    <symbol id="i-codigo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="38" height="32" rx="5" fill="#fff"/><path d="M5 13a5 5 0 0 1 5-5h28a5 5 0 0 1 5 5v3H5z" fill="#9268f5"/><path d="M19 23l-5 5 5 5M29 23l5 5-5 5"/></g></symbol>
+    <symbol id="i-candado" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-6a8 8 0 0 1 16 0v6"/><rect x="10" y="21" width="28" height="21" rx="5" fill="#ffcb3d"/><path d="M24 29v6"/></g></symbol>
+    <symbol id="i-dinero" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="24" rx="4" fill="#39bf84"/><circle cx="24" cy="24" r="6" fill="#fff"/><path d="M11 18h1M36 30h1"/></g></symbol>
+    <symbol id="i-alerta" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6L44 41H4z" fill="#f45454"/><path d="M24 18v11M24 35v.5"/></g></symbol>
+    <symbol id="i-lupa" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 30l11 11" stroke-width="4"/><circle cx="20" cy="20" r="13" fill="#e6eefe"/><path d="M14 19a6 6 0 0 1 6-6"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="36" rx="9" fill="#39bf84"/><path d="M15 25l6 6 12-13"/></g></symbol>
+    <symbol id="i-cruz" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="36" rx="9" fill="#f45454"/><path d="M17 17l14 14M31 17L17 31"/></g></symbol>
+    <symbol id="i-escudo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4l16 6v12c0 10-7 17-16 22C15 39 8 32 8 22V10z" fill="#9268f5"/><path d="M17 24l5 5 9-10"/></g></symbol>
+    <symbol id="i-capas" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 32l19 9 19-9" /><path d="M5 24l19 9 19-9" fill="#e6eefe"/><path d="M24 6l19 9-19 9L5 15z" fill="#4487f6"/></g></symbol>
+    <symbol id="i-lista" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="30" height="35" rx="4" fill="#fff"/><rect x="17" y="4" width="14" height="8" rx="2.5" fill="#f45454"/><path d="M16 21l2 2 4-4M26 21h7M16 31l2 2 4-4M26 31h7"/></g></symbol>
+    <symbol id="i-pregunta" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h36v24H22l-9 8v-8H6z" fill="#ffcb3d"/><path d="M20 16.5a4.5 4.5 0 1 1 6 4.2c-1.3.6-2 1.4-2 2.8M24 28v.5"/></g></symbol>
+    <symbol id="i-botella" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4h8v9l7 8v19a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4V21l7-8z" fill="#4487f6"/><path d="M13 29h22"/><path d="M19 4h10"/></g></symbol>
+    <symbol id="i-arena" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 39c2-6 8-6 8-10 0 4 6 4 8 10z" fill="#ffcb3d" stroke="none"/><path d="M12 5h24M12 43h24"/><path d="M15 5c0 11 9 12 9 19s-9 8-9 19M33 5c0 11-9 12-9 19s9 8 9 19"/></g></symbol>
+    <symbol id="i-cpu" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5v7M24 5v7M30 5v7M18 36v7M24 36v7M30 36v7M5 18h7M5 24h7M5 30h7M36 18h7M36 24h7M36 30h7"/><rect x="12" y="12" width="24" height="24" rx="4" fill="#39bf84"/><rect x="19" y="19" width="10" height="10" rx="2" fill="#fff"/></g></symbol>
+    <symbol id="i-nube" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 37a9 9 0 0 1-1.5-17.9A12 12 0 0 1 35 16.5 10 10 0 0 1 35 37z" fill="#e6eefe"/><path d="M19 29h10"/></g></symbol>
+    <symbol id="i-transferir" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="32" rx="7" fill="#39bf84"/><path d="M12 19h22l-5-5M36 29H14l5 5"/></g></symbol>
+    <symbol id="i-celular" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="4" width="22" height="40" rx="5" fill="#fff"/><path d="M21 38h6"/><path d="M26 11l-7 11h6l-3 9 9-12h-6z" fill="#ffcb3d"/></g></symbol>
+    <symbol id="i-recibo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5h28v38l-4.7-3-4.6 3-4.7-3-4.7 3-4.6-3-4.7 3z" fill="#fff4d4"/><path d="M17 14h14M17 21h14M17 28h8"/></g></symbol>
+    <symbol id="i-llave" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="24" r="10" fill="#ffcb3d"/><circle cx="13" cy="24" r="3" fill="#fff"/><path d="M25 24h19M37 24v7M43 24v5"/></g></symbol>
+    <symbol id="i-fila" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="4" fill="#f45454"/><path d="M4 38v-9a5 5 0 0 1 10 0v9"/><circle cx="24" cy="16" r="4" fill="#f45454"/><path d="M19 38v-9a5 5 0 0 1 10 0v9"/><circle cx="39" cy="16" r="4" fill="#f45454"/><path d="M34 38v-9a5 5 0 0 1 10 0v9"/></g></symbol>
+    <symbol id="i-objetivo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="26" r="17" fill="#fde9e9"/><circle cx="22" cy="26" r="10" fill="#f45454"/><circle cx="22" cy="26" r="3.5" fill="#fff"/><path d="M22 26L40 8M33 8h7v7"/></g></symbol>
+    <symbol id="i-grafico" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="38" height="34" rx="5" fill="#fff"/><path d="M11 33l8-9 6 5 12-13" stroke="#4487f6" stroke-width="3.2"/><path d="M11 33l8-9 6 5 12-13" stroke="none"/></g></symbol>
+    <symbol id="i-libro" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10c7-2 13-1 19 3 6-4 12-5 19-3v29c-7-2-13-1-19 3-6-4-12-5-19-3z" fill="#fff3d1"/><path d="M24 13v29"/></g></symbol>
+    <symbol id="i-repetir" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="40" height="40" rx="10" fill="#e6eefe"/><path d="M35 19a12 12 0 0 0-21-3M13 29a12 12 0 0 0 21 3"/><path d="M13 9v7h7M35 39v-7h-7"/></g></symbol>
+    <symbol id="i-monitor" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="38" height="27" rx="4" fill="#eee8fd"/><path d="M10 26l6-7 5 4 6-9 5 6 6-3"/><path d="M17 41h14M24 34v7"/></g></symbol>
+    <symbol id="i-flecha-der" viewBox="0 0 48 48"><g fill="none" stroke="#66666c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24h34M30 14l10 10-10 10"/></g></symbol>
+  </defs>
+</svg>
+<div class="deck" id="deck">
+
+<!-- s-portada -->
+<section id="s-portada" class="slide portada">
+  <div class="puntos"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i><i style="background:var(--green)"></i></div>
+  <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px">
+    <div>
+      <p class="antetitulo">CS5383 · Proyecto 2 · Presentación final · Rendimiento</p>
+      <h1>¿Aguanta Qolqe la Quincena Qolqe?</h1>
+      <p class="sub">Cómo lo diseñamos, qué encontramos con k6 y lo que corregimos después de la retroalimentación.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,96px);gap:18px">
+      <svg class="ic" style="width:96px;height:96px"><use href="#i-usuarios"/></svg>
+      <svg class="ic" style="width:96px;height:96px"><use href="#i-rayo"/></svg>
+      <svg class="ic" style="width:96px;height:96px"><use href="#i-grafico"/></svg>
+      <svg class="ic" style="width:96px;height:96px"><use href="#i-dinero"/></svg>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:24px"><b style="font-weight:500">Grupo 5 · Kalos y Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
+  <aside class="notas"><b>Kalos.</b> Somos el grupo 5. Esta presentación junta todo lo de rendimiento: qué pidió el enunciado, cómo lo resolvimos con lo de las semanas 13 y 14, los resultados y, al final, lo que corregimos de la retroalimentación de la Parte 2.</aside>
+</section>
+
+<!-- s-agenda -->
+<section id="s-agenda" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--ink)"></i>Recorrido</span></p>
+  <h1>Seis bloques</h1>
+  <div class="cuerpo">
+    <div class="fila" style="grid-template-columns:repeat(3,1fr)">
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-lista"/></svg><p class="dato">Diap. <span data-diap="s-enunciado:s-curso"></span></p><h2>Lo que se pide</h2><p>El enunciado, la rúbrica y el curso.</p></div>
+      <div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-calendario"/></svg><p class="dato">Diap. <span data-diap="s-req-uso:s-req-espera-2"></span></p><h2>El requerimiento</h2><p>Qué pide el negocio, con todo su detalle.</p></div>
+      <div class="tarjeta t-morado"><svg class="ic"><use href="#i-rayo"/></svg><p class="dato">Diap. <span data-diap="s-criterios-herr:s-k6-codigo"></span></p><h2>La herramienta</h2><p>Qué necesitábamos y por qué k6.</p></div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-capas"/></svg><p class="dato">Diap. <span data-diap="s-flujos:s-demo"></span></p><h2>El diseño</h2><p>Flujos, umbrales, datos, modelo, entorno y demo.</p></div>
+      <div class="tarjeta t-verde"><svg class="ic"><use href="#i-lupa"/></svg><p class="dato">Diap. <span data-diap="s-analisis:s-arquitectura"></span></p><h2>El análisis</h2><p>Los cuatro pasos de la semana 14.</p></div>
+      <div class="tarjeta t-blanco"><svg class="ic"><use href="#i-check"/></svg><p class="dato">Diap. <span data-diap="s-retro:s-preguntas-3"></span></p><h2>Lo corregido y preguntas</h2><p>La Parte 2, antes y ahora.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Vamos en este orden. Si el tiempo aprieta, el bloque de análisis es el que manda: ahí están las respuestas al negocio. Al final dejamos las preguntas que creemos que nos pueden hacer.</aside>
+</section>
+
+<!-- s-enunciado -->
+<section id="s-enunciado" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Lo que se pide</span></p>
+  <h1>Cada punto del enunciado, y dónde está</h1>
+  <div class="cuerpo">
+    <div class="fila c2" style="align-items:start">
+      <table class="tabla-chica">
+        <thead><tr><th>Qué deben hacer</th><th style="width:24%">Diap.</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Flujos críticos (mínimo tres), justificados</td><td data-diap="s-flujos"></td></tr>
+          <tr><td>2 · Requerimiento convertido en umbrales y supuestos</td><td data-diap="s-umbral"></td></tr>
+          <tr><td>3 · Modelo de carga: cada valor sale de un dato</td><td data-diap="s-req-uso, s-modelo"></td></tr>
+          <tr><td>4 · Datos de prueba: un usuario por VU</td><td data-diap="s-reglas"></td></tr>
+          <tr><td>5 · Carga y estrés; pico y resistencia</td><td data-diap="s-tipos, s-hora:s-quiebre"></td></tr>
+          <tr><td>6 · CPU y memoria de la aplicación</td><td data-diap="s-entorno, s-resistencia, s-quiebre"></td></tr>
+          <tr><td>7 · ¿Pasó? ¿Dónde? ¿Por qué? ¿Qué hacer?</td><td data-diap="s-analisis:s-recomendaciones"></td></tr>
+          <tr><td>8 · Informe y demo en vivo</td><td><span data-diap="s-demo"></span> · informe</td></tr>
+        </tbody>
+      </table>
+      <table class="tabla-chica">
+        <thead><tr><th>Rúbrica</th><th style="width:12%">Pts</th><th style="width:26%">Diap.</th></tr></thead>
+        <tbody>
+          <tr><td>Investigación de la herramienta</td><td>3</td><td data-diap="s-criterios-herr:s-k6-codigo"></td></tr>
+          <tr><td>Diseño de escenarios, trazado al requerimiento</td><td>5</td><td data-diap="s-req-uso:s-req-espera-2, s-flujos:s-modelo"></td></tr>
+          <tr><td>Tipos de prueba</td><td>3</td><td data-diap="s-tipos, s-hora:s-quiebre"></td></tr>
+          <tr><td>Análisis frente a los umbrales</td><td>5</td><td data-diap="s-analisis:s-recomendaciones"></td></tr>
+          <tr><td>Exposición y demo</td><td>4</td><td data-diap="s-demo"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">Corrimos las cuatro pruebas, también pico y resistencia (el enunciado deja descartarlas con justificación), y una quinta de concurrencia por la condición del dinero.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Esta es la lista de verificación que usamos. A la izquierda los ocho pasos del enunciado; a la derecha la rúbrica de 20 puntos. Cada fila dice en qué diapositiva lo mostramos.</aside>
+</section>
+
+<!-- s-curso -->
+<section id="s-curso" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Lo que se pide · contenido del curso</span></p>
+  <h1>Lo que aplicamos de las semanas 13 y 14</h1>
+  <div class="cuerpo">
+    <div class="fila c2">
+      <div class="tarjeta t-azul">
+        <div class="fila-ic"><svg class="ic"><use href="#i-lista"/></svg><h2>Semana 13 · el plan de pruebas</h2></div>
+        <ul class="lista">
+          <li>Flujos críticos y capa objetivo <span class="diap">· <span data-diap="s-flujos"></span></span></li>
+          <li>Tipos de prueba conectados al requerimiento <span class="diap">· <span data-diap="s-tipos"></span></span></li>
+          <li>Modelo de carga con el origen de cada valor <span class="diap">· <span data-diap="s-modelo"></span></span></li>
+          <li>Criterios de aceptación con su fuente <span class="diap">· <span data-diap="s-umbral"></span></span></li>
+          <li>Restricciones del entorno <span class="diap">· <span data-diap="s-entorno:s-cpu"></span></span></li>
+        </ul>
+      </div>
+      <div class="tarjeta t-verde">
+        <div class="fila-ic"><svg class="ic"><use href="#i-libro"/></svg><h2>Semana 14 · métricas y análisis</h2></div>
+        <ul class="lista">
+          <li>Percentiles, no promedio <span class="diap">· <span data-diap="s-umbral"></span></span></li>
+          <li>Un umbral = métrica + percentil + límite + carga <span class="diap">· <span data-diap="s-umbral"></span></span></li>
+          <li>Flujo de análisis en cuatro pasos <span class="diap">· <span data-diap="s-analisis"></span></span></li>
+          <li>Patrones de degradación: abrupto y periódico <span class="diap">· <span data-diap="s-resistencia, s-quiebre"></span></span></li>
+          <li>Cuello de botella: el recurso que se agota primero <span class="diap">· <span data-diap="s-cuello"></span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> De la semana 13 sale la estructura del plan, que es la del informe. De la semana 14 sale todo el análisis: por qué medimos p95, cómo convertimos cada frase del requerimiento en un umbral y cómo leímos los gráficos.</aside>
+</section>
+
+<!-- s-req-uso -->
+<section id="s-req-uso" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>El requerimiento · 1 de 4</span></p>
+  <h1>Cómo se usa Qolqe hoy y en la campaña</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="fila c2">
+      <div class="tarjeta t-amarillo">
+        <div class="fila-ic"><svg class="ic"><use href="#i-reloj"/></svg><div><p class="dato">Uso actual</p><h2>Hora punta, de 12:00 a 13:00</h2></div></div>
+        <ul class="lista">
+          <li>Unas <b>3000 sesiones por hora</b>, de <b>2 minutos</b> cada una.</li>
+          <li>Cada sesión: iniciar sesión y <b>6 operaciones</b>.</li>
+          <li>Entre operaciones, una pausa de <b>10 a 25 s</b> (18 s en promedio).</li>
+        </ul>
+      </div>
+      <div class="tarjeta t-rojo">
+        <div class="fila-ic"><svg class="ic"><use href="#i-calendario"/></svg><div><p class="dato">Campaña Quincena Qolqe</p><h2>El 15 y el último de cada mes</h2></div></div>
+        <ul class="lista">
+          <li>De <b>12:00 a 12:15</b>, el <b>triple de usuarios</b> a la vez.</li>
+          <li>La mayoría entra en los <b>primeros 5 minutos</b>.</li>
+          <li>Qolqe opera de <b>6:00 a 24:00 sin reinicios</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fila c4">
+      <div class="chip t-blanco"><b>100</b>usuarios a la vez en hora punta → carga</div>
+      <div class="chip t-blanco"><b>18 s</b>de pausa entre operaciones → la sesión</div>
+      <div class="chip t-blanco"><b>300</b>usuarios, subida en 5 min → pico</div>
+      <div class="chip t-blanco"><b>18 h</b>sin reiniciar → resistencia</div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> El requerimiento es el mismo para todos los grupos y tiene dos escenas: la hora punta de hoy y la campaña de quincena. Abajo, en qué se convirtió cada dato: 3000 sesiones por hora de 2 minutos son 100 usuarios a la vez; la campaña es el triple; y operar 18 horas sin reinicio es lo que justifica la prueba de resistencia.</aside>
+</section>
+
+<!-- s-req-mezcla -->
+<section id="s-req-mezcla" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>El requerimiento · 2 de 4</span></p>
+  <h1>Qué hace cada sesión, y cuánto pesa</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="mezcla">
+      <span class="con" style="width:30%">Saldo y perfil · 30 %</span>
+      <span class="con" style="width:15%">Movimientos · 15 %</span>
+      <span class="din" style="width:15%">Transferir · 15 %</span>
+      <span class="con" style="width:10%">Contactos · 10</span>
+      <span class="din" style="width:10%">Recargar · 10</span>
+      <span class="con" style="width:6%">Deudas</span>
+      <span class="din" style="width:4%">Pago</span>
+      <span class="con" style="width:10%">Otras · 10</span>
+    </div>
+    <div style="display:flex;gap:28px;font-size:19px;color:var(--copy)"><span class="leyenda-en-linea"><i style="background:var(--blue)"></i>consulta: el 95 % en menos de 800 ms</span><span class="leyenda-en-linea"><i style="background:var(--green)"></i>dinero: el 95 % en menos de 1.5 s</span></div>
+    <table class="tabla-chica">
+      <thead><tr><th style="width:34%">Operación</th><th>Lo que llama k6</th></tr></thead>
+      <tbody>
+        <tr><td><b>Iniciar sesión</b> · una por sesión</td><td><code>POST /api/auth/login</code></td></tr>
+        <tr><td>Saldo y perfil · movimientos · contactos</td><td><code>GET /api/cuentas/me/saldo</code>, <code>/api/cuentas/me</code>, <code>/api/movimientos</code>, <code>/api/contactos</code></td></tr>
+        <tr><td><b>Transferir</b> a otro usuario Qolqe</td><td><code>POST /api/transferencias</code>: S/ 1 a 20 a otro usuario</td></tr>
+        <tr><td><b>Recargar</b> un celular</td><td><code>POST /api/recargas</code>: S/ 5 a 30 a un número al azar</td></tr>
+        <tr><td>Consultar deudas · <b>pagar</b> servicios</td><td><code>GET /api/servicios/deudas</code> · <code>POST /api/servicios/pagos</code> (siempre consulta antes)</td></tr>
+        <tr><td>Otras: límites, alertas, solicitudes, dispositivos, sesiones</td><td><code>GET</code> a una de las cinco, al azar</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notas"><b>Kalos.</b> La barra es la tabla del requerimiento: el ancho de cada parte es su peso. Azul son consultas y verde dinero, porque cada grupo tiene su propio límite de tiempo. Deudas y pagos van juntos en el requerimiento como 10 %, con la aclaración 6 de consulta y 4 de pago, y así los separamos.</aside>
+</section>
+
+<!-- s-req-espera -->
+<section id="s-req-espera" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>El requerimiento · 3 de 4</span></p>
+  <h1>Lo que se espera: tiempos de respuesta</h1>
+  <div class="cuerpo">
+    <div class="fila c2" style="align-items:stretch">
+      <div class="tarjeta t-azul espera">
+        <div class="cabeza"><p class="grande">800<small>ms</small></p><h2>Consultas e inicio de sesión</h2></div>
+        <div><p class="et">Dice el requerimiento</p><p>«El 95 % debe responder en menos de 800 ms».</p></div>
+        <div><p class="et">Qué significa</p><p>De cada 100 consultas (saldo, movimientos, contactos, deudas, otras) o inicios de sesión, al menos 95 tardan menos de 0.8 s. Las 5 más lentas pueden tardar más.</p></div>
+        <div><p class="et">Cómo lo medimos</p><p>El p95 de todas las peticiones de consulta: <code>p(95)&lt;800</code>.</p></div>
+      </div>
+      <div class="tarjeta t-verde espera">
+        <div class="cabeza"><p class="grande">1.5<small>s</small></p><h2>Operaciones de dinero</h2></div>
+        <div><p class="et">Dice el requerimiento</p><p>«Transferencias, recargas y pagos: el 95 % en menos de 1.5 segundos».</p></div>
+        <div><p class="et">Qué significa</p><p>Tienen casi el doble de tiempo porque validan límite, saldo y antifraude, y escriben en dos cuentas. De cada 100, al menos 95 bajo 1.5 s.</p></div>
+        <div><p class="et">Cómo lo medimos</p><p>El p95 de todas las peticiones de dinero: <code>p(95)&lt;1500</code>.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Cada tarjeta tiene tres partes: lo que dice el requerimiento, casi textual; lo que significa en concreto; y cómo lo medimos en k6. El 95 % es el p95: ordenamos todos los tiempos y miramos el que deja al 95 % por debajo.</aside>
+</section>
+
+<!-- s-req-espera-2 -->
+<section id="s-req-espera-2" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>El requerimiento · 4 de 4</span></p>
+  <h1>Lo que se espera: fallas y dinero</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila c2" style="align-items:stretch">
+      <div class="tarjeta t-amarillo espera">
+        <div class="cabeza"><p class="grande">1<small>%</small></p><h2>Fallas en hora punta, sin retrasos</h2></div>
+        <div><p class="et">Dice el requerimiento</p><p>«No más del 1 % de las operaciones puede fallar, y la plataforma debe sostener el volumen sin acumular retrasos».</p></div>
+        <div><p class="et">Qué significa</p><p>Fallar es un error 500, un timeout o una respuesta inesperada; un rechazo por regla de negocio (por ejemplo, límite excedido) no cuenta. Sin retrasos: atender las 3000 sesiones por hora sin que el tiempo vaya subiendo.</p></div>
+        <div><p class="et">Cómo lo medimos</p><p><code>rate&lt;0.01</code>; al menos 50 sesiones por minuto; el mismo p95 en cada ventana de 5 minutos.</p></div>
+      </div>
+      <div class="tarjeta t-rojo espera">
+        <div class="cabeza"><p class="grande">0</p><h2>Dinero a medias o aplicado dos veces</h2></div>
+        <div><p class="et">Dice el requerimiento</p><p>«En el pico se acepta una degradación razonable, pero ninguna operación de dinero puede quedar a medias ni aplicarse dos veces».</p></div>
+        <div><p class="et">Qué significa</p><p>A medias: se descontó de una cuenta y no llegó a la otra. Dos veces: el mismo pago o transferencia aplicado dos veces. «Degradación razonable» no trae número: supusimos hasta el doble de tiempo.</p></div>
+        <div><p class="et">Cómo lo medimos</p><p>Comparando la base de datos antes y después de cada prueba, y con una prueba aparte de concurrencia.</p></div>
+      </div>
+    </div>
+    <div class="fila c3" style="gap:14px">
+      <div class="chip t-blanco"><b style="font-size:21px">¿Cumplimos en hora punta?</b>carga: 100 usuarios, 20 min · diap. <span data-diap="s-hora"></span></div>
+      <div class="chip t-blanco"><b style="font-size:21px">¿Y en el pico de la campaña?</b>pico: de 100 a 300 en 5 min · diap. <span data-diap="s-campana"></span></div>
+      <div class="chip t-blanco"><b style="font-size:21px">¿Hasta cuántos usuarios?</b>estrés: escalones hasta fallar · diap. <span data-diap="s-estres-pps, s-capacidad"></span></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> La de dinero es la única que no es un tiempo: se verifica en la base. Abajo, las tres preguntas que el negocio quiere responder con todo esto, y qué prueba responde cada una.</aside>
+</section>
+
+<!-- s-criterios-herr -->
+<section id="s-criterios-herr" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>La herramienta · 1 de 4</span></p>
+  <h1>Primero, qué necesitábamos de la herramienta</h1>
+  <div class="cuerpo">
+    <div class="fila c5">
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-objetivo"/></svg><h2 style="font-size:23px">Umbrales que deciden</h2><p style="font-size:19px">Escribir el p95 y la tasa de error, y que la prueba diga sola si pasó.</p></div>
+      <div class="tarjeta t-verde"><svg class="ic"><use href="#i-cpu"/></svg><h2 style="font-size:23px">Poco consumo</h2><p style="font-size:19px">Hasta 2000 usuarios desde la misma laptop sin quitarle CPU a Qolqe.</p></div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-usuarios"/></svg><h2 style="font-size:23px">Modelar la sesión</h2><p style="font-size:19px">Pesos, pausas, un usuario por VU y subidas por etapas.</p></div>
+      <div class="tarjeta t-morado"><svg class="ic"><use href="#i-codigo"/></svg><h2 style="font-size:23px">Código en el repo</h2><p style="font-size:19px">Archivos de texto que se revisan y se corren por consola.</p></div>
+      <div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-usuarios"/></svg><h2 style="font-size:23px">Encaje con el equipo</h2><p style="font-size:19px">Un lenguaje que ya usamos y podemos explicar.</p></div>
+    </div>
+    <p class="nota">El segundo criterio lo pone el enunciado: si la herramienta pasa del 80 % de CPU, se mide a la herramienta y no a la app. El primero es el paso 1 de la semana 14: un veredicto, no una impresión.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> No empezamos por la herramienta, sino por lo que el requerimiento y el enunciado nos obligaban a hacer. Estos cinco criterios son las filas de la comparación que viene.</aside>
+</section>
+
+<!-- s-comparacion -->
+<section id="s-comparacion" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>La herramienta · 2 de 4</span></p>
+  <h1>Cinco herramientas contra esos criterios</h1>
+  <div class="cuerpo" style="gap:18px">
+    <table class="tabla-chica comparacion">
+      <thead><tr><th style="width:15%">Criterio</th><th class="elegida">k6 · elegida</th><th>JMeter</th><th>Gatling</th><th>Locust</th><th>Artillery</th></tr></thead>
+      <tbody>
+        <tr><td><b>1</b> · Umbrales que deciden</td><td class="elegida"><span class="si">Sí</span> p(95) por etiqueta; si falla, termina con error</td><td><span class="parcial">Parcial</span> con Taurus o plugins</td><td><span class="si">Sí</span> assertions por percentil</td><td><span class="no">No</span> hay que programarlo</td><td><span class="si">Sí</span> con <code>ensure</code></td></tr>
+        <tr><td><b>2</b> · Poco consumo</td><td class="elegida"><span class="si">Sí</span> 2000 VUs con 4 % de un núcleo, medido</td><td><span class="no">No</span> un hilo de JVM por usuario</td><td><span class="si">Sí</span> asíncrono</td><td><span class="parcial">Parcial</span> un proceso por núcleo</td><td><span class="parcial">Parcial</span> un proceso de Node</td></tr>
+        <tr><td><b>3</b> · Modelar la sesión</td><td class="elegida"><span class="si">Sí</span> etapas, pausas, un usuario por VU</td><td><span class="si">Sí</span> thread groups y timers</td><td><span class="si">Sí</span> inyección abierta y cerrada</td><td><span class="si">Sí</span> tareas con peso</td><td><span class="parcial">Parcial</span> fases por llegadas, no por usuario</td></tr>
+        <tr><td><b>4</b> · Código en el repo</td><td class="elegida"><span class="si">Sí</span> JavaScript</td><td><span class="parcial">Parcial</span> XML armado en la interfaz</td><td><span class="si">Sí</span> Java, Kotlin o Scala</td><td><span class="si">Sí</span> Python</td><td><span class="si">Sí</span> YAML y JS</td></tr>
+        <tr><td><b>5</b> · Encaje con el equipo</td><td class="elegida"><span class="si">Sí</span> JS, como la suite de API</td><td><span class="no">No</span> herramienta y formato nuevos</td><td><span class="parcial">Parcial</span> JVM y DSL nuevos</td><td><span class="parcial">Parcial</span> Python, pero compite con Qolqe por el CPU</td><td><span class="parcial">Parcial</span> formato nuevo</td></tr>
+        <tr><td><b>Cumple</b></td><td class="elegida"><b>5 de 5</b></td><td>1 de 5</td><td>4 de 5</td><td>2 de 5</td><td>2 de 5</td></tr>
+      </tbody>
+    </table>
+    <p class="nota"><b>Cómo leerla:</b> cada fila es un criterio. <span class="si">Sí</span>: lo trae listo. <span class="parcial">Parcial</span>: con plugins o código extra. <span class="no">No</span>: no lo trae o choca con nuestro entorno. La segunda opción fue Gatling: cumple casi todo, pero pide la JVM y aprender su DSL.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Se lee por filas. En umbrales, k6, Gatling y Artillery lo traen; JMeter necesita Taurus o plugins y en Locust hay que programarlo. En consumo, JMeter crea un hilo por usuario y en la misma laptop competiría con Qolqe. La última fila es el conteo: k6 cumple los cinco.</aside>
+</section>
+
+<!-- s-por-que-k6 -->
+<section id="s-por-que-k6" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>La herramienta · 3 de 4</span></p>
+  <h1>Elegimos k6 por cuatro razones</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila c2">
+      <div class="tarjeta t-rojo"><div class="fila-ic"><svg class="ic"><use href="#i-objetivo"/></svg><h2>El requerimiento es el código</h2></div><p><code>p(95)&lt;1500</code> para dinero, y si no se cumple k6 termina con error. El veredicto no depende de mirar un gráfico.</p></div>
+      <div class="tarjeta t-verde"><div class="fila-ic"><svg class="ic"><use href="#i-cpu"/></svg><h2>4 % de un núcleo con 2000 usuarios</h2></div><p>Está escrito en Go: miles de usuarios caben en pocos núcleos. Como máximo usó el 90 % de un núcleo y 745 MB.</p></div>
+      <div class="tarjeta t-azul"><div class="fila-ic"><svg class="ic"><use href="#i-usuarios"/></svg><h2>Modela lo que pide el negocio</h2></div><p>Etapas para carga, pico y estrés; pausas; un usuario por VU; etiquetas para consulta y dinero; <code>http.batch</code> para el doble clic.</p></div>
+      <div class="tarjeta t-morado"><div class="fila-ic"><svg class="ic"><use href="#i-codigo"/></svg><h2>JavaScript, en el repo</h2></div><p>El mismo lenguaje que la suite de API. Corre por consola, con panel web en vivo, y deja CSV y JSON para los gráficos.</p></div>
+    </div>
+    <p class="nota"><b>Lo que no hace:</b> no mide el servidor (lo mide <code>monitor.py</code>); su JavaScript no es Node, así que no usa paquetes de npm; no tiene grabador gráfico como JMeter: la prueba se escribe a mano y se revisa como código.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Si nos preguntan por qué k6 en una frase: porque el requerimiento se escribe tal cual y la prueba dice sola si pasó, sin quitarle CPU a Qolqe. Las otras dos razones hacen que el modelo de carga se exprese sin trucos y que encaje con lo que ya teníamos.</aside>
+</section>
+
+<!-- s-k6-codigo -->
+<section id="s-k6-codigo" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>La herramienta · 4 de 4</span><span class="tenue"><code>escenarios/carga.js</code>, resumido</span></p>
+  <h1>Así se ve una prueba en k6</h1>
+  <div class="cuerpo">
+    <div class="fila" style="grid-template-columns:1.15fr 1fr;align-items:center;gap:40px">
+      <div class="codigo" style="font-size:18px;line-height:1.6">export const options = {
+  scenarios: {
+    hora_punta: {
+      executor: <span class="s">'ramping-vus'</span>,
+      stages: [
+        { duration: <span class="s">'2m'</span>,  target: <span class="v">100</span> }, <span class="c">// subida</span>
+        { duration: <span class="s">'20m'</span>, target: <span class="v">100</span> }, <span class="c">// estable</span>
+        { duration: <span class="s">'1m'</span>,  target: <span class="v">0</span> },
+      ],
+    },
+  },
+  thresholds: {
+    <span class="s">'http_req_duration{tipo:consulta}'</span>: [<span class="s">'p(95)&lt;800'</span>],
+    <span class="s">'http_req_duration{tipo:dinero}'</span>:   [<span class="s">'p(95)&lt;1500'</span>],
+    http_req_failed: [<span class="s">'rate&lt;0.01'</span>],
+  },
+};
+export default sesion; <span class="c">// login + 6 operaciones</span></div>
+      <div style="display:grid;gap:14px">
+        <div class="chip t-azul"><b style="font-size:22px">ramping-vus</b>Los usuarios suben y bajan por etapas. Pico y estrés solo cambian las etapas.</div>
+        <div class="chip t-amarillo"><b style="font-size:22px">target: 100</b>Los 100 usuarios de la ley de Little; 20 minutos dan unas 1000 sesiones.</div>
+        <div class="chip t-rojo"><b style="font-size:22px">thresholds</b>Las frases del requerimiento. Si una falla, la corrida termina en rojo.</div>
+        <div class="chip t-verde"><b style="font-size:22px">sesion</b>Login y 6 operaciones sorteadas con sus pesos, con pausa de 10 a 25 s.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Esto es todo lo que define la prueba de carga. Arriba, cuántos usuarios y por cuánto tiempo; abajo, los umbrales del requerimiento. La sesión está en otro archivo y es la misma para las cuatro pruebas. Esto es lo que vamos a correr en la demo.</aside>
+</section>
+
+<!-- s-flujos -->
+<section id="s-flujos" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · flujos críticos y capa</span></p>
+  <h1>Cuatro flujos que no pueden fallar</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="fila c4">
+      <div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-llave"/></svg><h2>Iniciar sesión</h2><p><b>Frecuencia y costo:</b> toda la campaña entra por aquí, y verificar el PIN es lo que más CPU gasta.</p></div>
+      <div class="tarjeta t-verde"><svg class="ic"><use href="#i-transferir"/></svg><h2>Transferir · 15 %</h2><p><b>Dinero de dos cuentas:</b> valida límite diario, saldo y antifraude.</p></div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-celular"/></svg><h2>Recargar · 10 %</h2><p><b>Dinero</b>, y un tope de recargas al día al mismo número.</p></div>
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-recibo"/></svg><h2>Pagar · 4 %</h2><p><b>Dinero</b>, y el riesgo de cobrar dos veces la misma deuda.</p></div>
+    </div>
+    <div class="tarjeta t-blanco" style="flex-direction:row;align-items:center;gap:22px"><svg class="ic"><use href="#i-codigo"/></svg><p><b>Capa: API.</b> El requerimiento pide tiempos de operaciones, y las resuelve la API: la web es HTML estático que llama a los mismos endpoints. Probar la web sumaría el tiempo del navegador, que el requerimiento no pide.</p></div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> El criterio del enunciado: frecuencia, impacto en el dinero y riesgo. El login entra por frecuencia y costo; los otros tres mueven dinero. Las consultas también se prueban, con su peso. La capa la elegimos como pide la plantilla de la semana 13.</aside>
+</section>
+
+<!-- s-umbral -->
+<section id="s-umbral" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · del SLA al umbral · semana 14</span></p>
+  <h1>Cada frase, convertida en un número</h1>
+  <div class="cuerpo" style="gap:20px">
+    <div class="fila" style="grid-template-columns:repeat(4,1fr) auto 1.2fr;align-items:center;gap:12px">
+      <div class="chip t-azul" style="text-align:center"><b style="font-size:24px">Métrica</b>tiempo de respuesta</div>
+      <div class="chip t-verde" style="text-align:center"><b style="font-size:24px">Percentil</b>p95</div>
+      <div class="chip t-amarillo" style="text-align:center"><b style="font-size:24px">Límite</b>800 ms</div>
+      <div class="chip t-morado" style="text-align:center"><b style="font-size:24px">Carga</b>100 usuarios</div>
+      <div class="flecha">→</div>
+      <div class="chip t-blanco" style="text-align:center"><b style="font-size:24px;font-family:var(--mono)">p(95)&lt;800</b>umbral que k6 verifica</div>
+    </div>
+    <table class="tabla-chica">
+      <thead><tr><th style="width:36%">Frase del requerimiento</th><th>Umbral</th><th style="width:34%">Lo que faltaba</th></tr></thead>
+      <tbody>
+        <tr><td>«Consultas e inicio de sesión: el 95 % en menos de 800 ms»</td><td class="mono">p(95)&lt;800 con 100 VUs</td><td>La carga: sale de la ley de Little</td></tr>
+        <tr><td>«Dinero: el 95 % en menos de 1.5 s»</td><td class="mono">p(95)&lt;1500 con 100 VUs</td><td>La carga</td></tr>
+        <tr><td>«No más del 1 % puede fallar»</td><td class="mono">rate&lt;0.01</td><td>Qué es fallar: 5xx, timeout o respuesta inesperada</td></tr>
+        <tr><td>«Sin acumular retrasos»</td><td>≥ 50 sesiones/min y p95 plano</td><td>Un número: 3000 por hora = 50 por minuto</td></tr>
+        <tr><td>«Degradación razonable» en la campaña</td><td class="mono">p(95)&lt;1600 y &lt;3000</td><td><b>Supuesto:</b> hasta el doble</td></tr>
+        <tr><td>«Nada a medias ni aplicado dos veces»</td><td>base antes = después</td><td>No es un tiempo: se verifica en la base</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Arriba, la fórmula de la semana 14: un umbral necesita métrica, percentil, límite y carga. Cuando faltaba algo no lo inventamos: lo escribimos como supuesto. El más discutible es la degradación razonable; tomamos el doble. Y medimos p95, no promedio, porque el promedio esconde a los usuarios lentos.</aside>
+</section>
+
+<!-- s-reglas -->
+<section id="s-reglas" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · datos de prueba</span></p>
+  <h1>Las reglas del negocio también aplican bajo carga</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila c5">
+      <div class="tarjeta t-verde"><svg class="ic c"><use href="#i-transferir"/></svg><h2 style="font-size:21px">Límite diario de S/ 2000</h2><p style="font-size:18px">Un usuario propio por VU y transferencias de S/ 1 a 20.</p></div>
+      <div class="tarjeta t-amarillo"><svg class="ic c"><use href="#i-dinero"/></svg><h2 style="font-size:21px">Saldo suficiente</h2><p style="font-size:18px">S/ 10 000 por usuario antes de cada prueba.</p></div>
+      <div class="tarjeta t-azul"><svg class="ic c"><use href="#i-celular"/></svg><h2 style="font-size:21px">Tope de recargas</h2><p style="font-size:18px">Cada recarga va a un número al azar.</p></div>
+      <div class="tarjeta t-rojo"><svg class="ic c"><use href="#i-candado"/></svg><h2 style="font-size:21px">Bloqueo por 3 PIN errados</h2><p style="font-size:18px">Cada VU con su celular y su PIN correcto.</p></div>
+      <div class="tarjeta t-morado"><svg class="ic c"><use href="#i-recibo"/></svg><h2 style="font-size:21px">Una deuda, un pago</h2><p style="font-size:18px">20 deudas por usuario; cada pago avanza a la siguiente.</p></div>
+    </div>
+    <div class="fila c2">
+      <div class="tarjeta t-blanco"><p class="grande">1000<small>usuarios</small></p><p>Cada uno con saldo, 20 deudas y 5 contactos, preparados por <code>preparar_datos.py</code>.</p></div>
+      <div class="tarjeta t-blanco"><p class="grande">0<small>rechazos de negocio</small></p><p>En carga, pico y resistencia ningún 422: lo que medimos es rendimiento, no datos mal armados.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Si cien usuarios virtuales usaran la misma cuenta, el límite diario se agotaría en minutos y estaríamos midiendo rechazos de negocio, no rendimiento. Por eso cada VU es una persona distinta, con su propio saldo y sus deudas. El enunciado lo pide: un 422 de negocio se cuenta aparte, y fueron cero.</aside>
+</section>
+
+<!-- s-modelo -->
+<section id="s-modelo" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · modelo de carga</span></p>
+  <h1>De dónde sale cada número</h1>
+  <div class="cuerpo" style="gap:30px">
+    <div class="fila c3">
+      <div class="tarjeta t-azul"><p class="grande">100<small>usuarios</small></p><p>3000 sesiones por hora son 0.83 por segundo; cada una dura 120 s: 0.83 × 120 = 100 a la vez (ley de Little).</p></div>
+      <div class="tarjeta t-rojo"><p class="grande">300<small>usuarios</small></p><p>El triple en la campaña, con la subida en los 5 minutos en que entra la mayoría.</p></div>
+      <div class="tarjeta t-amarillo"><p class="grande">18<small>s de pausa</small></p><p>Triangular de 10 a 25 s con moda 19: (10 + 19 + 25) / 3 = 18 exacto.</p></div>
+    </div>
+    <div>
+      <p class="dato" style="margin-bottom:12px;color:var(--muted);font-size:15px">Una sesión de un usuario virtual</p>
+      <div class="sesion">
+        <span class="op t-amarillo">login</span><span class="pausa">10–25 s</span>
+        <span class="op t-azul">saldo</span><span class="pausa">10–25 s</span>
+        <span class="op t-verde">transferir</span><span class="pausa">10–25 s</span>
+        <span class="op t-azul">movimientos</span><span class="pausa">10–25 s</span>
+        <span class="op t-azul">contactos</span><span class="pausa">10–25 s</span>
+        <span class="op t-verde">recargar</span><span class="pausa">10–25 s</span>
+        <span class="op t-azul">saldo</span>
+      </div>
+      <p class="nota" style="margin-top:12px">Las 6 operaciones se sortean con los pesos del requerimiento; este es un ejemplo. Al terminar, el usuario empieza otra sesión.</p>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> 3000 por hora son 0.83 por segundo; por 120 segundos de sesión dan 100 a la vez. La pausa: el requerimiento da rango y promedio, y una triangular con moda 19 cumple los dos. Seis pausas de 18 s son 108 s por sesión: con 100 VUs hacemos un 10 % más de sesiones que las pedidas, así que la prueba queda del lado exigente.</aside>
+</section>
+
+<!-- s-tipos -->
+<section id="s-tipos" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · tipos de prueba</span></p>
+  <h1>Cuatro pruebas, cada una responde algo</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="grafico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 270" width="1100" height="270" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Usuarios virtuales de cada prueba</title><line x1="60" y1="210.0" x2="290" y2="210.0" stroke="#e6e6e9" stroke-width="1"/><text x="48.0" y="210.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="60" y1="156.7" x2="290" y2="156.7" stroke="#e6e6e9" stroke-width="1"/><text x="48.0" y="156.7" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">500</text><line x1="60" y1="103.3" x2="290" y2="103.3" stroke="#e6e6e9" stroke-width="1"/><text x="48.0" y="103.3" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">1000</text><line x1="60" y1="50.0" x2="290" y2="50.0" stroke="#e6e6e9" stroke-width="1"/><text x="48.0" y="50.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">1500</text><polygon points="60.0,210.0 60.0,210.0 80.0,199.3 280.0,199.3 290.0,210.0 290.0,210.0" fill="#4487f6" fill-opacity="0.14" stroke="none"/><polyline points="60.0,210.0 80.0,199.3 280.0,199.3 290.0,210.0" fill="none" stroke="#4487f6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="60" y1="210" x2="290" y2="210" stroke="#c9c9ce" stroke-width="1"/><text x="290.0" y="236.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">23 min</text><text x="60.0" y="34.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Carga</text><text x="86.0" y="189.3" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">100</text><line x1="330" y1="210.0" x2="560" y2="210.0" stroke="#e6e6e9" stroke-width="1"/><text x="318.0" y="210.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="330" y1="156.7" x2="560" y2="156.7" stroke="#e6e6e9" stroke-width="1"/><text x="318.0" y="156.7" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="330" y1="103.3" x2="560" y2="103.3" stroke="#e6e6e9" stroke-width="1"/><text x="318.0" y="103.3" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="330" y1="50.0" x2="560" y2="50.0" stroke="#e6e6e9" stroke-width="1"/><text x="318.0" y="50.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><polygon points="330.0,210.0 330.0,210.0 348.4,199.3 366.8,199.3 412.8,178.0 504.8,178.0 514.0,199.3 550.8,199.3 560.0,210.0 560.0,210.0" fill="#f08a24" fill-opacity="0.14" stroke="none"/><polyline points="330.0,210.0 348.4,199.3 366.8,199.3 412.8,178.0 504.8,178.0 514.0,199.3 550.8,199.3 560.0,210.0" fill="none" stroke="#f08a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="330" y1="210" x2="560" y2="210" stroke="#c9c9ce" stroke-width="1"/><text x="560.0" y="236.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">25 min</text><text x="330.0" y="34.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Pico</text><text x="418.8" y="168.0" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">300</text><line x1="600" y1="210.0" x2="830" y2="210.0" stroke="#e6e6e9" stroke-width="1"/><text x="588.0" y="210.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="600" y1="156.7" x2="830" y2="156.7" stroke="#e6e6e9" stroke-width="1"/><text x="588.0" y="156.7" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="600" y1="103.3" x2="830" y2="103.3" stroke="#e6e6e9" stroke-width="1"/><text x="588.0" y="103.3" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="600" y1="50.0" x2="830" y2="50.0" stroke="#e6e6e9" stroke-width="1"/><text x="588.0" y="50.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><polygon points="600.0,210.0 600.0,210.0 607.9,199.3 631.7,199.3 639.7,178.0 663.4,178.0 671.4,146.0 695.2,146.0 703.1,124.7 726.9,124.7 734.8,103.3 758.6,103.3 766.6,82.0 790.3,82.0 798.3,60.7 822.1,60.7 830.0,210.0 830.0,210.0" fill="#f45454" fill-opacity="0.14" stroke="none"/><polyline points="600.0,210.0 607.9,199.3 631.7,199.3 639.7,178.0 663.4,178.0 671.4,146.0 695.2,146.0 703.1,124.7 726.9,124.7 734.8,103.3 758.6,103.3 766.6,82.0 790.3,82.0 798.3,60.7 822.1,60.7 830.0,210.0" fill="none" stroke="#f45454" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="600" y1="210" x2="830" y2="210" stroke="#c9c9ce" stroke-width="1"/><text x="830.0" y="236.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">29 min</text><text x="600.0" y="34.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Estrés</text><text x="804.3" y="50.7" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">1400</text><line x1="870" y1="210.0" x2="1100" y2="210.0" stroke="#e6e6e9" stroke-width="1"/><text x="858.0" y="210.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="870" y1="156.7" x2="1100" y2="156.7" stroke="#e6e6e9" stroke-width="1"/><text x="858.0" y="156.7" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="870" y1="103.3" x2="1100" y2="103.3" stroke="#e6e6e9" stroke-width="1"/><text x="858.0" y="103.3" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><line x1="870" y1="50.0" x2="1100" y2="50.0" stroke="#e6e6e9" stroke-width="1"/><text x="858.0" y="50.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle"></text><polygon points="870.0,210.0 870.0,210.0 877.3,199.3 1096.3,199.3 1100.0,210.0 1100.0,210.0" fill="#9268f5" fill-opacity="0.14" stroke="none"/><polyline points="870.0,210.0 877.3,199.3 1096.3,199.3 1100.0,210.0" fill="none" stroke="#9268f5" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="870" y1="210" x2="1100" y2="210" stroke="#c9c9ce" stroke-width="1"/><text x="1100.0" y="236.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">63 min</text><text x="870.0" y="34.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Resistencia</text><text x="883.3" y="189.3" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">100</text></svg></div>
+    <div class="fila c4">
+      <div class="tarjeta t-azul"><h2 style="font-size:23px">Carga</h2><p style="font-size:19px">¿Cumple la hora punta? 100 usuarios, 20 minutos estables.</p></div>
+      <div class="tarjeta t-amarillo"><h2 style="font-size:23px">Pico</h2><p style="font-size:19px">La campaña: de 100 a 300 en 5 minutos y de vuelta.</p></div>
+      <div class="tarjeta t-rojo"><h2 style="font-size:23px">Estrés</h2><p style="font-size:19px">Escalones de usuarios hasta que deja de cumplir.</p></div>
+      <div class="tarjeta t-morado"><h2 style="font-size:23px">Resistencia</h2><p style="font-size:19px">100 usuarios durante una hora, buscando fugas de memoria.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Corrimos las cuatro. Los escalones del estrés no son al azar: antes hicimos un sondeo de 0 a 2000 usuarios que se rompió cerca de 1100, y pusimos los escalones alrededor. La resistencia no es de 18 horas: es la hora punta completa, y proyectamos la tendencia.</aside>
+</section>
+
+<!-- s-entorno -->
+<section id="s-entorno" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · entorno</span></p>
+  <h1>Qolqe en una caja de 1 CPU; k6 afuera</h1>
+  <div class="cuerpo" style="gap:26px">
+    <div class="flujo" style="grid-template-columns:1fr 70px 1fr 70px 1fr">
+      <div class="tarjeta t-verde"><svg class="ic g"><use href="#i-laptop"/></svg><h2>k6 en la laptop</h2><p>Genera de 100 a 2000 usuarios. Usó como máximo el 9 % de la laptop.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-azul"><svg class="ic g"><use href="#i-caja"/></svg><h2>Qolqe en Docker</h2><p><b>1 CPU y 1 GB</b>, un proceso de uvicorn y SQLite. Una línea base, no producción.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-morado"><svg class="ic g"><use href="#i-monitor"/></svg><h2>Cada segundo</h2><p>CPU, memoria e hilos de Qolqe y de k6 con <code>monitor.py</code>.</p></div>
+    </div>
+    <div class="fila c4">
+      <div class="chip t-blanco"><b style="font-size:22px">Tiempo</b>p95 por tipo y por operación</div>
+      <div class="chip t-blanco"><b style="font-size:22px">Throughput</b>peticiones/s y sesiones/min</div>
+      <div class="chip t-blanco"><b style="font-size:22px">Recursos</b>CPU, memoria e hilos</div>
+      <div class="chip t-blanco"><b style="font-size:22px">SLA</b>umbrales y dinero cuadrado</div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> De las cuatro opciones de entorno del enunciado elegimos Docker. Abajo, las cuatro categorías de métricas de la semana 14: todas se midieron. La pregunta obvia es por qué 1 CPU; la respondemos en la siguiente.</aside>
+</section>
+
+<!-- s-cpu -->
+<section id="s-cpu" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Diseño · entorno</span></p>
+  <h1>¿Por qué 1 CPU y no un VPS?</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="fila c2">
+      <div class="tarjeta t-azul">
+        <div class="fila-ic"><svg class="ic"><use href="#i-cpu"/></svg><h2>Por qué 1 CPU</h2></div>
+        <ul class="lista">
+          <li>Es una de las cuatro opciones del enunciado: Docker con <code>--cpus=1 --memory=1g</code>.</li>
+          <li>Qolqe corre en <b>un solo proceso</b>: así está hecho, y así lo probamos.</li>
+          <li><b>El CPU nunca fue el límite:</b> llegó como máximo al 58 % y, cuando colapsó, bajó. Más CPUs no habrían movido el quiebre.</li>
+          <li>Con 1 CPU el quiebre aparece con usuarios que una laptop sí puede generar.</li>
+        </ul>
+      </div>
+      <div class="tarjeta t-amarillo">
+        <div class="fila-ic"><svg class="ic"><use href="#i-nube"/></svg><h2>Por qué no un VPS</h2></div>
+        <ul class="lista">
+          <li>Desde la laptop, la <b>latencia de internet</b> se suma a cada tiempo: mediríamos la red, no a Qolqe. El enunciado lo advierte para Codespaces.</li>
+          <li>Un VPS compartido tiene <b>vecinos ruidosos</b>: dos corridas no dan lo mismo.</li>
+          <li>Cuesta, y no estaba entre las opciones del enunciado.</li>
+          <li>El cuello de botella es SQLite con un solo escritor: <b>aparece igual en cualquier máquina</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="nota">Lo que sí cambia de máquina a máquina son los números absolutos; por eso el informe lo presenta como línea base relativa. Para producción, la recomendación es otra arquitectura (PostgreSQL y varios procesos), no otra máquina.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> La clave es el tercer punto de la izquierda: medimos el CPU todo el tiempo y nunca llegó al límite. Si el problema fuera falta de CPU, un VPS más grande ayudaría; pero el problema es el candado de SQLite, y ese se repite en cualquier máquina.</aside>
+</section>
+
+<!-- s-demo -->
+<section id="s-demo" class="slide oscura">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>Demo en vivo</span></p>
+  <h1>Una prueba, un comando</h1>
+  <div class="cuerpo">
+    <div class="codigo"><span class="c"># hora punta en corto: 100 usuarios, 4 minutos</span>
+tests/performance/correr.sh demo 100
+<span class="c"># mientras corre, el panel de k6</span>
+open http://localhost:5665
+<span class="c"># el doble clic: 5 repeticiones en 3 segundos</span>
+k6 run tests/performance/escenarios/concurrencia.js</div>
+    <div class="fila c3">
+      <p style="font-size:22px">Levanta Qolqe limpio, prepara los datos y toma la foto de la base.</p>
+      <p style="font-size:22px">Corre k6 y mide a Qolqe y a k6 cada segundo.</p>
+      <p style="font-size:22px">Al final: umbrales en verde o rojo, el dinero cuadrado y los gráficos.</p>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Lanzar correr.sh demo 100 y abrir el panel. Mostrar los VUs subiendo y el p95 plano. Mientras corre, seguir con el análisis y volver al final para el resumen: umbrales en verde y el dinero cuadrado. Después, concurrencia.js: en 3 segundos fallan las verificaciones de límite y saldo.</aside>
+</section>
+
+<!-- s-analisis -->
+<section id="s-analisis" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Análisis · semana 14</span></p>
+  <h1>Leímos los resultados en cuatro pasos</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="flujo" style="grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr">
+      <div class="tarjeta t-verde"><svg class="ic"><use href="#i-check"/></svg><p class="paso-n">Paso 1 · diap. <span data-diap="s-hora:s-resistencia"></span></p><h2>¿Pasó?</h2><p style="font-size:19px">Hora punta, campaña y resistencia contra los umbrales.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-alerta"/></svg><p class="paso-n">Paso 2 · diap. <span data-diap="s-estres-pps, s-estres-errores"></span></p><h2>¿Dónde falló?</h2><p style="font-size:19px">Con cuántos usuarios, en qué métrica, qué errores.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-lupa"/></svg><p class="paso-n">Paso 3 · diap. <span data-diap="s-quiebre:s-dinero"></span></p><h2>¿Por qué?</h2><p style="font-size:19px">Qué recurso se agotó y qué patrón muestra.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-objetivo"/></svg><p class="paso-n">Paso 4 · diap. <span data-diap="s-capacidad:s-arquitectura"></span></p><h2>¿Qué hacer?</h2><p style="font-size:19px">Capacidad y recomendaciones.</p></div>
+    </div>
+    <div class="fila c3">
+      <div class="tarjeta t-blanco"><svg class="boceto" viewBox="0 0 200 70"><path d="M6 62 C60 60 110 50 194 10" fill="none" stroke="#c9c9ce" stroke-width="4" stroke-linecap="round"/></svg><h2 style="font-size:22px">Gradual</h2><p style="font-size:18px">Un recurso se llena de a poco. <b>No apareció.</b></p></div>
+      <div class="tarjeta t-rojo"><svg class="boceto" viewBox="0 0 200 70"><path d="M6 60 H110 L118 10 H194" fill="none" stroke="#f45454" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 style="font-size:22px">Abrupto</h2><p style="font-size:18px">Un límite fijo se agota de golpe. <b>El estrés, con 800.</b></p></div>
+      <div class="tarjeta t-amarillo"><svg class="boceto" viewBox="0 0 200 70"><path d="M6 58 H58 L64 22 L70 58 H128 L134 22 L140 58 H194" fill="none" stroke="#a86b00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 style="font-size:22px">Periódico</h2><p style="font-size:18px">Algo que corre cada cierto tiempo. <b>La resistencia.</b></p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Usamos el flujo de la clase: primero el veredicto contra los umbrales; después dónde, por qué y qué hacer. Abajo, los tres patrones de degradación de la semana 14: vimos dos de los tres.</aside>
+</section>
+
+<!-- s-graficos -->
+<section id="s-graficos" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Análisis · cómo leer los gráficos</span></p>
+  <h1>Tres reglas en todos los gráficos</h1>
+  <div class="cuerpo">
+    <div class="fila c3">
+      <div class="tarjeta t-azul"><svg class="boceto" viewBox="0 0 200 70"><rect x="4" y="4" width="192" height="28" rx="6" fill="#fff"/><path d="M14 24 C60 22 90 12 186 14" fill="none" stroke="#4487f6" stroke-width="3"/><rect x="4" y="38" width="192" height="28" rx="6" fill="#fff"/><path d="M14 58 H90 L98 46 H186" fill="none" stroke="#f45454" stroke-width="3"/></svg><h2>Un eje por panel</h2><p>Usuarios y milisegundos nunca comparten gráfico: van en paneles alineados en el tiempo.</p></div>
+      <div class="tarjeta t-amarillo"><svg class="boceto" viewBox="0 0 200 70"><path d="M8 50 H192" stroke="#101011" stroke-width="2" stroke-dasharray="7 6"/><text x="190" y="44" text-anchor="end" font-size="14" fill="#424246">límite 800 ms</text><path d="M10 62 C50 60 100 58 190 60" fill="none" stroke="#39bf84" stroke-width="3"/></svg><h2>El límite, dibujado</h2><p>Cada umbral es una línea punteada: si la curva queda debajo, cumple.</p></div>
+      <div class="tarjeta t-rojo"><svg class="boceto" viewBox="0 0 200 70"><rect x="18" y="40" width="30" height="26" rx="4" fill="#4487f6"/><rect x="62" y="26" width="30" height="40" rx="4" fill="#4487f6"/><rect x="106" y="50" width="30" height="16" rx="4" fill="#f45454"/><rect x="150" y="44" width="30" height="22" rx="4" fill="#f45454"/></svg><h2>Rojo = no cumple</h2><p>El color solo marca lo que falla; lo demás va en azul y verde.</p></div>
+    </div>
+    <p class="nota">Y medimos p95 por ventana de tiempo, nunca promedios. Como dice la semana 14: la tabla dice si se cumplió; los gráficos en el tiempo dicen cuándo y cómo empezó a fallar.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Antes de los resultados, cómo leerlos. La regla más importante: nunca dos ejes en un gráfico, porque la forma depende de cómo se eligen las escalas. Por eso van en paneles separados.</aside>
+</section>
+
+<!-- s-hora -->
+<section id="s-hora" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 1 · hora punta</span></p>
+  <h1>100 usuarios: lejos de cualquier límite</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila" style="grid-template-columns:1fr 330px;gap:34px;align-items:center">
+      <div class="grafico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 520" width="1100" height="520" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>p95 por operación con 100 usuarios</title><line x1="220.0" y1="60" x2="220.0" y2="420" stroke="#e6e6e9" stroke-width="1"/><text x="220.0" y="450.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">0 ms</text><line x1="430.0" y1="60" x2="430.0" y2="420" stroke="#e6e6e9" stroke-width="1"/><text x="430.0" y="450.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">400 ms</text><line x1="640.0" y1="60" x2="640.0" y2="420" stroke="#e6e6e9" stroke-width="1"/><text x="640.0" y="450.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">800 ms</text><line x1="850.0" y1="60" x2="850.0" y2="420" stroke="#e6e6e9" stroke-width="1"/><text x="850.0" y="450.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">1200 ms</text><line x1="1060.0" y1="60" x2="1060.0" y2="420" stroke="#e6e6e9" stroke-width="1"/><text x="1060.0" y="450.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">1600 ms</text><rect x="220" y="68.0" width="29.4" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="80.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Iniciar sesión</text><text x="261.4" y="80.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">56 ms</text><rect x="220" y="108.0" width="14.2" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="120.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Movimientos</text><text x="246.2" y="120.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">27 ms</text><rect x="220" y="148.0" width="4.0" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="160.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Contactos</text><text x="236.0" y="160.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">6 ms</text><rect x="220" y="188.0" width="4.0" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="200.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Consultar deudas</text><text x="236.0" y="200.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">6 ms</text><rect x="220" y="228.0" width="4.0" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="240.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Otras consultas</text><text x="236.0" y="240.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">6 ms</text><rect x="220" y="268.0" width="4.0" height="24" rx="4" fill="#4487f6"/><text x="204.0" y="280.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Saldo y perfil</text><text x="236.0" y="280.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">5 ms</text><rect x="220" y="308.0" width="68.8" height="24" rx="4" fill="#2fa874"/><text x="204.0" y="320.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Transferir</text><text x="300.8" y="320.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">131 ms</text><rect x="220" y="348.0" width="6.8" height="24" rx="4" fill="#2fa874"/><text x="204.0" y="360.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Recargar</text><text x="238.8" y="360.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">13 ms</text><rect x="220" y="388.0" width="5.8" height="24" rx="4" fill="#2fa874"/><text x="204.0" y="400.0" font-size="19" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="middle">Pagar servicio</text><text x="237.8" y="400.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">11 ms</text><line x1="640.0" y1="44" x2="640.0" y2="420" stroke="#101011" stroke-width="2" stroke-dasharray="7 6" stroke-opacity="0.7"/><text x="632.0" y="36.0" font-size="17" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="auto">límite consultas · 800 ms</text><line x1="1007.5" y1="44" x2="1007.5" y2="420" stroke="#101011" stroke-width="2" stroke-dasharray="7 6" stroke-opacity="0.7"/><text x="999.5" y="36.0" font-size="17" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="auto">límite dinero · 1500 ms</text><line x1="220" y1="486" x2="242" y2="486" stroke="#4487f6" stroke-width="3" stroke-linecap="round"/><text x="250.0" y="486.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">consultas y login</text><line x1="424.2" y1="486" x2="446.2" y2="486" stroke="#2fa874" stroke-width="3" stroke-linecap="round"/><text x="454.2" y="486.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">dinero</text></svg></div>
+      <div style="display:grid;gap:14px">
+        <div class="chip t-azul"><b>51 ms</b>p95 de consultas (límite 800)</div>
+        <div class="chip t-verde"><b>126 ms</b>p95 de dinero (límite 1500)</div>
+        <div class="chip t-amarillo"><b>0 %</b>fallas en 7999 peticiones</div>
+        <div class="chip t-blanco"><b>55 / min</b>sesiones (mínimo 50)</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> ¿Pasó? Sí, y con margen. Cada barra es el p95 de una operación; las líneas punteadas son los límites. La más lenta es transferir, 131 ms, y casi todo es la pausa de 40 a 120 ms del antifraude. En 20 minutos las cuatro ventanas de 5 minutos dan lo mismo: no se acumulan retrasos.</aside>
+</section>
+
+<!-- s-campana -->
+<section id="s-campana" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 1 · campaña</span></p>
+  <h1>300 usuarios y los tiempos no se mueven</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila" style="grid-template-columns:1fr 330px;gap:34px;align-items:center">
+      <div class="grafico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 500" width="1100" height="500" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Campaña: de 100 a 300 usuarios y vuelta</title><line x1="90" y1="180.0" x2="1060" y2="180.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="180.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="90" y1="140.0" x2="1060" y2="140.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="140.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">100</text><line x1="90" y1="100.0" x2="1060" y2="100.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="100.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">200</text><line x1="90" y1="60.0" x2="1060" y2="60.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="60.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">300</text><polygon points="80.5,180.0 80.5,180.0 99.5,170.0 118.5,160.0 137.5,150.0 156.6,140.4 175.6,140.0 194.6,140.0 213.6,140.0 232.6,140.0 251.7,132.4 270.7,124.4 289.7,116.4 308.7,108.4 327.7,100.4 346.8,92.4 365.8,84.4 384.8,76.4 403.8,68.4 422.8,60.4 441.9,60.0 460.9,60.0 479.9,60.0 498.9,60.0 517.9,60.0 537.0,60.0 556.0,60.0 575.0,60.0 594.0,60.0 613.0,60.0 632.1,60.0 651.1,60.0 670.1,60.0 689.1,60.0 708.1,60.0 727.2,60.0 746.2,60.0 765.2,60.0 784.2,60.0 803.2,60.0 822.3,60.0 841.3,68.0 860.3,83.6 879.3,101.6 898.3,126.8 917.4,137.2 936.4,140.0 955.4,140.0 974.4,140.0 993.4,140.0 1012.5,140.0 1031.5,141.6 1050.5,150.8 1050.5,180.0" fill="#4487f6" fill-opacity="0.12" stroke="none"/><polyline points="80.5,180.0 99.5,170.0 118.5,160.0 137.5,150.0 156.6,140.4 175.6,140.0 194.6,140.0 213.6,140.0 232.6,140.0 251.7,132.4 270.7,124.4 289.7,116.4 308.7,108.4 327.7,100.4 346.8,92.4 365.8,84.4 384.8,76.4 403.8,68.4 422.8,60.4 441.9,60.0 460.9,60.0 479.9,60.0 498.9,60.0 517.9,60.0 537.0,60.0 556.0,60.0 575.0,60.0 594.0,60.0 613.0,60.0 632.1,60.0 651.1,60.0 670.1,60.0 689.1,60.0 708.1,60.0 727.2,60.0 746.2,60.0 765.2,60.0 784.2,60.0 803.2,60.0 822.3,60.0 841.3,68.0 860.3,83.6 879.3,101.6 898.3,126.8 917.4,137.2 936.4,140.0 955.4,140.0 974.4,140.0 993.4,140.0 1012.5,140.0 1031.5,141.6 1050.5,150.8" fill="none" stroke="#4487f6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="90" y1="180" x2="1060" y2="180" stroke="#c9c9ce" stroke-width="1"/><text x="90.0" y="44.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Usuarios conectados</text><text x="90.0" y="246.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Tiempo de respuesta (p95, cada 30 s)</text><line x1="90" y1="432.0" x2="1060" y2="432.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="432.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0 ms</text><line x1="90" y1="389.5" x2="1060" y2="389.5" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="389.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">400 ms</text><line x1="90" y1="347.0" x2="1060" y2="347.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="347.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">800 ms</text><line x1="90" y1="304.5" x2="1060" y2="304.5" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="304.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">1200 ms</text><line x1="90" y1="262.0" x2="1060" y2="262.0" stroke="#e6e6e9" stroke-width="1"/><text x="78.0" y="262.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">1600 ms</text><line x1="90" y1="347.0" x2="1060" y2="347.0" stroke="#66666c" stroke-width="1.5" stroke-dasharray="6 6"/><text x="1060.0" y="339.0" font-size="16" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="auto">límite consultas · 800 ms</text><line x1="90" y1="272.6" x2="1060" y2="272.6" stroke="#66666c" stroke-width="1.5" stroke-dasharray="6 6"/><text x="1060.0" y="264.6" font-size="16" fill="#424246" text-anchor="end" font-weight="400" dominant-baseline="auto">límite dinero · 1500 ms</text><polyline points="99.5,419.9 118.5,420.4 137.5,419.0 156.6,418.4 175.6,417.6 194.6,418.3 213.6,418.2 232.6,417.7 251.7,418.3 270.7,418.0 289.7,418.7 308.7,418.9 327.7,419.1 346.8,419.0 365.8,418.8 384.8,418.4 403.8,417.9 422.8,418.6 441.9,418.7 460.9,418.7 479.9,418.5 498.9,419.0 517.9,418.0 537.0,418.4 556.0,418.4 575.0,418.3 594.0,418.4 613.0,418.3 632.1,418.5 651.1,418.9 670.1,418.9 689.1,419.0 708.1,419.2 727.2,418.7 746.2,419.0 765.2,418.4 784.2,418.9 803.2,418.2 822.3,418.5 841.3,418.4 860.3,418.4 879.3,418.7 898.3,418.2 917.4,419.5 936.4,418.4 955.4,418.0 974.4,420.2 993.4,419.0 1012.5,418.9 1031.5,417.7 1050.5,418.0" fill="none" stroke="#2fa874" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="80.5,426.0 99.5,426.1 118.5,426.2 137.5,426.7 156.6,426.7 175.6,426.8 194.6,426.4 213.6,426.9 232.6,426.4 251.7,426.8 270.7,426.7 289.7,426.6 308.7,426.4 327.7,426.7 346.8,426.8 365.8,426.8 384.8,426.8 403.8,426.5 422.8,426.7 441.9,426.8 460.9,426.6 479.9,426.4 498.9,426.3 517.9,426.6 537.0,426.8 556.0,426.9 575.0,427.0 594.0,427.0 613.0,426.9 632.1,426.9 651.1,427.0 670.1,426.9 689.1,426.9 708.1,426.9 727.2,427.0 746.2,426.9 765.2,426.9 784.2,427.0 803.2,426.9 822.3,427.0 841.3,427.0 860.3,427.2 879.3,427.1 898.3,426.7 917.4,426.7 936.4,426.8 955.4,426.9 974.4,426.9 993.4,427.0 1012.5,426.9 1031.5,427.3 1050.5,429.2" fill="none" stroke="#f08a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="90" y1="432" x2="1060" y2="432" stroke="#c9c9ce" stroke-width="1"/><text x="90.0" y="458.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">0 min</text><text x="242.2" y="458.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">4 min</text><text x="432.4" y="458.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">9 min</text><text x="812.7" y="458.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">19 min</text><text x="1041.0" y="458.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">25 min</text><line x1="242.2" y1="60" x2="242.2" y2="180" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><line x1="432.4" y1="60" x2="432.4" y2="180" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><line x1="812.7" y1="60" x2="812.7" y2="180" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><text x="166.1" y="208.0" font-size="17" fill="#424246" text-anchor="middle" font-weight="400" dominant-baseline="auto">hora punta</text><text x="337.3" y="208.0" font-size="17" fill="#424246" text-anchor="middle" font-weight="400" dominant-baseline="auto">sube: entra la mayoría</text><text x="622.5" y="208.0" font-size="17" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">300 usuarios</text><text x="938.3" y="208.0" font-size="17" fill="#424246" text-anchor="middle" font-weight="400" dominant-baseline="auto">baja a 100</text><text x="622.5" y="391.6" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">los tiempos no se mueven</text><line x1="90" y1="482" x2="112" y2="482" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/><text x="120.0" y="482.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">consultas y login</text><line x1="294.2" y1="482" x2="316.2" y2="482" stroke="#2fa874" stroke-width="3" stroke-linecap="round"/><text x="324.2" y="482.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">dinero</text></svg></div>
+      <div style="display:grid;gap:14px">
+        <div class="chip t-azul"><b>48 ms</b>p95 de consultas</div>
+        <div class="chip t-verde"><b>127 ms</b>p95 de dinero</div>
+        <div class="chip t-amarillo"><b>0 %</b>fallas</div>
+        <div class="chip t-blanco"><b>Se recupera</b>al volver a 100, igual que antes</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Arriba, los usuarios: 100 en hora punta, suben a 300 en los 5 minutos en que entra la mayoría, 10 minutos arriba y bajan a 100. La bajada es más suave que la subida porque k6 no saca a un usuario a mitad de su sesión: lo deja terminar. Abajo, los tiempos: planos aunque los usuarios suban y bajen. Eso es lo bueno: si Qolqe sufriera con la carga, el tiempo subiría junto con los usuarios. El supuesto de degradación razonable ni se usó. CPU al 20 %.</aside>
+</section>
+
+<!-- s-resistencia -->
+<section id="s-resistencia" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 1 · resistencia</span></p>
+  <h1>Una hora con 100 usuarios: sin fugas</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="grafico medio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 380" width="1100" height="380" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Resistencia: una hora con 100 usuarios</title><text x="80.0" y="54.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Tiempo de respuesta (p95, cada 5 min)</text><line x1="80" y1="300.0" x2="680" y2="300.0" stroke="#e6e6e9" stroke-width="1"/><text x="68.0" y="300.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0 ms</text><line x1="80" y1="242.5" x2="680" y2="242.5" stroke="#e6e6e9" stroke-width="1"/><text x="68.0" y="242.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">50 ms</text><line x1="80" y1="185.0" x2="680" y2="185.0" stroke="#e6e6e9" stroke-width="1"/><text x="68.0" y="185.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">100 ms</text><line x1="80" y1="127.5" x2="680" y2="127.5" stroke="#e6e6e9" stroke-width="1"/><text x="68.0" y="127.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">150 ms</text><line x1="80" y1="70.0" x2="680" y2="70.0" stroke="#e6e6e9" stroke-width="1"/><text x="68.0" y="70.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">200 ms</text><polyline points="146.7,156.2 194.3,159.7 241.9,158.6 289.5,152.8 337.1,155.1 384.8,156.2 432.4,153.9 480.0,151.7 527.6,155.1 575.2,156.2 622.9,152.8 670.5,156.2" fill="none" stroke="#2fa874" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="146.7,251.7 194.3,249.4 241.9,255.2 289.5,254.0 337.1,252.8 384.8,250.6 432.4,250.6 480.0,251.7 527.6,251.7 575.2,249.4 622.9,248.2 670.5,254.0" fill="none" stroke="#f08a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="146.7" cy="156.2" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="194.3" cy="159.7" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="241.9" cy="158.6" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="289.5" cy="152.8" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="337.1" cy="155.1" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="384.8" cy="156.2" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="432.4" cy="153.9" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="480.0" cy="151.7" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="527.6" cy="155.1" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="575.2" cy="156.2" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="622.9" cy="152.8" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="670.5" cy="156.2" r="5" fill="#2fa874" stroke="#ffffff" stroke-width="2"/><circle cx="146.7" cy="251.7" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="194.3" cy="249.4" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="241.9" cy="255.2" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="289.5" cy="254.0" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="337.1" cy="252.8" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="384.8" cy="250.6" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="432.4" cy="250.6" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="480.0" cy="251.7" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="527.6" cy="251.7" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="575.2" cy="249.4" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="622.9" cy="248.2" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><circle cx="670.5" cy="254.0" r="5" fill="#f08a24" stroke="#ffffff" stroke-width="2"/><line x1="80" y1="300" x2="680" y2="300" stroke="#c9c9ce" stroke-width="1"/><text x="80.0" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">0 min</text><text x="222.9" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">15 min</text><text x="365.7" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">30 min</text><text x="508.6" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">45 min</text><text x="651.4" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">60 min</text><text x="790.0" y="54.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Memoria de Qolqe (MB)</text><line x1="790" y1="300.0" x2="1060" y2="300.0" stroke="#e6e6e9" stroke-width="1"/><text x="778.0" y="300.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="790" y1="242.5" x2="1060" y2="242.5" stroke="#e6e6e9" stroke-width="1"/><text x="778.0" y="242.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">25</text><line x1="790" y1="185.0" x2="1060" y2="185.0" stroke="#e6e6e9" stroke-width="1"/><text x="778.0" y="185.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">50</text><line x1="790" y1="127.5" x2="1060" y2="127.5" stroke="#e6e6e9" stroke-width="1"/><text x="778.0" y="127.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">75</text><line x1="790" y1="70.0" x2="1060" y2="70.0" stroke="#e6e6e9" stroke-width="1"/><text x="778.0" y="70.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">100</text><polygon points="820.0,300.0 820.0,152.8 841.4,150.5 862.9,150.5 884.3,150.5 905.7,150.5 927.1,145.9 948.6,145.9 970.0,145.9 991.4,145.9 1012.9,141.3 1034.3,141.3 1055.7,141.3 1055.7,300.0" fill="#9268f5" fill-opacity="0.12" stroke="none"/><polyline points="820.0,152.8 841.4,150.5 862.9,150.5 884.3,150.5 905.7,150.5 927.1,145.9 948.6,145.9 970.0,145.9 991.4,145.9 1012.9,141.3 1034.3,141.3 1055.7,141.3" fill="none" stroke="#9268f5" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><text x="1049.7" y="125.3" font-size="18" fill="#101011" text-anchor="end" font-weight="600" dominant-baseline="auto">64 → 69 MB</text><line x1="790" y1="300" x2="1060" y2="300" stroke="#c9c9ce" stroke-width="1"/><text x="790.0" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">0 min</text><text x="918.6" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">30 min</text><text x="1047.1" y="326.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">60 min</text><line x1="80" y1="356" x2="102" y2="356" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/><text x="110.0" y="356.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">consultas y login</text><line x1="284.2" y1="356" x2="306.2" y2="356" stroke="#2fa874" stroke-width="3" stroke-linecap="round"/><text x="314.2" y="356.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">dinero</text></svg></div>
+    <div class="fila c4">
+      <div class="chip t-azul"><b>100 · 60 min</b>la carga de hora punta, sostenida una hora</div>
+      <div class="chip t-morado"><b>+5.5 MB/h</b>de memoria: unos 99 MB en 18 horas, lejos de 1 GB</div>
+      <div class="chip t-verde"><b>12 ventanas</b>de 5 min con el mismo p95: sin fugas</div>
+      <div class="chip t-amarillo"><b>Periódico</b>dos pausas breves, minutos 23 y 49, bajo el límite</div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Es con 100 usuarios, la carga de hora punta, y no con 300: la campaña dura 15 minutos dos veces al mes, pero Qolqe opera 18 horas seguidas todos los días, y lo que importa es si aguanta su carga normal durante mucho tiempo. Si hubiera una fuga, la memoria o el tiempo subirían ventana a ventana; no pasa. Las dos pausas tocaron 15 de 25 034 peticiones a la vez: es el patrón periódico de la clase. Parece el checkpoint del WAL de SQLite; no lo confirmamos.</aside>
+</section>
+
+<!-- s-estres-pps -->
+<section id="s-estres-pps" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Paso 2 · dónde falló</span></p>
+  <h1>Hasta 600 usuarios crece; con 800 se desploma</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila" style="grid-template-columns:1fr 360px;gap:30px;align-items:center">
+      <div class="grafico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" width="1100" height="470" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Estrés: peticiones por segundo por escalón</title><line x1="70" y1="340.0" x2="1060" y2="340.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="340.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="70" y1="250.0" x2="1060" y2="250.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="250.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">15</text><line x1="70" y1="160.0" x2="1060" y2="160.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="160.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">30</text><line x1="70" y1="70.0" x2="1060" y2="70.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="70.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">45</text><path d="M120.5,340.0 L120.5,305.0 Q120.5,301.0 124.5,301.0 L180.5,301.0 Q184.5,301.0 184.5,305.0 L184.5,340.0 Z" fill="#4487f6"/><text x="152.5" y="289.0" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">6/s</text><path d="M258.0,340.0 L258.0,224.6 Q258.0,220.6 262.0,220.6 L318.0,220.6 Q322.0,220.6 322.0,224.6 L322.0,340.0 Z" fill="#4487f6"/><text x="290.0" y="208.6" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">20/s</text><path d="M395.5,340.0 L395.5,105.2 Q395.5,101.2 399.5,101.2 L455.5,101.2 Q459.5,101.2 459.5,105.2 L459.5,340.0 Z" fill="#4487f6"/><text x="427.5" y="89.2" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">40/s</text><path d="M533.0,340.0 L533.0,284.6 Q533.0,280.6 537.0,280.6 L593.0,280.6 Q597.0,280.6 597.0,284.6 L597.0,340.0 Z" fill="#f45454"/><text x="565.0" y="268.6" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">10/s</text><path d="M670.5,340.0 L670.5,263.6 Q670.5,259.6 674.5,259.6 L730.5,259.6 Q734.5,259.6 734.5,263.6 L734.5,340.0 Z" fill="#f45454"/><text x="702.5" y="247.6" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">13/s</text><path d="M808.0,340.0 L808.0,244.4 Q808.0,240.4 812.0,240.4 L868.0,240.4 Q872.0,240.4 872.0,244.4 L872.0,340.0 Z" fill="#f45454"/><text x="840.0" y="228.4" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">17/s</text><path d="M945.5,340.0 L945.5,228.8 Q945.5,224.8 949.5,224.8 L1005.5,224.8 Q1009.5,224.8 1009.5,228.8 L1009.5,340.0 Z" fill="#f45454"/><text x="977.5" y="212.8" font-size="20" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">19/s</text><line x1="70" y1="340" x2="1060" y2="340" stroke="#c9c9ce" stroke-width="1"/><text x="152.5" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">100 usuarios</text><text x="152.5" y="398.0" font-size="17" fill="#4487f6" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 63 ms</text><text x="290.0" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">300 usuarios</text><text x="290.0" y="398.0" font-size="17" fill="#4487f6" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 61 ms</text><text x="427.5" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">600 usuarios</text><text x="427.5" y="398.0" font-size="17" fill="#4487f6" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 95 ms</text><text x="565.0" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">800 usuarios</text><text x="565.0" y="398.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 60 s</text><text x="702.5" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">1000 usuarios</text><text x="702.5" y="398.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 60 s</text><text x="840.0" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">1200 usuarios</text><text x="840.0" y="398.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 60 s</text><text x="977.5" y="372.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="500" dominant-baseline="auto">1400 usuarios</text><text x="977.5" y="398.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="500" dominant-baseline="auto">p95 60 s</text><text x="70.0" y="30.0" font-size="20" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">Peticiones atendidas por segundo, en cada escalón de usuarios</text><text x="221.3" y="100.0" font-size="18" fill="#424246" text-anchor="middle" font-weight="400" dominant-baseline="auto">más usuarios,</text><text x="221.3" y="122.0" font-size="18" fill="#424246" text-anchor="middle" font-weight="400" dominant-baseline="auto">más peticiones</text><path d="M269.4,148.0 L372.5,109.0 M364.2,117.7 L372.5,109.0 L360.5,107.9" fill="none" stroke="#101011" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="640.6" y="106.0" font-size="18" fill="#f45454" text-anchor="start" font-weight="600" dominant-baseline="auto">cada petición espera hasta 60 s:</text><text x="640.6" y="128.0" font-size="18" fill="#f45454" text-anchor="start" font-weight="600" dominant-baseline="auto">el usuario no manda la siguiente</text><path d="M633.8,130.0 L585.6,232.0 M585.5,220.0 L585.6,232.0 L595.0,224.5" fill="none" stroke="#f45454" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="70" y1="440" x2="92" y2="440" stroke="#4487f6" stroke-width="3" stroke-linecap="round"/><text x="100.0" y="440.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">cumple (p95 bajo 800 ms)</text><line x1="334.4" y1="440" x2="356.4" y2="440" stroke="#f45454" stroke-width="3" stroke-linecap="round"/><text x="364.4" y="440.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">no cumple</text></svg></div>
+      <div class="tarjeta t-rojo">
+        <div class="fila-ic"><svg class="ic"><use href="#i-arena"/></svg><h2>¿Por qué baja?</h2></div>
+        <p>Con 600, cada petición tarda <b>0.05 s</b>. Con 800, Qolqe deja de contestar y cada una espera hasta <b>60 s</b>.</p>
+        <p>Mientras espera, ese usuario no manda la siguiente. Más usuarios, pero menos peticiones atendidas.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Hasta 600 sube en línea recta: cada usuario manda una petición cada 16 segundos, así que el doble de usuarios es el doble de peticiones. Con 800 cae de 40 a 10 por segundo. Es como una caja de supermercado trabada: llegan más clientes, pero salen menos. En el ejercicio 3 de la semana 14 pasa lo mismo: suben los usuarios y baja el throughput.</aside>
+</section>
+
+<!-- s-estres-errores -->
+<section id="s-estres-errores" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Paso 2 · qué errores</span></p>
+  <h1>Con 800 usuarios, el 86 % de las peticiones falla</h1>
+  <div class="cuerpo" style="gap:20px">
+    <div class="fila" style="grid-template-columns:1fr 380px;gap:28px;align-items:center">
+    <div class="grafico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 490" width="1100" height="490" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Estrés: resultado de cada petición por escalón</title><line x1="70" y1="350.0" x2="790" y2="350.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="350.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0 %</text><line x1="70" y1="282.5" x2="790" y2="282.5" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="282.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">25 %</text><line x1="70" y1="215.0" x2="790" y2="215.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="215.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">50 %</text><line x1="70" y1="147.5" x2="790" y2="147.5" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="147.5" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">75 %</text><line x1="70" y1="80.0" x2="790" y2="80.0" stroke="#e6e6e9" stroke-width="1"/><text x="58.0" y="80.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">100 %</text><rect x="103.0" y="81.0" width="54" height="268.0" rx="3" fill="#2fa874"/><text x="130.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">100</text><rect x="203.0" y="81.0" width="54" height="268.0" rx="3" fill="#2fa874"/><text x="230.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">300</text><rect x="303.0" y="81.0" width="54" height="268.0" rx="3" fill="#2fa874"/><text x="330.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">600</text><rect x="403.0" y="314.1" width="54" height="34.9" rx="3" fill="#2fa874"/><rect x="403.0" y="251.7" width="54" height="60.5" rx="3" fill="#f45454"/><rect x="403.0" y="82.2" width="54" height="167.4" rx="3" fill="#ffcb3d"/><rect x="403.0" y="81.0" width="54" height="0.0" rx="3" fill="#9268f5"/><text x="430.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">800</text><rect x="503.0" y="81.0" width="54" height="268.0" rx="3" fill="#ffcb3d"/><text x="530.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">1000</text><rect x="603.0" y="81.0" width="54" height="268.0" rx="3" fill="#ffcb3d"/><text x="630.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">1200</text><rect x="703.0" y="81.0" width="54" height="268.0" rx="3" fill="#ffcb3d"/><text x="730.0" y="380.0" font-size="18" fill="#101011" text-anchor="middle" font-weight="600" dominant-baseline="auto">1400</text><text x="430.0" y="408.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">usuarios en el escalón</text><rect x="830" y="92" width="250" height="236" rx="14" fill="#f3f3f4"/><text x="850.0" y="126.0" font-size="19" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">Con 800 usuarios</text><text x="850.0" y="150.0" font-size="16" fill="#66666c" text-anchor="start" font-weight="400" dominant-baseline="auto">1 772 peticiones</text><rect x="850" y="181" width="16" height="16" rx="3" fill="#ffcb3d"/><text x="876.0" y="190.0" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">1112 timeouts</text><rect x="850" y="215" width="16" height="16" rx="3" fill="#f45454"/><text x="876.0" y="224.0" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="middle">410 errores 500</text><rect x="850" y="249" width="16" height="16" rx="3" fill="#2fa874"/><text x="876.0" y="258.0" font-size="18" fill="#101011" text-anchor="start" font-weight="400" dominant-baseline="middle">242 correctas</text><rect x="850" y="283" width="16" height="16" rx="3" fill="#9268f5"/><text x="876.0" y="292.0" font-size="18" fill="#101011" text-anchor="start" font-weight="400" dominant-baseline="middle">8 conexiones cortadas</text><text x="70.0" y="30.0" font-size="20" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">Qué pasó con cada petición, en cada escalón (% del total)</text><rect x="70" y="424" width="16" height="16" rx="3" fill="#2fa874"/><text x="96.0" y="432.0" font-size="17" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">respuesta correcta</text><rect x="450" y="424" width="16" height="16" rx="3" fill="#f45454"/><text x="476.0" y="432.0" font-size="17" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">error 500 «database is locked»</text><rect x="70" y="452" width="16" height="16" rx="3" fill="#ffcb3d"/><text x="96.0" y="460.0" font-size="17" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">timeout: 60 s sin respuesta</text><rect x="450" y="452" width="16" height="16" rx="3" fill="#9268f5"/><text x="476.0" y="460.0" font-size="17" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="middle">conexión cortada</text></svg></div>
+    <div style="display:grid;gap:14px">
+      <div class="tarjeta t-amarillo" style="padding:20px 24px"><div class="fila-ic"><svg class="ic c"><use href="#i-arena"/></svg><h2 style="font-size:22px">Timeout</h2></div><p style="font-size:18px">k6 espera 60 s y no llega respuesta. El usuario ve la app cargando y nada.</p></div>
+      <div class="tarjeta t-rojo" style="padding:20px 24px"><div class="fila-ic"><svg class="ic c"><use href="#i-candado"/></svg><h2 style="font-size:22px">Error 500 «database is locked»</h2></div><p style="font-size:18px">Qolqe esperó 10 s el candado de la base y se rindió. Sobre todo en el login.</p></div>
+      <div class="tarjeta t-morado" style="padding:20px 24px"><div class="fila-ic"><svg class="ic c"><use href="#i-cruz"/></svg><h2 style="font-size:22px">Conexión cortada</h2></div><p style="font-size:18px">La conexión se cerró sin respuesta. Fueron solo 8.</p></div>
+    </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Cuando decimos «errores», son estos tres. Ninguno es un rechazo de negocio: son fallas del servidor. Con 800, de 1772 peticiones: 1112 timeouts, 410 errores 500 y solo 242 correctas. De 1000 para arriba, el 100 % son timeouts: Qolqe ya no contesta nada. Por eso decimos que «se traba»: no se pone lento, deja de responder.</aside>
+</section>
+
+<!-- s-quiebre -->
+<section id="s-quiebre" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Paso 3 · por qué</span></p>
+  <h1>No es el CPU: cuando falla, el CPU baja</h1>
+  <div class="cuerpo" style="gap:14px">
+    <div class="grafico alto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 620" width="1100" height="620" role="img" style="font-family: Archivo, 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'tnum' 1;"><title>Estrés: el minuto en que deja de responder</title><text x="201.0" y="30.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="600" dominant-baseline="auto">100</text><text x="330.7" y="30.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="600" dominant-baseline="auto">300</text><text x="460.3" y="30.0" font-size="17" fill="#66666c" text-anchor="middle" font-weight="600" dominant-baseline="auto">600</text><text x="590.0" y="30.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="600" dominant-baseline="auto">800</text><text x="719.7" y="30.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="600" dominant-baseline="auto">1000</text><text x="849.3" y="30.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="600" dominant-baseline="auto">1200</text><text x="982.2" y="30.0" font-size="17" fill="#f45454" text-anchor="middle" font-weight="600" dominant-baseline="auto">1400</text><text x="110.0" y="30.0" font-size="17" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="auto">usuarios:</text><text x="120.0" y="94.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Tiempo de respuesta (p95)</text><line x1="120" y1="205.9" x2="1060" y2="205.9" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="205.9" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0.1 s</text><line x1="120" y1="171.4" x2="1060" y2="171.4" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="171.4" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">1 s</text><line x1="120" y1="110.0" x2="1060" y2="110.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="110.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">60 s</text><polyline points="111.9,216.0 128.1,207.9 144.3,203.8 160.5,205.7 176.7,204.7 192.9,212.7 209.1,205.6 225.3,204.5 241.6,210.4 257.8,206.7 274.0,206.9 290.2,204.4 306.4,204.8 322.6,205.5 338.8,205.4 355.0,204.6 371.2,205.2 387.4,206.9 403.6,208.1 419.8,204.6 436.0,204.8 452.2,204.8 468.4,206.6 484.7,206.3 500.9,205.5 517.1,204.7 533.3,130.6 549.5,115.4 565.7,110.0 581.9,110.0 598.1,110.0 614.3,110.0 630.5,110.0 646.7,110.0 662.9,110.0 679.1,110.0 695.3,110.0 711.6,110.0 727.8,110.0 744.0,110.0 760.2,110.0 776.4,110.0 792.6,110.0 808.8,110.0 825.0,110.0 841.2,110.0 857.4,110.0 873.6,110.0 889.8,110.0 906.0,110.0 922.2,110.0 938.4,110.0 954.7,110.0 970.9,110.0 987.1,110.0 1003.3,110.0 1019.5,110.0 1035.7,110.0 1051.9,110.0 1068.1,110.0" fill="none" stroke="#4487f6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><text x="120.0" y="276.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">Hilos de Qolqe ocupados</text><line x1="120" y1="412.0" x2="1060" y2="412.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="412.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="120" y1="372.0" x2="1060" y2="372.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="372.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">20</text><line x1="120" y1="332.0" x2="1060" y2="332.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="332.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">40</text><line x1="120" y1="292.0" x2="1060" y2="292.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="292.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">60</text><line x1="120" y1="316.0" x2="1060" y2="316.0" stroke="#66666c" stroke-width="1.5" stroke-dasharray="6 6"/><text x="128.0" y="308.0" font-size="16" fill="#424246" text-anchor="start" font-weight="400" dominant-baseline="auto">todos los hilos ocupados (8 + 40 del pool)</text><polyline points="128.1,398.0 144.3,396.0 160.5,394.0 176.7,396.0 192.9,396.0 209.1,396.0 225.3,396.0 241.6,396.0 257.8,392.0 274.0,394.0 290.2,394.0 306.4,392.0 322.6,392.0 338.8,392.0 355.0,392.0 371.2,392.0 387.4,392.0 403.6,392.0 419.8,392.0 436.0,386.0 452.2,378.0 468.4,388.0 484.7,386.0 500.9,386.0 517.1,378.0 533.3,310.0 549.5,310.0 565.7,304.0 581.9,306.0 598.1,308.0 614.3,308.0 630.5,306.0 646.7,310.0 662.9,310.0 679.1,314.0 695.3,308.0 711.6,308.0 727.8,312.0 744.0,312.0 760.2,312.0 776.4,314.0 792.6,316.0 808.8,316.0 825.0,316.0 841.2,312.0 857.4,310.0 873.6,306.0 889.8,306.0 906.0,310.0 922.2,304.0 938.4,312.0 954.7,310.0 970.9,310.0 987.1,312.0 1003.3,312.0 1019.5,316.0 1035.7,314.0 1051.9,316.0 1068.1,316.0" fill="none" stroke="#101011" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><text x="120.0" y="458.0" font-size="18" fill="#101011" text-anchor="start" font-weight="500" dominant-baseline="auto">CPU de Qolqe (%)</text><line x1="120" y1="594.0" x2="1060" y2="594.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="594.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">0</text><line x1="120" y1="534.0" x2="1060" y2="534.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="534.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">50</text><line x1="120" y1="474.0" x2="1060" y2="474.0" stroke="#e6e6e9" stroke-width="1"/><text x="108.0" y="474.0" font-size="16" fill="#66666c" text-anchor="end" font-weight="400" dominant-baseline="middle">100</text><polyline points="128.1,583.1 144.3,582.1 160.5,589.1 176.7,584.7 192.9,581.1 209.1,581.8 225.3,587.6 241.6,581.8 257.8,563.1 274.0,564.5 290.2,577.9 306.4,567.7 322.6,560.4 338.8,570.8 355.0,575.6 371.2,563.5 387.4,538.5 403.6,547.6 419.8,565.2 436.0,548.6 452.2,538.9 468.4,555.8 484.7,558.6 500.9,545.2 517.1,529.4 533.3,527.5 549.5,578.7 565.7,575.8 581.9,572.1 598.1,576.0 614.3,579.0 630.5,572.1 646.7,568.0 662.9,581.8 679.1,569.4 695.3,565.8 711.6,568.7 727.8,570.2 744.0,567.4 760.2,569.7 776.4,567.9 792.6,568.3 808.8,573.5 825.0,568.6 841.2,568.4 857.4,556.7 873.6,549.9 889.8,560.0 906.0,561.2 922.2,567.1 938.4,562.9 954.7,565.0 970.9,563.6 987.1,564.4 1003.3,561.6 1019.5,561.4 1035.7,563.4 1051.9,567.2 1068.1,563.3" fill="none" stroke="#2fa874" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="120" y1="594" x2="1060" y2="594" stroke="#c9c9ce" stroke-width="1"/><text x="120.0" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">0 min</text><text x="249.7" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">4 min</text><text x="379.3" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">8 min</text><text x="509.0" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">12 min</text><text x="638.6" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">16 min</text><text x="768.3" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">20 min</text><text x="897.9" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">24 min</text><text x="1027.6" y="620.0" font-size="16" fill="#66666c" text-anchor="middle" font-weight="400" dominant-baseline="auto">28 min</text><line x1="533.3" y1="110" x2="533.3" y2="230" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><line x1="533.3" y1="292" x2="533.3" y2="412" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><line x1="533.3" y1="474" x2="533.3" y2="594" stroke="#101011" stroke-width="1" stroke-opacity="0.35"/><text x="545.3" y="156.0" font-size="18" fill="#f45454" text-anchor="start" font-weight="600" dominant-baseline="auto">pasa de 0.1 s a 60 s</text><text x="545.3" y="362.0" font-size="18" fill="#101011" text-anchor="start" font-weight="600" dominant-baseline="auto">de 17 a 51 hilos</text><text x="545.3" y="504.0" font-size="18" fill="#2fa874" text-anchor="start" font-weight="600" dominant-baseline="auto">el CPU baja</text></svg></div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Los tres paneles van en el mismo eje de tiempo. En el mismo minuto en que suben a 800 usuarios: el tiempo de respuesta pasa de 0.1 s a 60 s; los hilos de Qolqe pasan de 17 a 51, todos los del pool ocupados; y el CPU baja. El proceso no está trabajando: está esperando. Es el patrón abrupto de la semana 14: un recurso con límite fijo que se agota de golpe.</aside>
+</section>
+
+<!-- s-cuello -->
+<section id="s-cuello" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Paso 3 · el cuello de botella</span></p>
+  <h1>Un candado de SQLite y 40 hilos</h1>
+  <div class="cuerpo" style="gap:16px">
+    <div class="flujo" style="grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr">
+      <div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-candado"/></svg><h2 style="font-size:22px">1 · Uno toma el candado</h2><p style="font-size:18px">Una escritura (login, transferir, recargar, pagar) bloquea la base. SQLite admite un solo escritor.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-fila"/></svg><h2 style="font-size:22px">2 · Los demás esperan</h2><p style="font-size:18px">Cada escritura espera hasta 10 s ocupando uno de los 40 hilos de FastAPI.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-arena"/></svg><h2 style="font-size:22px">3 · El dueño no termina</h2><p style="font-size:18px">Para hacer commit necesita un hilo libre, y los 40 están esperando su candado.</p></div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-morado"><svg class="ic"><use href="#i-botella"/></svg><h2 style="font-size:22px">4 · Todo se queda quieto</h2><p style="font-size:18px">Hasta que vencen los 10 s (error 500) o los 60 s de k6 (timeout).</p></div>
+    </div>
+    <div class="fila" style="grid-template-columns:1fr 1fr 1.25fr;gap:14px">
+      <div class="chip t-rojo"><b>~750 usuarios</b>cuando entran de golpe (estrés, de 600 a 800 en 1 min): los hilos pasan de 17 a 49</div>
+      <div class="chip t-amarillo"><b>~1200 usuarios</b>cuando entran de a poco (sondeo, 100 más por minuto)</div>
+      <div class="chip t-blanco"><b>Lo dispara</b>cuántos inician sesión a la vez: cada login escribe la sesión en la base</div>
+    </div>
+    <div class="fila c3" style="gap:14px">
+      <div class="chip t-blanco"><b>10.5 s</b>tardan los 500: justo el tiempo de espera del candado</div>
+      <div class="chip t-blanco"><b>3878</b>«database is locked» en el log de Qolqe</div>
+      <div class="chip t-blanco"><b>51 hilos</b>ocupados: el pool de 40 lleno, más los de base</div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> La semana 14 lo anticipa: p95 alto más un pool lleno apunta a la base de datos. Aquí el pool es de hilos y la base admite un solo escritor. Lo confirmamos en el código de FastAPI 0.117: la respuesta se valida en el mismo pool antes del commit. Lo reportamos como DEF-10. ¿Cuándo pasa? Con unos 750 usuarios si entran de golpe, como en el estrés, y cerca de 1200 si entran de a poco, como en el sondeo. Lo que lo dispara es cuántos inician sesión a la vez: cada login escribe la sesión en la base y pelea por el candado. Por eso la capacidad que damos es 600, con margen.</aside>
+</section>
+
+<!-- s-dinero -->
+<section id="s-dinero" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Paso 3 · la condición del dinero</span></p>
+  <h1>Un doble clic se salta el límite y el saldo</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="fila c2">
+      <div class="tarjeta t-blanco">
+        <div class="fila-ic"><svg class="ic"><use href="#i-transferir"/></svg><div><h2>Diego · límite diario de S/ 1000</h2><p class="tenue">5 transferencias de S/ 300 al mismo tiempo</p></div></div>
+        <div class="fila c2" style="gap:14px">
+          <div class="chip t-verde"><b>3 · S/ 900</b>debían pasar</div>
+          <div class="chip t-rojo"><b>5 · S/ 1500</b>pasaron</div>
+        </div>
+      </div>
+      <div class="tarjeta t-blanco">
+        <div class="fila-ic"><svg class="ic"><use href="#i-dinero"/></svg><div><h2>Carla · saldo de S/ 50</h2><p class="tenue">2 transferencias de S/ 40 al mismo tiempo</p></div></div>
+        <div class="fila c2" style="gap:14px">
+          <div class="chip t-verde"><b>1 · S/ 10</b>debía pasar; saldo final</div>
+          <div class="chip t-rojo"><b>2 · S/ −30</b>pasaron; saldo final</div>
+        </div>
+      </div>
+    </div>
+    <div class="fila" style="grid-template-columns:auto 1fr 1fr;gap:22px;align-items:center">
+      <svg class="ic g"><use href="#i-repetir"/></svg>
+      <p style="font-size:22px"><b>Lo repetimos 5 veces, y las 5 veces pasó lo mismo:</b> no es casualidad. Pagar la misma deuda dos veces a la vez sí se rechaza bien.</p>
+      <div class="tarjeta t-rojo" style="padding:20px 24px"><h2 style="font-size:23px">DEF-11 · crítico</h2><p style="font-size:18px">Saldo y límite se leen antes del antifraude (40 a 120 ms) y fuera de la transacción: todas leen lo mismo y todas pasan.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Con un usuario por VU nunca coinciden dos operaciones de la misma cuenta, así que lo probamos aparte con http.batch de k6, que manda varias peticiones exactamente a la vez. Pasa siempre, sin carga alta: basta un doble clic. En la suite de API lo detectan CP-53 y CP-86. Y en el colapso del estrés, 6 operaciones se guardaron aunque el usuario vio error: reintenta y paga dos veces.</aside>
+</section>
+
+<!-- s-capacidad -->
+<section id="s-capacidad" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 4 · capacidad estimada</span></p>
+  <h1>600 usuarios: el doble de la campaña</h1>
+  <div class="cuerpo" style="gap:34px">
+    <div class="regla">
+      <div class="barra"><span style="width:42.86%;background:var(--green)"></span><span style="width:14.28%;background:var(--yellow)"></span><span style="flex:1;background:var(--red)"></span></div>
+      <div class="marca" style="left:7.14%"><b>100</b>hora punta</div>
+      <div class="marca" style="left:21.43%"><b>300</b>campaña</div>
+      <div class="marca" style="left:42.86%"><b>600</b>capacidad</div>
+      <div class="marca" style="left:57.14%"><b>800</b>deja de responder</div>
+      <div class="eje" style="left:0">0</div><div class="eje" style="left:100%">1400 usuarios</div>
+    </div>
+    <div class="fila c3">
+      <div class="tarjeta t-verde"><h2 style="font-size:23px">Hasta 600: cumple</h2><p style="font-size:19px">Seis veces la hora punta y el doble de la campaña.</p></div>
+      <div class="tarjeta t-amarillo"><h2 style="font-size:23px">De 600 a 800: riesgo</h2><p style="font-size:19px">Depende de cuántos entran juntos: con una subida suave aguantó hasta 1000.</p></div>
+      <div class="tarjeta t-rojo"><h2 style="font-size:23px">Desde 800: se cae</h2><p style="font-size:19px">No se pone lento: deja de responder para todos y no vuelve solo.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Damos 600 y no 1000 porque el colapso depende de la ráfaga y no se recupera: hay que planificar con margen. Para la campaña de hoy sobra; para una más grande o una notificación que haga entrar a todos a la vez, no. Es una línea base con 1 CPU, no producción.</aside>
+</section>
+
+<!-- s-recomendaciones -->
+<section id="s-recomendaciones" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 4 · qué hacer</span></p>
+  <h1>Recomendaciones, en orden</h1>
+  <div class="cuerpo" style="gap:16px">
+    <div class="fila c3" style="gap:16px">
+      <div class="tarjeta t-rojo" style="padding:24px 26px"><div class="fila-ic"><svg class="ic c"><use href="#i-dinero"/></svg><p class="dato">1 · dinero · DEF-11</p></div><h2 style="font-size:23px">Validar dentro de la transacción</h2><p style="font-size:18.5px">Leer el saldo y descontarlo en un solo paso, para que dos transferencias a la vez no lean el mismo saldo viejo.</p></div>
+      <div class="tarjeta t-rojo" style="padding:24px 26px"><div class="fila-ic"><svg class="ic c"><use href="#i-repetir"/></svg><p class="dato">2 · dinero</p></div><h2 style="font-size:23px">Clave de idempotencia</h2><p style="font-size:18.5px">Si el usuario reintenta después de un error, el servidor reconoce la operación y no la cobra dos veces.</p></div>
+      <div class="tarjeta t-amarillo" style="padding:24px 26px"><div class="fila-ic"><svg class="ic c"><use href="#i-candado"/></svg><p class="dato">3 · colapso · DEF-10</p></div><h2 style="font-size:23px">Commit dentro del endpoint</h2><p style="font-size:18.5px">Confirmar la escritura antes de armar la respuesta, para que el candado no espere un hilo libre.</p></div>
+    </div>
+    <div class="fila" style="grid-template-columns:1fr 2fr;gap:16px">
+      <div class="tarjeta t-amarillo" style="padding:24px 26px"><div class="fila-ic"><svg class="ic c"><use href="#i-arena"/></svg><p class="dato">4 · colapso</p></div><h2 style="font-size:23px">Fallar rápido</h2><p style="font-size:18.5px">Esperar el candado 1 s y no 10, y limitar los usuarios a la vez: un «intenta de nuevo» al instante en vez de 60 s colgado.</p></div>
+      <div class="tarjeta t-azul" style="padding:24px 26px"><div class="fila-ic"><svg class="ic c"><use href="#i-caja"/></svg><p class="dato">5 · crecer más allá de 600 usuarios</p></div><h2 style="font-size:23px">PostgreSQL y varias copias de la app</h2><p style="font-size:18.5px">SQLite admite un solo escritor para toda la base; PostgreSQL, muchos a la vez. Y varias copias de Qolqe usan más núcleos. Uno sin el otro no sirve: con SQLite, más copias pelean por el mismo candado.</p></div>
+    </div>
+    <p class="nota">Son las opciones de la semana 14: optimizar (1 a 4), que basta para la campaña actual, o escalar (5), solo si Qolqe necesita crecer. Después de cada cambio hay que repetir el estrés: al quitar un cuello de botella aparece el siguiente.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Los dos primeros son de dinero y van primero aunque no sean de carga. El tercero y el cuarto atacan el colapso. El quinto es para crecer de verdad.</aside>
+</section>
+
+<!-- s-arquitectura -->
+<section id="s-arquitectura" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Paso 4 · cómo lo evitaría un arquitecto</span></p>
+  <h1>Cómo se evita esto en la arquitectura</h1>
+  <div class="cuerpo" style="gap:18px">
+    <div class="fila c3" style="gap:16px">
+      <div class="tarjeta t-azul" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-caja"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: un solo escritor</p></div><h2 style="font-size:23px">Una base para muchos escritores</h2><p style="font-size:18px">PostgreSQL o MySQL bloquean la fila que se toca, no toda la base: dos transferencias de cuentas distintas no se esperan.</p></div>
+      <div class="tarjeta t-amarillo" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-llave"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: el login escribe en la base</p></div><h2 style="font-size:23px">No escribir lo que no hace falta</h2><p style="font-size:18px">Sesiones en memoria (Redis) o tokens que no se guardan; saldo y perfil desde caché o réplicas de lectura.</p></div>
+      <div class="tarjeta t-morado" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-arena"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: el candado tomado mientras se espera</p></div><h2 style="font-size:23px">Transacciones cortas</h2><p style="font-size:18px">Abrir, escribir y confirmar. Lo lento va afuera: SMS y notificaciones a una cola que se procesa aparte.</p></div>
+      <div class="tarjeta t-rojo" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-alerta"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: 60 s colgado</p></div><h2 style="font-size:23px">Fallar rápido</h2><p style="font-size:18px">Timeouts cortos, límite de concurrencia (un 503 en 1 s), circuit breaker y pools separados por tipo de operación.</p></div>
+      <div class="tarjeta t-verde" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-usuarios"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: todos entran en 5 minutos</p></div><h2 style="font-size:23px">Escalar y repartir la entrada</h2><p style="font-size:18px">Varias copias de la app con balanceador y autoescalado; para la campaña, una sala de espera virtual.</p></div>
+      <div class="tarjeta t-rojo" style="padding:22px 26px;gap:10px"><div class="fila-ic"><svg class="ic c"><use href="#i-dinero"/></svg><p class="dato" style="font-size:14px;color:var(--muted)">Vimos: el doble clic (DEF-11, DEF-12)</p></div><h2 style="font-size:23px">Dinero atómico</h2><p style="font-size:18px">Validar y descontar en una sola operación; reglas en la base (saldo ≥ 0, código único) y claves de idempotencia.</p></div>
+    </div>
+    <p class="nota"><b>Y medir siempre:</b> pruebas de carga antes de cada campaña y alertas cuando el pool pase el 50 %. Varias de estas ya son nuestras recomendaciones; las demás son el siguiente paso si Qolqe crece.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Cada tarjeta parte de algo que vimos en las pruebas. Lo más importante: una base que admita muchos escritores, transacciones cortas, fallar rápido en vez de colgarse y validar el dinero dentro de la misma operación atómica. Son patrones conocidos: bulkhead, circuit breaker, idempotencia, réplicas de lectura.</aside>
+</section>
+
+<!-- s-retro -->
+<section id="s-retro" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Retroalimentación de la Parte 2</span></p>
+  <h1>Lo que nos pidió la profe, y qué hicimos</h1>
+  <div class="cuerpo" style="gap:10px">
+    <div class="obs obs-cabeza"><p>Tema</p><p>Lo que pidió</p><p>Qué hicimos</p><p>Resultado</p></div>
+      <div class="obs t-azul">
+        <div class="obs-tema"><svg class="ic c"><use href="#i-lista"/></svg><div><p class="dato">Observación 1</p><h2>Cobertura de API</h2></div></div>
+        <p class="obs-pidio">«Falta la cobertura completa de los casos de prueba funcionales y técnicos en las APIs»</p>
+        <p class="obs-hicimos">58 casos nuevos; casos técnicos en cada HU del núcleo; cada caso dice qué criterio cubre.</p>
+        <div class="obs-res"><p class="grande">48<small>/ 48</small></p><p>criterios con caso</p></div>
+      </div>
+      <div class="obs t-morado">
+        <div class="obs-tema"><svg class="ic c"><use href="#i-escudo"/></svg><div><p class="dato">Observación 2</p><h2>Contrato y quality gates</h2></div></div>
+        <p class="obs-pidio">«El job del contrato debería ejecutarse mucho antes. No hay claridad en los quality gates»</p>
+        <p class="obs-hicimos">El contrato pasó a la primera etapa del pipeline; los hallazgos ya analizados van aparte; tabla de gates con su umbral.</p>
+        <div class="obs-res"><p class="grande">1.ª<small>etapa</small></p><p>y ya no sale en rojo</p></div>
+      </div>
+      <div class="obs t-amarillo">
+        <div class="obs-tema"><svg class="ic c"><use href="#i-grafico"/></svg><div><p class="dato">Observación 2</p><h2>Evidencia en los reportes</h2></div></div>
+        <p class="obs-pidio">«Permitir seleccionar si la reportería se desea con evidencia (imágenes) o sin evidencia»</p>
+        <p class="obs-hicimos">Una opción al correr el pipeline a mano: capturas de cada paso, solo de los fallos o ninguna.</p>
+        <div class="obs-res"><p class="grande">3<small>modos</small></p><p>con, fallos o sin</p></div>
+      </div>
+      <div class="obs t-verde">
+        <div class="obs-tema"><svg class="ic c"><use href="#i-capas"/></svg><div><p class="dato">Observación 3</p><h2>Trazabilidad y gestión de casos</h2></div></div>
+        <p class="obs-pidio">«Optimizar la trazabilidad tomando en cuenta las múltiples ejecuciones; considerar una herramienta de gestión de casos»</p>
+        <p class="obs-hicimos">La matriz guarda el historial de cada caso; comparamos 14 herramientas y conectamos Qase.</p>
+        <div class="obs-res"><p class="grande">30<small>corridas</small></p><p>de historial · Qase</p></div>
+      </div>
+      <div class="obs t-rojo">
+        <div class="obs-tema"><svg class="ic c"><use href="#i-libro"/></svg><div><p class="dato">Observación 4 y 5</p><h2>Patrón y herramientas</h2></div></div>
+        <p class="obs-pidio">«La justificación del patrón no está clara; las herramientas deben ser complementarias y estar sustentadas»</p>
+        <p class="obs-hicimos">Page Object para las pantallas y Screenplay para los flujos entre usuarios (Ana y Bruno, cada uno en su navegador); cada herramienta responde una pregunta distinta.</p>
+        <div class="obs-res"><p class="grande">2<small>patrones</small></p><p>Page Object y Screenplay</p></div>
+      </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> En la Parte 2 la profe nos dejó cinco observaciones. Cada fila tiene lo que pidió, casi textual, qué hicimos y el resultado en un número. Las siguientes diapositivas muestran cada cambio en detalle.</aside>
+</section>
+
+<!-- s-pipeline -->
+<section id="s-pipeline" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Observación 2 · pipeline y quality gates</span></p>
+  <h1>Lo barato primero, lo largo en paralelo</h1>
+  <div class="cuerpo" style="gap:26px">
+    <div class="etapas">
+      <div class="tarjeta t-morado">
+        <div class="fila-ic"><svg class="ic c"><use href="#i-escudo"/></svg><h2 style="font-size:24px">Etapa 1 · ~1 min</h2></div>
+        <div class="job"><span>verificar · trazabilidad y Gherkin</span><span>48 s</span></div>
+        <div class="job"><span>contrato · gate de Schemathesis</span><span>40 s</span></div>
+      </div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-azul">
+        <div class="fila-ic"><svg class="ic c"><use href="#i-usuarios"/></svg><h2 style="font-size:24px">Etapa 2 · en paralelo</h2></div>
+        <div class="job"><span>api · 260 pruebas</span><span>2 min 39 s</span></div>
+        <div class="job"><span>web · Chrome</span><span>1 min 24 s</span></div>
+        <div class="job"><span>web · Firefox</span><span>3 min 19 s</span></div>
+      </div>
+      <div class="flecha">→</div>
+      <div class="tarjeta t-verde">
+        <div class="fila-ic"><svg class="ic c"><use href="#i-grafico"/></svg><h2 style="font-size:24px">Etapa 3</h2></div>
+        <div class="job"><span>GitHub Pages</span><span>portada</span></div>
+        <div class="job"><span>historial por caso</span><span>hasta 30</span></div>
+        <div class="job"><span>Qase</span><span>1 por pipeline</span></div>
+      </div>
+    </div>
+    <div class="fila c3">
+      <div class="chip t-blanco"><b>Si falla la etapa 1</b>nada más corre: se ahorran unos 7 min de runner</div>
+      <div class="chip t-blanco"><b>1 corrida por push</b>antes, subir el tag la repetía entera</div>
+      <div class="chip t-blanco"><b>7 gates</b>con su umbral, en una tabla en <code>docs/pruebas.md</code></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> La profe pidió el contrato mucho antes: ahora está en la primera etapa, junto con una verificación de que cada escenario tenga su HU, su criterio y su defecto. Si algo de eso falla, en menos de un minuto se detiene todo. El contrato tiene un gate que solo bloquea si la API rompe su propio OpenAPI; los hallazgos ya analizados van aparte, y por eso ya no sale en rojo. La corrida #35 pasó entera en verde.</aside>
+</section>
+
+<!-- s-cobertura -->
+<section id="s-cobertura" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Observación 1 · cobertura de API</span></p>
+  <h1>Cada criterio de aceptación con su caso</h1>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila" style="grid-template-columns:1fr 1fr;gap:22px;align-items:stretch">
+      <div class="tarjeta t-blanco espera">
+        <div><p class="et">Lo que pidió</p><p>«Falta la cobertura completa de los casos de prueba funcionales y técnicos en las APIs».</p></div>
+        <div><p class="et">Qué hicimos</p><p>Revisamos los 48 criterios de aceptación del núcleo y de G5, uno por uno. Agregamos <b>58 casos</b> (CP-87 a CP-144) para los que faltaban, sobre todo técnicos en el núcleo, que no tenía ninguno.</p></div>
+        <div><p class="et">Funcional y técnico</p><p><b>Funcional:</b> una regla del negocio, como «no puedo transferir más que mi límite».<br><b>Técnico:</b> cómo responde la API, como «sin token responde 401» o «un dato inválido responde 422 y no cambia nada».</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="tarjeta t-azul"><p class="grande">48<small>/ 48</small></p><p style="font-size:19px">criterios de aceptación con al menos un caso</p></div>
+        <div class="tarjeta t-morado"><p class="grande">+58</p><p style="font-size:19px">casos nuevos, del CP-87 al CP-144</p></div>
+        <div class="tarjeta t-verde"><p class="grande">92<small>+ 39</small></p><p style="font-size:19px">casos funcionales + técnicos: 260 pruebas con sus ejemplos</p></div>
+        <div class="tarjeta t-rojo"><p class="grande">DEF-12</p><p style="font-size:19px">defecto nuevo: dos transferencias en el mismo segundo, mismo código</p></div>
+      </div>
+    </div>
+    <p class="nota">Si un criterio se queda sin caso, la primera etapa del pipeline falla. Así la cobertura no puede volver a bajar sin que nadie lo note.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Un caso con una tabla de ejemplos cuenta como varias pruebas: por eso son 131 casos y 260 pruebas. Antes, el núcleo no tenía ningún caso técnico; ahora cada HU tiene los suyos. Y uno de los casos nuevos encontró DEF-12.</aside>
+</section>
+
+<!-- s-trazabilidad -->
+<section id="s-trazabilidad" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Observación 3 · trazabilidad y gestión de casos</span></p>
+  <h1>Cada caso con su historial de corridas</h1>
+  <div class="cuerpo" style="gap:20px">
+    <div class="fila" style="grid-template-columns:1.25fr 1fr;gap:22px;align-items:stretch">
+      <div class="tarjeta t-blanco espera">
+        <div><p class="et">Lo que pidió</p><p>«Optimizar la trazabilidad tomando en cuenta las múltiples veces que se pueden ejecutar».</p></div>
+        <div><p class="et">Qué hicimos</p><p>Cada escenario lleva tres etiquetas, y la matriz publicada guarda el resultado de cada caso en las últimas 30 corridas del pipeline.</p></div>
+        <div class="chips">
+          <div class="chip t-amarillo" style="padding:10px 14px;font-size:17px"><b style="font-size:19px;font-family:var(--mono)">@HU-N-07</b>la historia de usuario</div>
+          <div class="chip t-azul" style="padding:10px 14px;font-size:17px"><b style="font-size:19px;font-family:var(--mono)">@CP-49</b>el número de caso</div>
+          <div class="chip t-verde" style="padding:10px 14px;font-size:17px"><b style="font-size:19px;font-family:var(--mono)">@CA-N-07-3</b>el criterio 3 de esa HU</div>
+        </div>
+        <div><p class="et">Así se lee el historial (ejemplo)</p>
+          <table class="tabla-chica"><tbody>
+            <tr><td><b>passed 30</b></td><td>pasó en las 30 corridas: estable</td></tr>
+            <tr><td><b>xfailed 30 → DEF-08</b></td><td>falla siempre por un defecto ya reportado</td></tr>
+            <tr><td><b>passed 28 · failed 2</b></td><td>falló 2 veces: inestable, hay que revisarlo</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="tarjeta t-amarillo espera">
+        <div class="fila-ic"><svg class="ic"><use href="#i-lista"/></svg><h2>Gestión de casos: Qase</h2></div>
+        <div><p class="et">Lo que pidió</p><p>«Considerar trabajar con una herramienta de gestión de casos de prueba (se valorará la investigación)».</p></div>
+        <div><p class="et">Qué hicimos</p><p>Comparamos 14 herramientas con cinco criterios: gratis sin vencimiento, desde GitHub Actions, historial por caso, defectos y acceso para la profe. <b>Qase cumple los cinco</b>.</p></div>
+        <div><p class="et">Resultado</p><p>Cada pipeline de main crea una corrida en Qase. La primera dejó <b>312 casos</b>: 260 de API, 14 del contrato y 19 de la web en cada navegador.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Las etiquetas unen la historia de usuario con su caso y su criterio. Los tres ejemplos de abajo muestran cómo se lee el historial; hoy recién empieza, con la primera corrida. La comparación de las 14 herramientas está en docs/gestion-casos.md.</aside>
+</section>
+
+<!-- s-patron -->
+<section id="s-patron" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>Observaciones 4 y 5 · patrón y herramientas</span></p>
+  <h1>Dos patrones y cuatro herramientas</h1>
+  <div class="cuerpo" style="gap:24px">
+    <div class="fila c2" style="align-items:stretch">
+      <div class="tarjeta t-azul">
+        <h2 style="font-size:23px">Page Object y Screenplay, cada uno para algo</h2>
+        <table class="tabla-chica">
+          <thead><tr><th>Opción</th><th>Un cambio, un lugar</th><th>Varios usuarios</th><th>Lo usamos para</th></tr></thead>
+          <tbody>
+            <tr><td>Script lineal</td><td class="no">no</td><td class="no">no</td><td>descartado</td></tr>
+            <tr><td><b>Page Object</b></td><td class="si">sí</td><td class="no">no sabe quién la usa</td><td><b>las pantallas</b></td></tr>
+            <tr><td><b>Screenplay</b></td><td class="si">sí</td><td class="si">un actor por navegador</td><td><b>flujos entre usuarios</b></td></tr>
+            <tr><td>Page Factory</td><td>—</td><td>—</td><td>no existe en Python</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:18px">En CP-145, Ana y Bruno, cada uno con su navegador: <code>ana.intenta(Transferir.a("Bruno").por(50))</code> y Bruno ve el dinero. Pasa en Chrome y Firefox.</p>
+      </div>
+      <div class="tarjeta t-amarillo">
+        <h2 style="font-size:23px">Cada herramienta, una pregunta</h2>
+        <div style="display:grid;gap:10px">
+          <div class="fila-ic"><svg class="ic c"><use href="#i-codigo"/></svg><p style="font-size:19px"><b>Playwright:</b> ¿se cumple cada regla de cada HU?</p></div>
+          <div class="fila-ic"><svg class="ic c"><use href="#i-escudo"/></svg><p style="font-size:19px"><b>Schemathesis:</b> ¿la API cumple su OpenAPI con cualquier entrada?</p></div>
+          <div class="fila-ic"><svg class="ic c"><use href="#i-laptop"/></svg><p style="font-size:19px"><b>Selenium:</b> ¿el usuario puede hacerlo en la pantalla?</p></div>
+          <div class="fila-ic"><svg class="ic c"><use href="#i-rayo"/></svg><p style="font-size:19px"><b>k6:</b> ¿responde a tiempo con cientos de usuarios?</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Page Object sabe dónde está cada botón, pero no quién lo usa. En Qolqe el dinero pasa de un usuario a otro, así que para esos flujos usamos Screenplay: cada actor tiene su propio navegador y su sesión, y el escenario se lee como «Ana le transfiere a Bruno; Bruno ve el dinero». Las tareas de Screenplay usan las páginas por dentro, así que no se duplica ningún localizador: conviven. Y cada herramienta deja un hueco que cubre otra.</aside>
+</section>
+
+<!-- s-preguntas-1 -->
+<section id="s-preguntas-1" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>Preguntas probables · 1 de 3</span></p>
+  <h1>Sobre el diseño</h1>
+  <div class="cuerpo">
+    <div class="fila c2">
+      <div class="tarjeta t-amarillo pregunta"><h2>¿Por qué 100 usuarios y no 3000?</h2><p>3000 son las sesiones de toda una hora. Como cada una dura 2 minutos, a la vez hay 100 (ley de Little).</p></div>
+      <div class="tarjeta t-amarillo pregunta"><h2>¿Por qué p95 y no el promedio?</h2><p>El promedio esconde a los lentos: unos pocos de 5 s se diluyen entre miles de 50 ms. El p95 dice cuánto esperó casi todo el mundo.</p></div>
+      <div class="tarjeta t-amarillo pregunta"><h2>¿Por qué un usuario distinto por VU?</h2><p>Si compartieran cuenta, el límite diario y el bloqueo por PIN darían rechazos de negocio, y mediríamos datos, no rendimiento.</p></div>
+      <div class="tarjeta t-amarillo pregunta"><h2>¿Cómo eligieron los escalones del estrés?</h2><p>Antes corrimos un sondeo de 0 a 2000 usuarios que se rompió cerca de 1100, y pusimos los escalones alrededor.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Los dos.</b> Preguntas que esperamos. Si no las hacen, se saltan.</aside>
+</section>
+
+<!-- s-preguntas-2 -->
+<section id="s-preguntas-2" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>Preguntas probables · 2 de 3</span></p>
+  <h1>Sobre el entorno y la herramienta</h1>
+  <div class="cuerpo">
+    <div class="fila c2">
+      <div class="tarjeta t-azul pregunta"><h2>¿Por qué 1 CPU y no un VPS?</h2><p>El CPU nunca fue el límite (máximo 58 %, y bajó al colapsar). Un VPS sumaría la latencia de internet y la variación de vecinos; el candado de SQLite aparece en cualquier máquina.</p></div>
+      <div class="tarjeta t-azul pregunta"><h2>¿Y si el colapso es culpa de k6?</h2><p>k6 usó 4 % de un núcleo en promedio. Los errores 500 «database is locked» están en el log de Qolqe, no de k6.</p></div>
+      <div class="tarjeta t-azul pregunta"><h2>¿Por qué k6 y no JMeter, si es el más usado?</h2><p>JMeter necesita plugins para cortar por p95 y crea un hilo por usuario: en la misma laptop competiría con Qolqe. k6 trae los umbrales y consume poco.</p></div>
+      <div class="tarjeta t-azul pregunta"><h2>¿Qué cambia en otra máquina?</h2><p>Los números absolutos. El quiebre por el candado y el defecto del dinero se repiten. Por eso lo llamamos línea base relativa.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Los dos.</b> Kalos responde las de entorno y herramienta.</aside>
+</section>
+
+<!-- s-preguntas-3 -->
+<section id="s-preguntas-3" class="slide">
+  <p class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>Preguntas probables · 3 de 3</span></p>
+  <h1>Sobre los resultados</h1>
+  <div class="cuerpo">
+    <div class="fila c2">
+      <div class="tarjeta t-rojo pregunta"><h2>¿Por qué la capacidad es 600 si el sondeo aguantó 1000?</h2><p>El colapso depende de cuántos entran juntos y no se recupera solo. Para planificar se toma el escalón seguro, con margen.</p></div>
+      <div class="tarjeta t-rojo pregunta"><h2>¿Por qué el DEF-11 no salió en la prueba de carga?</h2><p>Con un usuario por VU, dos operaciones de la misma cuenta nunca coinciden. Lo probamos aparte, mandando peticiones exactamente a la vez.</p></div>
+      <div class="tarjeta t-rojo pregunta"><h2>¿Cómo saben que el dinero cuadra?</h2><p><code>verificar_dinero.py</code> compara la base antes y después: saldos contra movimientos, salidas contra entradas, deudas pagadas una vez. 13 027 operaciones, todas cuadran.</p></div>
+      <div class="tarjeta t-rojo pregunta"><h2>¿Qué arreglarían primero?</h2><p>El dinero: validar saldo y límite dentro de la transacción. Después, el commit dentro del endpoint para quitar el colapso.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Los dos.</b> Gianpier responde las de dinero; Kalos, las de capacidad.</aside>
+</section>
+
+<!-- s-cierre -->
+<section id="s-cierre" class="slide portada">
+  <div class="puntos"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i><i style="background:var(--green)"></i></div>
+  <div>
+    <h1>Gracias</h1>
+    <p class="sub">Qolqe aguanta la campaña con el doble de margen. Lo que hay que arreglar antes es el dinero bajo concurrencia.</p>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:22px"><span class="tenue">tests/performance · docs/rendimiento.md · docs/pruebas.md · docs/gestion-casos.md</span><span class="tenue">kaloslazo.github.io/qolqe-wallet</span></div>
+  <aside class="notas"><b>Los dos.</b> Abrimos preguntas.</aside>
+</section>
+
+<script>
+  // números de diapositiva por id, para que no se desordenen al agregar diapositivas
+  (() => {
+    const orden = [...document.querySelectorAll('.slide')].map((s) => s.id);
+    const n = (id) => orden.indexOf(id.trim()) + 1;
+    document.querySelectorAll('[data-diap]').forEach((el) => {
+      el.textContent = el.dataset.diap.split(',').map((p) => {
+        const [a, b] = p.split(':').map(n);
+        if (!b) return String(a);
+        return b - a === 1 ? `${a} y ${b}` : `${a} a ${b}`;
+      }).join(', ');
+    });
+  })();
+</script>
+
+</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  slides.forEach((s, i) => {
+    if (i === 0 || i === total - 1) return;
+    const pie = document.createElement('div');
+    pie.className = 'pie';
+    pie.innerHTML = '<span>Grupo 5</span><span>' + (i + 1) + ' / ' + total + '</span>';
+    s.appendChild(pie);
+  });
+  let actual = Math.min(Math.max(parseInt(location.hash.slice(1), 10) || 1, 1), total) - 1;
+  function mostrar(n) {
+    actual = Math.min(Math.max(n, 0), total - 1);
+    slides.forEach((s, i) => s.classList.toggle('activa', i === actual));
+    history.replaceState(null, '', '#' + (actual + 1));
+  }
+  function escalar() {
+    const k = Math.min(innerWidth / 1600, innerHeight / 900);
+    document.getElementById('deck').style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === 'Home') mostrar(0);
+    if (e.key === 'End') mostrar(total - 1);
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+    if (e.key === 'n') document.body.classList.toggle('ver-notas');
+  });
+  addEventListener('click', (e) => mostrar(actual + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  addEventListener('resize', escalar);
+  escalar();
+  mostrar(actual);
+</script>
+</body>
+</html>
