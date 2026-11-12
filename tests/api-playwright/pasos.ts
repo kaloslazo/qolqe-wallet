@@ -115,9 +115,38 @@ When(
 );
 
 // ------------------------------------------------------------------------------------- When (casos técnicos)
-When('envío {word} {word} sin token', async ({ sesion }, metodo: string, ruta: string) => {
-  sesion.respuesta = await sesion.cruda(metodo.toLowerCase() as 'get' | 'post' | 'put' | 'delete', ruta);
+type Metodo = 'get' | 'post' | 'put' | 'delete';
+
+When('envío {word} {word} {acceso}', async ({ sesion }, metodo: string, ruta: string, acceso: string) => {
+  sesion.respuesta = await sesion.conAcceso(acceso, metodo.toLowerCase() as Metodo, ruta);
 });
+
+When(
+  'envío {word} {word} con el cuerpo {string} {acceso}',
+  async ({ sesion }, metodo: string, ruta: string, cuerpo: string, acceso: string) => {
+    sesion.respuesta = await sesion.conAcceso(acceso, metodo.toLowerCase() as Metodo, ruta, cuerpo);
+  },
+);
+
+// con mi sesión si inicié una; si no, sin token (registro e inicio de sesión son públicos)
+When('envío {word} {word} con el cuerpo {string}', async ({ sesion }, metodo: string, ruta: string, cuerpo: string) => {
+  const m = metodo.toLowerCase() as Metodo;
+  sesion.respuesta = sesion.token ? await sesion.api(m, ruta, cuerpo) : await sesion.cruda(m, ruta, undefined, cuerpo);
+});
+
+When('envío {word} {word}', async ({ sesion }, metodo: string, ruta: string) => {
+  sesion.respuesta = await sesion.api(metodo.toLowerCase() as Metodo, ruta);
+});
+
+Given(
+  'que envié {int} veces {word} {word} con el cuerpo {string}',
+  async ({ sesion }, veces: number, metodo: string, ruta: string, cuerpo: string) => {
+    for (let i = 0; i < veces; i++) {
+      sesion.respuesta = await sesion.cruda(metodo.toLowerCase() as Metodo, ruta, undefined, cuerpo);
+      expect(sesion.respuesta.status(), await sesion.respuesta.text()).toBe(422);
+    }
+  },
+);
 
 // el id va tal cual en la ruta: así se prueban los que no existen o no caben en un entero (hallazgo de Schemathesis)
 When('elimino la alerta con el identificador {word}', async ({ sesion }, id: string) => {
@@ -210,6 +239,21 @@ Then('el error indica el campo {string}', async ({ sesion }, campo: string) => {
   expect(errores.map((e) => e.campo), JSON.stringify(errores)).toContain(`body.${campo}`);
 });
 
+Then('el error indica el parámetro {string}', async ({ sesion }, parametro: string) => {
+  const errores: { campo: string }[] = (await leer(sesion.respuesta!)).errores ?? [];
+  expect(errores.map((e) => e.campo), JSON.stringify(errores)).toContain(`query.${parametro}`);
+});
+
+Then('el aumento rige desde {string}', async ({ sesion }, desde: string) => {
+  expect((await sesion.limites()).pendiente_desde ?? '').toMatch(new RegExp(`^${desde}`));
+});
+
+Then(
+  'la alerta de {word} con umbral S\\/ {word} se notificó por última vez el {string}',
+  async ({ sesion }, tipo: string, umbral: string, fecha: string) => {
+    expect((await sesion.alerta(tipo, umbral)).ultima_notificacion ?? '').toMatch(new RegExp(`^${fecha}`));
+  },
+);
 Then('la alerta de {word} con umbral S\\/ {word} de {word} sigue {word}', async ({ request }, tipo: string, umbral: string, dueno: string, estado: string) => {
   expect((await alertaDe(request, dueno, tipo, umbral)).estado).toBe(estado);
 });

@@ -1,5 +1,8 @@
 import { expect, type APIRequestContext, type APIResponse } from '@playwright/test';
-import { test as base, createBdd } from 'playwright-bdd';
+import { test as base, createBdd, defineParameterType } from 'playwright-bdd';
+
+// cómo se autentica un caso técnico: sin token, con uno inválido o con el mío ya vencido
+defineParameterType({ name: 'acceso', regexp: /sin token|con un token inválido|con mi token vencido/ });
 
 export const USUARIOS: Record<string, { celular: string; pin: string }> = {
   Ana: { celular: '987654321', pin: '4826' },
@@ -70,6 +73,22 @@ export class Sesion {
     const r = await this.request.get('/api/pruebas/notificaciones', { params: { celular: this.celular } });
     return ((await r.json()) as unknown[]).map((n) => JSON.stringify(n));
   }
+
+  /** Petición sin token, con un token inválido o con el token actual ya vencido (adelanta el reloj 30 minutos). */
+  async conAcceso(acceso: string, metodo: 'get' | 'post' | 'put' | 'delete', ruta: string, data?: unknown) {
+    if (acceso === 'sin token') return this.cruda(metodo, ruta, undefined, data);
+    if (acceso === 'con un token inválido') return this.cruda(metodo, ruta, 'token-invalido', data);
+    expect(this.token, 'el token vencido necesita un inicio de sesión previo').toBeTruthy();
+    expect((await this.request.put('/api/pruebas/reloj', { data: { avanzar_minutos: 30 } })).ok()).toBeTruthy();
+    return this.cruda(metodo, ruta, this.token, data);
+  }
+}
+
+/** Sesión aparte de otro usuario, para mirar o actuar sobre sus datos. */
+export async function sesionDe(request: APIRequestContext, nombre: string) {
+  const otra = new Sesion(request);
+  await otra.login(nombre);
+  return otra;
 }
 
 /** Cuerpo JSON de una respuesta, o {} si no tiene (204). */

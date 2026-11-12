@@ -246,3 +246,27 @@
 
 **Evidencia:** `tests/performance/resultados/concurrencia/salida.txt` (5 rondas: 10 de 15 verificaciones fallan, todas las de límite y saldo). En las pruebas de carga, pico y resistencia no aparece porque cada VU usa su propio usuario y nunca hace dos operaciones a la vez.
 
+## DEF-12: Dos transferencias del mismo usuario en el mismo segundo reciben el mismo código de operación
+
+| Campo | Valor |
+|---|---|
+| Módulo / regla | Núcleo · RN-10 · HU-N-07 CA3 |
+| Severidad | Media |
+| Prioridad | Media (pasa con un doble clic o con dos transferencias seguidas; no mueve dinero de más, pero dos operaciones quedan con el mismo código) |
+| Entorno | Qolqe Wallet, Playwright 1.64, API REST |
+| Prueba que lo detecta | `features/nucleo_transferencias.feature` → CP-119 "Dos transferencias en el mismo segundo tienen códigos de operación distintos" (`@DEF-12`) |
+
+**Pasos para reproducir**
+1. Reiniciar datos y fijar el reloj con `PUT /api/pruebas/reloj` `{"ahora": "2026-11-10T10:00:00"}`.
+2. Iniciar sesión como Ana (987654321 / 4826).
+3. `PUT /api/pruebas/reloj` con `{"ahora": "2026-11-10T10:05:00"}` y `POST /api/transferencias` con `{"celular_destino": "912345678", "monto": 10}`.
+4. Repetir el paso 3 con `{"celular_destino": "956781234", "monto": 10}` (el reloj se fija de nuevo para que las dos caigan en el mismo segundo).
+
+**Resultado esperado:** cada transferencia tiene su propio `codigo_operacion` (RN-10: toda operación exitosa genera un movimiento con un código de operación único).
+
+**Resultado obtenido:** las dos responden 201 con el mismo código `TRF26111010050000001`, y en `GET /api/movimientos/recientes` de Ana quedan dos movimientos distintos (a Bruno y a Carla) con ese código. Sin tocar el reloj pasa igual: dos `POST /api/transferencias` simultáneos de Ana devolvieron los dos `TRF26111010000000001`.
+
+**Causa:** `generar_codigo_operacion` (`operaciones.py`) arma el código con el prefijo, la fecha y hora al segundo y el id del usuario, sin nada que lo distinga dentro del mismo segundo, y `codigo_operacion` no tiene restricción `UNIQUE` en `transferencias` ni en `movimientos`. Lo mismo vale para recargas (`REC`) y pagos (`PAG`).
+
+**Evidencia:** las dos respuestas 201 de los pasos 3 y 4 con el mismo `codigo_operacion`; el escenario `@DEF-12` falla en la verificación "las dos transferencias tienen códigos de operación distintos".
+
