@@ -11,7 +11,7 @@ const URL = __ENV.QOLQE_URL || 'http://localhost:8000';
 
 // datos/usuarios.csv lo genera datos/preparar_datos.py
 const usuarios = new SharedArray('usuarios', () =>
-  open('./datos/usuarios.csv').trim().split('\n').slice(1).map((linea) => {
+  open('./datos/usuarios.csv').trim().split(/\r?\n/).slice(1).map((linea) => {
     const [celular, pin, suministros] = linea.split(',');
     return { celular, pin, suministros: suministros.split(';') };
   }),

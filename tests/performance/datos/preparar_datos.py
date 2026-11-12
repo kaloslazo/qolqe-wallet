@@ -66,7 +66,7 @@ bd.commit()
 bd.close()
 
 with open("/perf/datos/usuarios.csv", "w", newline="") as archivo:
-    escritor = csv.writer(archivo)
+    escritor = csv.writer(archivo, lineterminator="\n")
     escritor.writerow(["celular", "pin", "suministros"])
     for n in range(1, total + 1):
         escritor.writerow([celular(n), PIN, ";".join(suministros(n))])

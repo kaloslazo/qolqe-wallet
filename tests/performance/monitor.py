@@ -12,7 +12,7 @@ proceso = psutil.Process(int(sys.argv[1]))
 archivo = sys.argv[2]
 
 with open(archivo, "w", newline="") as f:
-    w = csv.writer(f)
+    w = csv.writer(f, lineterminator="\n")
     w.writerow(["hora", "epoch", "cpu_%", "memoria_MB", "hilos"])
     while not os.path.exists(archivo + ".fin"):
         cpu = proceso.cpu_percent(interval=1)
