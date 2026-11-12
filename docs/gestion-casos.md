@@ -37,7 +37,7 @@ Precios y planes revisados el 12 de noviembre de 2026 en las páginas oficiales 
 
 - Guarda 30 días de datos. Los reportes de GitHub Pages y el historial de [`trazabilidad.md`](trazabilidad.md) siguen siendo el registro permanente, y antes de cada entrega se exporta la corrida a PDF.
 - El plan gratis no tiene módulo de requisitos. Las HU quedan como etiquetas y la matriz HU → criterio → caso la sigue generando nuestro script.
-- Admite 5000 resultados al mes. Cada pipeline produce unos 190 (API, gate del contrato, web en dos navegadores), así que solo se sube desde `main`: unas 26 corridas al mes.
+- Admite 5000 resultados al mes. Cada pipeline sube 312 (260 de API, 14 del gate del contrato y 19 por navegador), así que solo se sube desde `main` y el pipeline no corre con cambios de documentación: alcanza para unas 16 corridas al mes.
 
 ## Cómo se conecta
 
@@ -70,6 +70,8 @@ Lo hace una persona, una sola vez:
 
 4. Si el proyecto tiene otro código, guardarlo como variable: `gh variable set QASE_PROYECTO -R kaloslazo/qolqe-wallet`.
 5. Correr el pipeline a mano (Actions › Pipeline › *Run workflow*) y revisar la corrida en Qase.
+
+Activado el 12 de noviembre de 2026. La primera corrida, *Pipeline #35 · b900935*, creó 312 casos en cuatro suites (API, Contrato, Web chrome y Web firefox): 299 passed y 6 skipped, que son los 3 defectos de interfaz conocidos en cada navegador. Los `@fail` de Playwright llegan como passed, igual que en el reporte de Playwright: pasan mientras el defecto siga ahí.
 
 ## Fuentes
 
