@@ -54,14 +54,14 @@ En el pipeline, los jobs `api` y `contrato` guardan el log de su app, y `reporte
 
 ## Interfaz web con Selenium + pytest-bdd
 
-15 escenarios de la pantalla de límites (`features/ui/limites_ui.feature`, Gherkin en español) automatizados con Selenium 4, pytest-bdd y Page Objects. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
+16 escenarios web (`features/ui/`, Gherkin en español) automatizados con Selenium 4 y pytest-bdd: los de la pantalla de límites con Page Objects y uno con dos usuarios a la vez (Ana y Bruno, cada uno en su navegador) con el patrón Screenplay. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
 
 ```bash
-scripts/selenium.sh todo          # 15 escenarios en Chrome sin ventana + reportes/selenium/reporte.html
+scripts/selenium.sh todo          # los escenarios web en Chrome sin ventana + reportes/selenium/reporte.html
 scripts/selenium.sh demo          # flujo feliz con Chrome visible, resaltando cada elemento
 ```
 
-Resultado esperado: `16 passed, 3 xfailed` (15 escenarios BDD + 1 ejemplo con el patrón Screenplay; los 3 xfailed son los defectos conocidos de `features/ui/defectos_ui.feature`). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
+Resultado esperado: `17 passed, 3 xfailed` (16 escenarios BDD, uno de ellos con dos usuarios y Screenplay, + 1 ejemplo de Screenplay con un actor; los 3 xfailed son los defectos conocidos de `features/ui/defectos_ui.feature`). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
 
 | Modo | Qué hace |
 |---|---|

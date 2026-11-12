@@ -85,18 +85,18 @@ Evidencia: `docs/evidencia/schemathesis/` (reporte HTML, JUnit y salida de la co
 
 **Ventajas:** estándar W3C mantenido por los fabricantes de navegadores; Safari real; Grid para correr en paralelo o en remoto; Python, el mismo lenguaje de la app y de su API de soporte. **Limitaciones:** más código propio que Playwright (esperas, reportes, capturas); un driver por navegador (Selenium Manager los descarga); más lento que probar por API. **IA:** reparación de localizadores rotos con un modelo de lenguaje (`scripts/selenium.sh ia`), que deja cada reparación en `reportes/selenium/sanaciones.json` para que una persona la revise y corrija el Page Object.
 
-### Patrón de diseño: Page Object, y por qué
+### Patrón de diseño: Page Object para las pantallas, Screenplay para varios usuarios
 
-**El problema.** La pantalla de límites cambia (textos, `data-testid`, orden de campos), la suite la mantienen dos personas y los pasos de Gherkin tienen que leerse como la historia de usuario. Elegimos el patrón con cuatro criterios: (1) un cambio de interfaz se corrige en un solo lugar; (2) los pasos hablan el idioma del negocio; (3) poco código extra para el tamaño de la suite (15 escenarios en 3 pantallas); (4) que los dos podamos explicarlo y mantenerlo.
+**El problema.** La pantalla de límites cambia (textos, `data-testid`, orden de campos), la suite la mantienen dos personas y los pasos de Gherkin tienen que leerse como la historia de usuario. Elegimos el patrón con cuatro criterios: (1) un cambio de interfaz se corrige en un solo lugar; (2) los pasos hablan el idioma del negocio; (3) poco código extra para el tamaño de la suite (16 escenarios en 4 pantallas); (4) que los dos podamos explicarlo y mantenerlo; (5) expresar escenarios con varios usuarios a la vez, porque en Qolqe el dinero pasa de un usuario a otro y la Parte 3 trata justamente de usuarios simultáneos.
 
-| Opción | (1) Un cambio, un lugar | (2) Pasos de negocio | (3) Código extra | (4) Mantenerlo entre dos | Decisión |
-|---|---|---|---|---|---|
-| Script lineal, sin patrón | no: el mismo localizador se repite en cada paso que lo usa | no: los pasos se llenan de `find_element` | ninguno | fácil al inicio, frágil después | descartado |
-| **Page Object** | **sí: cada localizador vive en su página** | **sí: `cambiar_limite(500)`** | **3 páginas y una base** | **sí** | **elegido** |
-| Screenplay | sí | sí, aún más (actor, tareas, preguntas) | alto: el flujo feliz solo pide 8 clases y 148 líneas | más conceptos que aprender | implementado como comparación, no como base |
-| Page Factory | sí | sí | — | — | no existe en Python (`@FindBy` es de Java) |
+| Opción | (1) Un cambio, un lugar | (2) Pasos de negocio | (3) Código extra | (4) Mantenerlo entre dos | (5) Varios usuarios | Decisión |
+|---|---|---|---|---|---|---|
+| Script lineal, sin patrón | no: el mismo localizador se repite en cada paso que lo usa | no: los pasos se llenan de `find_element` | ninguno | fácil al inicio, frágil después | no | descartado |
+| **Page Object** | **sí: cada localizador vive en su página** | **sí: `cambiar_limite(500)`** | **4 páginas y una base** | **sí** | no: la página no sabe quién la usa | **elegido para las pantallas** |
+| **Screenplay** | sí, porque usa las páginas por dentro | **sí, aún más: «Ana le transfiere a Bruno»** | alto: actores, tareas y preguntas | más conceptos que aprender | **sí: cada actor con su navegador y su sesión** | **elegido para los flujos entre usuarios** |
+| Page Factory | sí | sí | — | — | — | no existe en Python (`@FindBy` es de Java) |
 
-**La evidencia de que cumple.** Los 31 localizadores están en `pages/limites_page.py` (17), `transferir_page.py` (10) y `login_page.py` (4); de los 32 pasos, ninguno busca un elemento por su cuenta (solo uno lee el texto completo de la página para verificar un mensaje). `scripts/selenium.sh romper` cambia a propósito un localizador y el flujo feliz falla; arreglarlo es una línea en `limites_page.py` y los 15 escenarios vuelven a pasar. Screenplay está en `tests/e2e/screenplay/` con el mismo flujo de Ana y pasa: sus tareas llaman por dentro a `LimitesPage`, así que cambiar de patrón solo tocaría la capa de pasos. Para 15 escenarios y un actor, Screenplay agrega conceptos sin resolver un problema que tengamos; convendría con varios actores y flujos que cruzan muchas pantallas.
+**La evidencia de que cumple.** Los 34 localizadores están en `pages/limites_page.py` (17), `transferir_page.py` (10), `login_page.py` (4) e `inicio_page.py` (3); de los 37 pasos, ninguno busca un elemento por su cuenta (solo uno lee el texto completo de la página para verificar un mensaje). `scripts/selenium.sh romper` cambia a propósito un localizador y el flujo feliz falla; arreglarlo es una línea en `limites_page.py` y los 15 escenarios vuelven a pasar. Screenplay, en `tests/e2e/screenplay/`, resuelve lo que Page Object no: **quién** hace cada cosa. En CP-145 (`features/ui/dos_usuarios_ui.feature`) Ana y Bruno ingresan cada uno en su propio navegador, con su propia sesión; Ana le transfiere S/ 50 a Bruno, y Bruno ve el dinero en su saldo y en sus movimientos. El escenario se lee igual que el código: `ana.intenta(Transferir.a("Bruno").por(50))` y `bruno.ve(SaldoDisponible("S/ 850.00"))`. Pasa en Chrome y en Firefox. Las tareas usan las páginas por dentro (`TransferirPage`, `InicioPage`), así que no se duplica ningún localizador: Page Object responde «dónde está cada botón» y Screenplay, «quién hace qué».
 
 Junto a Page Object usamos Component Object (el menú, que aparece en varias páginas), una clase base con las esperas explícitas (`WebDriverWait`, nunca `sleep`), una fábrica de navegadores (local, Grid, móvil) y una fachada de la API para preparar datos. Localizadores: `data-testid` en todos los elementos propios de la pantalla y el texto del enlace en el menú; ningún XPath.
 
@@ -120,7 +120,7 @@ Cada escenario lleva `@CP-NN`, sus `@HU` y sus criterios (`@CA-N-07-3` = HU-N-07
 
 **Gestión de casos.** Comparamos 14 herramientas (Qase, Testomat.io, BrowserStack, Kiwi TCMS, TestLink, Xray, Zephyr, TestRail, Testmo, Allure TestOps y otras) con cinco criterios: gratis sin vencimiento, resultados desde GitHub Actions, historial por caso, defectos ligados al resultado y acceso para la profesora. Elegimos **Qase** (plan gratis): es la única que cumple los cinco. El job `reportes` crea una corrida de Qase por pipeline de `main` y sube los JUnit de API, contrato y web con `qasectl`; cada escenario acumula su historial y desde un resultado fallido se registra el defecto. Comparación, límites asumidos y cómo activarlo en [`gestion-casos.md`](gestion-casos.md).
 
-**Resultados web:** 16 passed y 3 xfailed en Chrome y en Firefox (15 escenarios, el ejemplo de Screenplay y los 3 defectos de interfaz conocidos). Reportes: `reportes/selenium/reporte-bdd.html` y el sitio en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
+**Resultados web:** 17 passed y 3 xfailed en Chrome y en Firefox (los escenarios de límites, el de dos usuarios con Screenplay, el ejemplo de Screenplay de un actor y los 3 defectos de interfaz conocidos). Reportes: `reportes/selenium/reporte-bdd.html` y el sitio en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
 
 ## 4. Pruebas de rendimiento
 

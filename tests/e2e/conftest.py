@@ -47,8 +47,9 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     for marca in ("G5", "ui", "happy", "demo", "reloj", "e2e", "ventanas", "dialogos", "datos", "bidi", "red",
                   "R-G5-04", "defecto", "screenplay", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-0{n}" for n in range(1, 4)),
-                  *(f"CP-{n:02d}" for n in range(1, 100)),
-                  *(f"CA-G5-0{h}-{c}" for h in range(1, 9) for c in range(1, 4))):
+                  *(f"CP-{n:02d}" for n in range(1, 200)), *(f"HU-N-0{n}" for n in range(1, 10)),
+                  *(f"CA-G5-0{h}-{c}" for h in range(1, 9) for c in range(1, 4)),
+                  *(f"CA-N-0{h}-{c}" for h in range(1, 10) for c in range(1, 7))):
         config.addinivalue_line("markers", f"{marca}: etiqueta Gherkin")
 
 
@@ -123,6 +124,14 @@ def driver(request, app, config_navegador, pytestconfig, monkeypatch):
     navegador = crear_driver(config_navegador)
     if config_navegador.soporta_bidi:
         request.node.stash[CONSOLA] = Consola(navegador)
+    yield navegador
+    navegador.quit()
+
+
+@pytest.fixture
+def otro_navegador(driver, config_navegador):
+    """Un segundo navegador con su propia sesión, para los escenarios con dos usuarios a la vez (Screenplay)."""
+    navegador = crear_driver(config_navegador)
     yield navegador
     navegador.quit()
 

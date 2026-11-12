@@ -158,7 +158,14 @@ Un escenario completo también usa la **API de la app** por fuera del navegador:
 | Facade + estado por API | `soporte/api.py` | Esconde las llamadas HTTP; prepara datos y sesión sin pasar por la UI |
 | Proxy (auto-reparación) | `BasePage.visible` + `soporte/sanador.py` | Se interpone en la búsqueda: si falla, la IA intenta antes de rendirse |
 
-**¿Y si nos piden otro patrón?** El más común es **Screenplay** (popular en Serenity BDD): en vez de páginas, un **actor** con **habilidades** (navegar la web) que realiza **tareas** y hace **preguntas** sobre lo que ve. Está implementado en `tests/e2e/screenplay/` y `tests/e2e/test_screenplay.py` con el mismo flujo de Ana, y pasa:
+**Screenplay, para los escenarios con varios usuarios.** Page Object sabe **dónde** está cada botón, pero no **quién** lo usa. Screenplay (popular en Serenity BDD) cuenta la prueba desde las personas: un **actor** con **habilidades** (su propio navegador y su sesión) que realiza **tareas** y hace **preguntas** sobre lo que ve. En Qolqe el dinero pasa de un usuario a otro, así que lo usamos para los flujos entre usuarios. En CP-145 (`features/ui/dos_usuarios_ui.feature`) Ana y Bruno abren cada uno su navegador:
+
+```python
+ana.intenta(Transferir.a("Bruno").por(50))
+assert bruno.ve(SaldoDisponible("S/ 850.00")) == "S/ 850.00"   # en el navegador de Bruno
+```
+
+El segundo navegador lo da el fixture `otro_navegador` del conftest. También está el flujo feliz de Ana escrito con Screenplay (`tests/e2e/test_screenplay.py`), para comparar estilos:
 
 ```python
 ana = Actor.llamado("Ana").que_puede(NavegarLaWeb(driver))
@@ -167,7 +174,7 @@ ana.intenta(IniciarSesion.como("Ana"), IrA("Límites y alertas"),
 assert ana.ve(LimiteDiarioVigente("S/ 500.00")) == "S/ 500.00"
 ```
 
-Las tareas de Screenplay llaman por dentro a `LimitesPage`: **Page Object y Screenplay conviven**. Cambiar de patrón solo afecta a la capa de pasos; el `.feature` y las páginas se quedan. Screenplay conviene en suites grandes, con varios actores y flujos que cruzan muchas páginas; para nuestro módulo, Page Object es más simple y suficiente.
+Las tareas de Screenplay llaman por dentro a las páginas (`LimitesPage`, `TransferirPage`, `InicioPage`): **Page Object y Screenplay conviven**. Page Object para las pantallas; Screenplay encima, cuando el escenario tiene más de un usuario. Para un solo usuario en una pantalla, los pasos con Page Object son más simples.
 
 Otros patrones que existen y no usamos: **Page Factory** (anotaciones `@FindBy` de Java; no existe en Python), **Loadable Component** (una página sabe verificar si terminó de cargar; nuestro `esperar_carga()` hace algo parecido) y **Data Builder** (construir datos de prueba paso a paso).
 
@@ -233,12 +240,13 @@ scripts/selenium.sh reporte
 
 ```
 features/ui/limites_ui.feature    15 escenarios (Gherkin en español)
+features/ui/dos_usuarios_ui.feature  Ana y Bruno a la vez, con Screenplay (CP-145)
 features/ui/defectos_ui.feature   3 escenarios de defectos conocidos (DEF-01, 02, 03)
 tests/e2e/
   conftest.py                     opciones, levanta la app si hace falta, capturas, reportes
   test_limites_ui.py              definiciones de pasos
   pages/                          Page Objects: base, login (+ menú), límites, transferir
-  screenplay/ + test_screenplay.py  el mismo happy path con el patrón Screenplay
+  screenplay/ + test_screenplay.py  actores, tareas y preguntas; el happy path de Ana con Screenplay
   soporte/
     navegador.py                  crea el driver: local o Grid, con o sin ventana, móvil
     bidi.py                       consola del navegador e intercepción de red
@@ -255,7 +263,7 @@ Comandos (`scripts/selenium.sh <modo>`):
 | Modo | Qué hace |
 |---|---|
 | `preparar` | Levanta el Grid y hace una corrida rápida para calentar todo |
-| `todo` | Los 18 escenarios BDD + el ejemplo Screenplay, sin ventana: 16 pasan y 3 son defectos conocidos |
+| `todo` | Los 19 escenarios BDD + el ejemplo de Screenplay, sin ventana: 17 pasan y 3 son defectos conocidos |
 | `demo` | El flujo feliz con Chrome visible y cada elemento resaltado |
 | `defectos` | Los 3 defectos como fallas reales (rojo), visibles; abre el reporte |
 | `navegadores` | Todo en Chrome, Edge y Firefox |
@@ -275,7 +283,7 @@ Comandos (`scripts/selenium.sh <modo>`):
 cd ~/PruebasTestAutomatizacion/proyecto/qolqe-g5-limites
 /opt/homebrew/bin/python3.12 -m venv .venv          # si no existe
 .venv/bin/pip install -r requirements-e2e.txt
-scripts/selenium.sh todo                             # debe decir: 16 passed, 3 xfailed
+scripts/selenium.sh todo                             # debe decir: 17 passed, 3 xfailed
 ```
 
 - Abrir **Docker Desktop**, esperar a que diga *Engine running* y correr `scripts/selenium.sh grid -m happy`: la primera vez descarga las imágenes de Docker y tarda varios minutos.

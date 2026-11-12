@@ -1,6 +1,8 @@
 """Tareas y preguntas del G5. Cada una se lee como una frase: CrearAlerta.de("Recargas").desde(50)."""
+from tests.e2e.pages.inicio_page import InicioPage
 from tests.e2e.pages.limites_page import LimitesPage
 from tests.e2e.pages.login_page import LoginPage, Menu
+from tests.e2e.pages.transferir_page import TransferirPage
 from tests.e2e.screenplay import NavegarLaWeb
 from tests.e2e.soporte.api import USUARIOS
 
@@ -61,6 +63,24 @@ class CrearAlerta:
         LimitesPage(_driver(actor)).crear_alerta(self.tipo, self.umbral)
 
 
+class Transferir:
+    """Transferir.a("Bruno").por(50): el actor transfiere desde su propio navegador."""
+
+    def __init__(self, destino: str, monto: int | None = None):
+        self.destino, self.monto = destino, monto
+
+    @classmethod
+    def a(cls, destino: str) -> "Transferir":
+        return cls(destino)
+
+    def por(self, monto: int) -> "Transferir":
+        self.monto = monto
+        return self
+
+    def realizada_por(self, actor):
+        TransferirPage(_driver(actor)).abrir().transferir(self.monto, USUARIOS[self.destino][0])
+
+
 # ---------------------------------------------------------------- preguntas
 class LimiteDiarioVigente:
     def __init__(self, esperado: str = ""):
@@ -77,3 +97,23 @@ class EstadoDeAlerta:
 
     def respondida_por(self, actor) -> str:
         return LimitesPage(_driver(actor)).estado_alerta(self.titulo, self.esperado)
+
+
+class MontoDelComprobante:
+    def respondida_por(self, actor) -> str:
+        return TransferirPage(_driver(actor)).monto_comprobante()
+
+
+class SaldoDisponible:
+    """Abre (o recarga) el inicio del actor: así ve lo que otro actor hizo desde otro navegador."""
+
+    def __init__(self, esperado: str = ""):
+        self.esperado = esperado
+
+    def respondida_por(self, actor) -> str:
+        return InicioPage(_driver(actor)).abrir().saldo(self.esperado)
+
+
+class MovimientosRecientes:
+    def respondida_por(self, actor) -> list[str]:
+        return InicioPage(_driver(actor)).abrir().movimientos_recientes()

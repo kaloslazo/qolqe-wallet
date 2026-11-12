@@ -1,9 +1,12 @@
-"""Pasos de features/ui/*.feature (límites y defectos conocidos). Cada paso delega en un Page Object: aquí no hay selectores."""
+"""Pasos de features/ui/*.feature. Cada paso delega en un Page Object, o en un actor de Screenplay cuando el escenario
+tiene varios usuarios: aquí no hay selectores."""
 from pytest_bdd import given, parsers, scenarios, then, when
 
 from tests.e2e.pages.limites_page import LimitesPage
 from tests.e2e.pages.login_page import LoginPage, Menu
 from tests.e2e.pages.transferir_page import TransferirPage
+from tests.e2e.screenplay import Actor, NavegarLaWeb
+from tests.e2e.screenplay.tareas import IniciarSesion, MontoDelComprobante, MovimientosRecientes, SaldoDisponible, Transferir
 from tests.e2e.soporte import bidi
 from tests.e2e.soporte.api import USUARIOS
 
@@ -199,3 +202,37 @@ def bandeja_en_otra_pestana(driver, usuario, texto):
     driver.close()
     driver.switch_to.window(original)
     assert texto in contenido, f"La bandeja no contiene {texto!r}: {contenido}"
+
+
+# ---------------------------------------------------------------- Screenplay: varios usuarios, cada uno con su navegador
+@given("que Ana y Bruno ingresan a Qolqe, cada uno en su navegador")
+def ana_y_bruno(driver, otro_navegador, contexto):
+    contexto["actores"] = {
+        "Ana": Actor.llamado("Ana").que_puede(NavegarLaWeb(driver)),
+        "Bruno": Actor.llamado("Bruno").que_puede(NavegarLaWeb(otro_navegador)),
+    }
+    for nombre, actor in contexto["actores"].items():
+        actor.intenta(IniciarSesion.como(nombre))
+
+
+@when(parsers.parse("{quien} le transfiere S/ {monto:d} a {destino}"))
+def actor_transfiere(contexto, quien, monto, destino):
+    contexto["actores"][quien].intenta(Transferir.a(destino).por(monto))
+
+
+@then(parsers.parse('{quien} ve en su comprobante "{monto}"'))
+def actor_ve_comprobante(contexto, quien, monto):
+    real = contexto["actores"][quien].ve(MontoDelComprobante())
+    assert real == monto, f"{quien} esperaba {monto!r} y su pantalla muestra {real!r}"
+
+
+@then(parsers.parse('{quien} ve su saldo en "{saldo}"'))
+def actor_ve_saldo(contexto, quien, saldo):
+    real = contexto["actores"][quien].ve(SaldoDisponible(saldo))
+    assert real == saldo, f"{quien} esperaba {saldo!r} y su pantalla muestra {real!r}"
+
+
+@then(parsers.parse('{quien} ve un movimiento reciente de "{monto}"'))
+def actor_ve_movimiento(contexto, quien, monto):
+    recientes = contexto["actores"][quien].ve(MovimientosRecientes())
+    assert any(monto in m for m in recientes), f"{quien} no ve un movimiento de {monto}: {recientes}"
