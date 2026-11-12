@@ -1,0 +1,4 @@
+*
+!requirements.txt
+!qolqe/
+qolqe/**/__pycache__
