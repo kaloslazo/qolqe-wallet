@@ -23,7 +23,7 @@ Diego tiene un límite de S/ 1,000. Un aumento tarda 24 horas en aplicarse, y un
 | API | Playwright + playwright-bdd | 134 escenarios en Gherkin del G5 y del núcleo |
 | Contrato | Schemathesis | que cada endpoint responda lo que dice su OpenAPI |
 | Interfaz web | Selenium 4 + pytest-bdd | la pantalla de límites, con Page Objects, Grid, móvil y reparación de localizadores con IA |
-| Rendimiento | k6 | hora punta, campaña, estrés y resistencia sobre la API, con Qolqe en Docker |
+| Rendimiento | k6 | hora punta, campaña, estrés y resistencia sobre la API, con Qolqe en Docker ([resultados](docs/rendimiento.md)) |
 
 Cada push y cada pull request corren el pipeline en GitHub Actions: primero la API y, si pasa, el contrato y la interfaz en Chrome y Firefox. Los fallos esperados son los defectos ya reportados; cualquier otro fallo, o un escenario que pasa solo al reintentar, deja el pipeline en rojo. Desde `main`, los reportes y la [matriz de trazabilidad](docs/trazabilidad.md) se publican en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
 
@@ -63,6 +63,7 @@ docs/
   pruebas.md        cómo correr cada suite y cómo funciona el pipeline
   defectos.md       los defectos encontrados
   trazabilidad.md   HU → casos → resultado de un run del pipeline
+  rendimiento.md    Parte 3: hallazgos de rendimiento, con cifras y gráficos
   informe.md        informe del proyecto
   guia-selenium.md  glosario y guion de la demo
   evidencia/        reportes de la última corrida

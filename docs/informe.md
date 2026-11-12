@@ -90,7 +90,7 @@ Evidencia: `docs/evidencia/schemathesis/` (reporte HTML, JUnit y salida de la co
 
 **Recomendaciones:** commit dentro del endpoint para que el candado no dependa del pool; `busy_timeout` corto y `--limit-concurrency` para fallar rápido con 503; clave de idempotencia en las operaciones de dinero; validar saldo y límite dentro de la transacción de escritura (DEF-11); PostgreSQL y varios procesos para crecer más allá de 600.
 
-El análisis completo, con el modelo de carga, los supuestos y los gráficos, está en el [informe de rendimiento](Informe_Rendimiento_G5.docx).
+El análisis completo, con el modelo de carga, los supuestos y los gráficos, está en el [informe de rendimiento](Informe_Rendimiento_G5.docx); un resumen para leer en GitHub, en [`rendimiento.md`](rendimiento.md).
 
 ## 5. Defectos encontrados
 
