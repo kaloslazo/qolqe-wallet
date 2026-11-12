@@ -1,0 +1,81 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: escenarios/concurrencia.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * rondas: 5 iterations for each of 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+time="2026-11-11T21:37:43-05:00" level=info msg="diego: 5 de 5 transferencias aceptadas, usado hoy S/ 1500" source=console
+time="2026-11-11T21:37:43-05:00" level=info msg="carla: 2 de 2 transferencias aceptadas, saldo final S/ -30" source=console
+time="2026-11-11T21:37:43-05:00" level=info msg="usuario 900000001: 1 de 2 pagos de la misma deuda aceptados" source=console
+time="2026-11-11T21:37:43-05:00" level=info msg="diego: 5 de 5 transferencias aceptadas, usado hoy S/ 1500" source=console
+
+running (00m01.0s), 1/1 VUs, 1 complete and 0 interrupted iterations
+rondas   [  20% ] 1 VUs  00m01.0s/10m0s  1/5 iters, 5 per VU
+time="2026-11-11T21:37:43-05:00" level=info msg="carla: 2 de 2 transferencias aceptadas, saldo final S/ -30" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="usuario 900000001: 1 de 2 pagos de la misma deuda aceptados" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="diego: 5 de 5 transferencias aceptadas, usado hoy S/ 1500" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="carla: 2 de 2 transferencias aceptadas, saldo final S/ -30" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="usuario 900000001: 1 de 2 pagos de la misma deuda aceptados" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="diego: 5 de 5 transferencias aceptadas, usado hoy S/ 1500" source=console
+time="2026-11-11T21:37:44-05:00" level=info msg="carla: 2 de 2 transferencias aceptadas, saldo final S/ -30" source=console
+
+running (00m02.0s), 1/1 VUs, 3 complete and 0 interrupted iterations
+rondas   [  60% ] 1 VUs  00m02.0s/10m0s  3/5 iters, 5 per VU
+time="2026-11-11T21:37:44-05:00" level=info msg="usuario 900000001: 1 de 2 pagos de la misma deuda aceptados" source=console
+time="2026-11-11T21:37:45-05:00" level=info msg="diego: 5 de 5 transferencias aceptadas, usado hoy S/ 1500" source=console
+time="2026-11-11T21:37:45-05:00" level=info msg="carla: 2 de 2 transferencias aceptadas, saldo final S/ -30" source=console
+time="2026-11-11T21:37:45-05:00" level=info msg="usuario 900000001: 1 de 2 pagos de la misma deuda aceptados" source=console
+
+
+  █ THRESHOLDS 
+
+    checks
+    ✗ 'rate==1' rate=33.33%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 15     6.028372/s
+    checks_succeeded...: 33.33% 5 out of 15
+    checks_failed......: 66.66% 10 out of 15
+
+    ✗ diego no pasa su limite diario de S/ 1000
+      ↳  0% — ✓ 0 / ✗ 5
+    ✗ el saldo de carla no queda negativo
+      ↳  0% — ✓ 0 / ✗ 5
+    ✓ la misma deuda se cobra una sola vez
+
+    CUSTOM
+    aceptadas......................: 40    16.075658/s
+
+    HTTP
+    http_req_duration..............: avg=52.72ms min=648µs    med=48.73ms  max=233.84ms p(90)=111.3ms  p(95)=118.92ms
+      { expected_response:true }...: avg=55.49ms min=648µs    med=54.95ms  max=233.84ms p(90)=113.76ms p(95)=119.72ms
+    http_req_failed................: 5.88% 5 out of 85
+    http_reqs......................: 85    34.160774/s
+
+    EXECUTION
+    iteration_duration.............: avg=497.6ms min=429.49ms med=476.31ms max=644.91ms p(90)=577.68ms p(95)=611.29ms
+    iterations.....................: 5     2.009457/s
+    vus............................: 1     min=1       max=1
+    vus_max........................: 1     min=1       max=1
+
+    NETWORK
+    data_received..................: 28 kB 11 kB/s
+    data_sent......................: 28 kB 11 kB/s
+
+
+
+
+running (00m02.5s), 0/1 VUs, 5 complete and 0 interrupted iterations
+rondas ✓ [ 100% ] 1 VUs  00m02.5s/10m0s  5/5 iters, 5 per VU
+time="2026-11-11T21:37:45-05:00" level=error msg="thresholds on metrics 'checks' have been crossed"

@@ -1,0 +1,56 @@
+# Prueba de resistencia
+
+```
+inicio 2026-11-12 08:15:49
+fin    2026-11-12 09:19:20
+```
+
+## Por tramo estable (mismos VUs al menos 90 s)
+
+| minutos | VUs | peticiones | pet/s | sesiones/min | p95 login | p95 consultas | p95 dinero | errores % | CPU Qolqe prom / máx | memoria máx MB | hilos máx | CPU k6 máx |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2.0–62.1 | 100 | 24207 | 6.7 | 55.5 | 47 | 42 | 126 | 0.00 | 7 / 65 | 69 | 16 | 6 |
+
+Tiempos en ms. Umbrales de hora punta: consultas y login p95 < 800, dinero p95 < 1500, errores < 1 %.
+
+## Mesetas largas, cada 5 minutos
+
+| minutos | VUs | peticiones | pet/s | sesiones/min | p95 login | p95 consultas | p95 dinero | errores % | CPU Qolqe prom / máx | memoria máx MB | hilos máx | CPU k6 máx |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2.0–7.0 | 100 | 2008 | 6.7 | 54.2 | 47 | 42 | 125 | 0.00 | 7 / 29 | 64 | 9 | 5 |
+| 7.0–12.0 | 100 | 2008 | 6.7 | 56.8 | 48 | 44 | 122 | 0.00 | 7 / 17 | 65 | 8 | 4 |
+| 12.0–17.0 | 100 | 2024 | 6.7 | 55.6 | 44 | 39 | 123 | 0.00 | 6 / 18 | 65 | 8 | 5 |
+| 17.0–22.0 | 100 | 1988 | 6.6 | 54.8 | 45 | 40 | 128 | 0.00 | 6 / 19 | 65 | 8 | 4 |
+| 22.0–27.0 | 100 | 2029 | 6.8 | 55.4 | 45 | 41 | 126 | 0.00 | 7 / 65 | 65 | 9 | 4 |
+| 27.0–32.0 | 100 | 2008 | 6.7 | 55.2 | 47 | 43 | 125 | 0.00 | 6 / 21 | 67 | 11 | 3 |
+| 32.0–37.0 | 100 | 2015 | 6.7 | 56.8 | 47 | 43 | 127 | 0.00 | 7 / 26 | 67 | 8 | 3 |
+| 37.0–42.0 | 100 | 2010 | 6.7 | 55.8 | 46 | 42 | 129 | 0.00 | 7 / 20 | 67 | 8 | 4 |
+| 42.0–47.0 | 100 | 2005 | 6.7 | 54.2 | 47 | 42 | 126 | 0.00 | 7 / 29 | 67 | 9 | 3 |
+| 47.0–52.0 | 100 | 2014 | 6.7 | 54.6 | 57 | 44 | 125 | 0.00 | 8 / 54 | 69 | 16 | 5 |
+| 52.0–57.0 | 100 | 2052 | 6.8 | 56.6 | 51 | 45 | 128 | 0.00 | 8 / 43 | 69 | 9 | 6 |
+| 57.0–62.0 | 100 | 2011 | 6.7 | 56.4 | 47 | 40 | 125 | 0.00 | 7 / 20 | 69 | 9 | 4 |
+
+## Por operación (toda la prueba)
+
+| operación | peticiones | p50 | p95 | p99 | máx | errores % |
+|---|---|---|---|---|---|---|
+| login | 3458 | 38 | 47 | 57 | 655 | 0.00 |
+| saldo_perfil | 6226 | 3 | 6 | 9 | 601 | 0.00 |
+| movimientos | 3095 | 22 | 30 | 42 | 192 | 0.00 |
+| contactos | 2043 | 4 | 7 | 12 | 501 | 0.00 |
+| deudas | 2093 | 4 | 6 | 10 | 577 | 0.00 |
+| otras | 2135 | 4 | 6 | 10 | 385 | 0.00 |
+| transferencia | 2999 | 93 | 130 | 137 | 1045 | 0.00 |
+| recarga | 2094 | 8 | 13 | 19 | 396 | 0.00 |
+| pago | 891 | 7 | 10 | 16 | 94 | 0.00 |
+
+## Dinero: antes y después
+
+```
+OK    transferencias con salida y entrada: 2999 transferencias, 0 con movimientos que no cuadran
+OK    saldo = saldo anterior + movimientos: 0 cuentas descuadradas []
+OK    deudas pagadas una sola vez: 0 deudas con mas de un pago
+OK    codigos de operacion unicos: 0 codigos repetidos
+OK    sin saldos negativos: 0 cuentas en negativo
+OK    operaciones en la bd = 201 recibidos por k6: bd: 5984, k6: 5984
+```

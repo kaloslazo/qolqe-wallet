@@ -1,0 +1,6 @@
+OK    transferencias con salida y entrada: 3089 transferencias, 0 con movimientos que no cuadran
+OK    saldo = saldo anterior + movimientos: 0 cuentas descuadradas []
+OK    deudas pagadas una sola vez: 0 deudas con mas de un pago
+OK    codigos de operacion unicos: 0 codigos repetidos
+OK    sin saldos negativos: 0 cuentas en negativo
+FALLA operaciones en la bd = 201 recibidos por k6: bd: 5826, k6: 5823
