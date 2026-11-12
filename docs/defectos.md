@@ -200,3 +200,49 @@
 **Resultado obtenido:** uno 201 y los demás **500 Internal Server Error** sin `codigo` (5 de 5 intentos).
 
 **Evidencia:** log del servidor: `sqlite3.IntegrityError: UNIQUE constraint failed: usuarios.celular` (tres veces en `docs/evidencia/playwright/log-servidor.txt`, durante el escenario `@DEF-09`).
+
+## DEF-10: Desde unos 800 usuarios simultáneos el servicio se traba y responde 500 «database is locked»
+
+| Campo | Valor |
+|---|---|
+| Módulo / regla | Rendimiento · requerimiento «Quincena Qolqe» (capacidad y fallas < 1 %) · toda operación que escribe |
+| Severidad | Alta |
+| Prioridad | Media (aparece con 2.7 veces la carga de la campaña) |
+| Entorno | Qolqe Wallet en Docker con 1 CPU y 1 GB, uvicorn con un proceso, FastAPI 0.117, SQLite en WAL; k6 v2.3 |
+| Prueba que lo detecta | `tests/performance/escenarios/estres.js` (`tests/performance/correr.sh estres 1400`) y `sondeo.js` |
+
+**Pasos para reproducir**
+1. `docker build -f tests/performance/Dockerfile -t qolqe-perf .`
+2. `tests/performance/correr.sh estres 1400`: escalones de 100, 300, 600, 800, 1000, 1200 y 1400 usuarios con la sesión del requerimiento.
+
+**Resultado esperado:** al pasar su capacidad, Qolqe responde más lento o rechaza rápido lo que no puede atender, pero sigue procesando a su ritmo máximo y se recupera cuando baja la presión.
+
+**Resultado obtenido:** con 600 usuarios todo cumple (p95 de consultas 51 ms, de dinero 126 ms, 0 % de errores, 40 peticiones/s, 17 hilos). Al subir a 800, en menos de un minuto el throughput cae de 40 a 10 peticiones/s, el CPU baja a 15 % y el 86 % de las peticiones termina en 500 a los 10.5 s o en timeout de 60 s. No se recupera en los 16 minutos siguientes y la memoria sube de 75 a 780 MB con las peticiones en cola. En el sondeo, con una subida más suave, el mismo quiebre llegó a los 1100 usuarios: depende de la ráfaga de logins, no solo de la cantidad de usuarios.
+
+**Causa:** cada escritura (el `INSERT` de la sesión en el login, `mover_saldo` en transferencias y recargas, el pago) espera el candado de escritura de SQLite hasta 10 s (`busy_timeout`) ocupando uno de los 40 hilos del pool de FastAPI. Quien tiene el candado no hace `commit` hasta salir de `obtener_bd`, y antes de eso FastAPI valida la respuesta en ese mismo pool (`serialize_response` con `run_in_threadpool`, dentro del `AsyncExitStack` de las dependencias). Cuando los 40 hilos esperan el candado, su dueño no consigue hilo para terminar y todos esperan hasta que vence el `busy_timeout`: un bloqueo cruzado entre el pool de hilos y el candado de SQLite.
+
+**Evidencia:** `tests/performance/resultados/estres/`: en `graficos.png` los hilos de Qolqe saltan de 17 a 51 (8 de base + 40 del pool) en el mismo minuto en que el p95 pasa de 50 ms a 60 s; `log_qolqe.txt.gz` tiene 3878 `sqlite3.OperationalError: database is locked`: 3149 en el `INSERT` de la sesión (`autenticacion.py:136`), 716 en `mover_saldo` (`operaciones.py:23`) y 13 en pagos; `integridad.txt` muestra 6 operaciones de dinero aplicadas cuyo cliente recibió error o timeout.
+
+## DEF-11: Transferencias simultáneas de la misma cuenta se saltan el límite diario y el saldo
+
+| Campo | Valor |
+|---|---|
+| Módulo / regla | Núcleo y G5 · HU-N-07 CA5 · HU-G5-03 CA2 · RN-06 · RN-08 |
+| Severidad | Crítica |
+| Prioridad | Alta (basta un doble clic o un reintento de la app; no hace falta carga alta) |
+| Entorno | Qolqe Wallet en Docker, API REST; k6 v2.3 y Playwright 1.64 |
+| Prueba que lo detecta | `tests/performance/escenarios/concurrencia.js` (5 rondas) y `features/nucleo_transferencias.feature` → CP-53 y CP-86 (`@DEF-11`) |
+
+**Pasos para reproducir**
+1. Reiniciar datos (`POST /api/pruebas/reiniciar`).
+2. Iniciar sesión como Diego (límite diario S/ 1,000, saldo S/ 2,500) y enviar **a la vez** 5 `POST /api/transferencias` con `{"celular_destino": "912345678", "monto": 300}`.
+3. Iniciar sesión como Carla (saldo S/ 50) y enviar a la vez 2 `POST /api/transferencias` con `{"celular_destino": "912345678", "monto": 40}`.
+
+**Resultado esperado:** Diego: 3 transferencias aceptadas (S/ 900) y 2 rechazadas con `LIMITE_DIARIO_EXCEDIDO`. Carla: una aceptada y otra con `SALDO_INSUFICIENTE`; su saldo queda en S/ 10.
+
+**Resultado obtenido:** en las 5 rondas, las 5 transferencias de Diego responden 201 (`usado_hoy` = S/ 1,500 con un límite de S/ 1,000) y las 2 de Carla también: su saldo queda en **S/ −30.00**. El pago doble de una misma deuda sí se rechaza (1 de 2), como pide su HU.
+
+**Causa:** `realizar_transferencia` lee el saldo y lo transferido hoy antes de escribir y fuera de una transacción, y entre esa lectura y el `UPDATE` consulta el antifraude, que tarda de 40 a 120 ms (`time.sleep`). Las peticiones simultáneas leen el mismo saldo y el mismo uso del día, todas pasan las validaciones y después todas escriben. El pago no tiene ese hueco: valida y escribe sin pausas.
+
+**Evidencia:** `tests/performance/resultados/concurrencia/salida.txt` (5 rondas: 10 de 15 verificaciones fallan, todas las de límite y saldo). En las pruebas de carga, pico y resistencia no aparece porque cada VU usa su propio usuario y nunca hace dos operaciones a la vez.
+

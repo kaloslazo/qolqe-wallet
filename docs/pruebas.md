@@ -20,7 +20,7 @@ npm test
 npx playwright show-report
 ```
 
-`npm test` genera los pasos desde `features/`, levanta la app y corre los 133 escenarios. Resultado esperado: `132 passed, 1 skipped`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; el omitido es de rendimiento (Parte 3).
+`npm test` genera los pasos desde `features/`, levanta la app y corre los 134 escenarios. Resultado esperado: `134 passed`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; entre ellos, CP-53 y CP-86 mandan transferencias simultáneas (DEF-11).
 
 ## Contrato con Schemathesis
 
@@ -80,6 +80,17 @@ Safari necesita habilitarse una vez: `sudo safaridriver --enable` y, en Safari, 
 
 Glosario, cómo armar una prueba nueva y guion de la demo: [`guia-selenium.md`](guia-selenium.md).
 
+## Rendimiento con k6
+
+Qolqe corre en Docker con 1 CPU y 1 GB y k6 genera la carga desde la laptop. Cada prueba se corre con un solo comando que prepara los datos, mide CPU y memoria, revisa el dinero antes y después y deja los gráficos en `tests/performance/resultados/<prueba>/`:
+
+```bash
+docker build -f tests/performance/Dockerfile -t qolqe-perf .
+tests/performance/correr.sh carga        # humo, demo, carga, pico, estres o resistencia
+```
+
+El detalle de cada escenario está en [`tests/performance/README.md`](../tests/performance/README.md) y el análisis en el informe de rendimiento.
+
 ## Pipeline
 
 `.github/workflows/pruebas.yml` corre en cada push, en cada pull request y a mano desde la pestaña Actions (`workflow_dispatch`).
@@ -92,7 +103,7 @@ push / PR ─▶ api ─┬─▶ contrato ────────┐
 
 | Job | Qué hace | ¿Bloquea? |
 |---|---|---|
-| `api` | `npm test`: los 133 escenarios de API | sí |
+| `api` | `npm test`: los 134 escenarios de API | sí |
 | `contrato` | Schemathesis contra el OpenAPI | no: sus hallazgos son defectos de contrato ya analizados en el informe |
 | `web (chrome)`, `web (firefox)` | los escenarios de interfaz con Selenium | sí |
 | `reportes` | arma el sitio con los reportes, la matriz de trazabilidad y la cobertura frente a Schemathesis, y lo publica en Pages | — |

@@ -54,12 +54,18 @@ Feature: Transferir dinero
     When transfiero S/ 50.01 al celular 912345678
     Then el resultado es "SALDO_INSUFICIENTE"
 
-  @HU-N-07 @rendimiento @skip @CP-53
-  Scenario: Transferencias simultáneas no superan el límite ni dejan saldo negativo
-    # Se ejecuta en la Parte 3 (rendimiento)
+  @HU-N-07 @HU-G5-03 @api @rendimiento @DEF-11 @fail @CP-53
+  Scenario: Transferencias simultáneas no superan el límite diario
+    # Parte 3: lo mismo, en 5 rondas, en tests/performance/escenarios/concurrencia.js
     Given que inicié sesión como Diego
     When envío 5 transferencias simultáneas de S/ 300.00 al celular 912345678
     Then lo usado hoy no supera S/ 1000.00
+
+  @HU-N-07 @api @rendimiento @DEF-11 @fail @CP-86
+  Scenario: Transferencias simultáneas no dejan el saldo negativo
+    Given que inicié sesión como Carla
+    When envío 2 transferencias simultáneas de S/ 40.00 al celular 912345678
+    Then mi saldo es S/ 10.00
 
   @HU-N-08 @api @CP-54
   Scenario Outline: Validación del CCI
