@@ -102,6 +102,7 @@ def main():
             gate_junit + hall_junit)
         cobertura = cobertura_contrato.a_html(filas_cob, meta)
         (sitio / "cobertura-contrato.md").write_text(cobertura_contrato.a_markdown(filas_cob, meta), encoding="utf-8")
+        (sitio / "cobertura-contrato.html").write_text(cobertura_contrato.a_pagina(filas_cob, meta), encoding="utf-8")
 
     diagnostico = (' · Qué pasó en cada prueba que no pasó limpia, con sus requests y la traza del servidor: '
                    '<a href="diagnostico/diagnostico.html">diagnóstico</a>') if (sitio / "diagnostico/diagnostico.html").exists() else ""
