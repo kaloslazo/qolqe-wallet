@@ -233,7 +233,7 @@ jobs:
           python .github/scripts/tablero.py instantanea --repo . --nombre "Esta corrida (${GITHUB_SHA::7})" --salida /tmp/despues.json \
             --api-json sitio/api/resultados-api.json $([ -f sitio/web-chrome/junit.xml ] && echo "--web-junit sitio/web-chrome/junit.xml") \
             && python .github/scripts/tablero.py tablero --antes calidad/antes.json --despues /tmp/despues.json --salida sitio/tablero/tablero.html \
-              --enlace "Diagnóstico por prueba=../diagnostico/diagnostico.html" --enlace "Trazabilidad=../trazabilidad.md" \
+              --enlace "Diagnóstico por prueba=../diagnostico/diagnostico.html" --enlace "Trazabilidad=../index.html#trazabilidad" \
             || echo "sin tablero: faltan los resultados"
           python .github/scripts/portada.py sitio
           if [ -f sitio/diagnostico/diagnostico.md ]; then cat sitio/diagnostico/diagnostico.md >> "$GITHUB_STEP_SUMMARY"; fi

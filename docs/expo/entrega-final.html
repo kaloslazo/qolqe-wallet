@@ -513,6 +513,22 @@ Scenario: Dos registros simultáneos con el
   <aside class="notas"><b>Kalos.</b> Aquí se ve por qué guardamos CPU, hilos y el log de la app: sin ellos solo sabríamos que se puso lento, no que el cuello de botella es el candado de la base de datos.</aside>
 </section>
 
+<section id="s-panel" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo" style="gap:20px">
+    <h1 style="font-size:46px">El panel de k6: en vivo y ya cargado</h1>
+    <div class="fila" style="grid-template-columns:1.3fr 1fr;gap:28px;align-items:center">
+      <div class="captura recorte"><img src="img/final2/k6-carga.png" alt=""></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="tarjeta t-verde" style="padding:18px 24px"><div class="paso-n">En vivo · 4 minutos</div><p style="font-size:20px"><code>correr.sh demo 100</code> y el panel en <code>localhost:5665</code>: peticiones por segundo, usuarios virtuales y tiempo de respuesta moviéndose.</p></div>
+        <div class="tarjeta t-azul" style="padding:18px 24px"><div class="paso-n">Ya cargado · 23 minutos</div><p style="font-size:20px"><code>resultados/carga/reporte.html</code>: el mismo panel de la prueba de carga completa, con sus umbrales.</p></div>
+        <div class="tarjeta t-amarillo" style="padding:18px 24px"><div class="paso-n">Qué mirar</div><p style="font-size:20px">VUs sube y se sostiene en 100; el p95 no se mueve; las fallas quedan en 0.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> El panel lo genera k6 con K6_WEB_DASHBOARD=true; correr.sh también lo exporta a reporte.html al terminar. En la demo lanzamos la versión corta y, mientras corre, mostramos la corrida completa ya cargada.</aside>
+</section>
+
 <section id="s-traza" class="slide">
   <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>7 · Trazabilidad</span></div>
   <div class="cuerpo" style="gap:22px">
@@ -621,7 +637,7 @@ Scenario: Dos registros simultáneos con el
       <div class="tarjeta t-morado" style="padding:14px 20px;gap:2px"><div class="paso-n">4 · Causa</div><h2 style="font-size:22px">Del fallo al 500</h2><p style="font-size:17px;font-family:var(--mono)">npm run diagnostico</p></div>
       <div class="tarjeta t-azul" style="padding:14px 20px;gap:2px"><div class="paso-n">5 · Contrato</div><h2 style="font-size:22px">Gate y hallazgos</h2><p style="font-size:17px;font-family:var(--mono)">npm run contrato</p></div>
       <div class="tarjeta t-azul" style="padding:14px 20px;gap:2px"><div class="paso-n">6 · Web</div><h2 style="font-size:22px">Reporte BDD con capturas</h2><p style="font-size:17px;font-family:var(--mono)">reporte-bdd.html</p></div>
-      <div class="tarjeta t-rojo" style="padding:14px 20px;gap:2px"><div class="paso-n">7 · Rendimiento</div><h2 style="font-size:22px">Carga y quiebre, ya corridos</h2><p style="font-size:17px;font-family:var(--mono)">reporte.html · quiebre</p></div>
+      <div class="tarjeta t-rojo" style="padding:14px 20px;gap:2px"><div class="paso-n">7 · Rendimiento</div><h2 style="font-size:22px">Panel de k6 en vivo y ya cargado</h2><p style="font-size:17px;font-family:var(--mono)">correr.sh demo 100</p></div>
       <div class="tarjeta t-amarillo" style="padding:14px 20px;gap:2px"><div class="paso-n">8 · Historial</div><h2 style="font-size:22px">Matriz en Pages y Qase</h2><p style="font-size:17px;font-family:var(--mono)">kaloslazo.github.io</p></div>
       <div class="tarjeta t-morado" style="padding:14px 20px;gap:2px"><div class="paso-n">9 · IA</div><h2 style="font-size:22px">Proponer casos y decidir</h2><p style="font-size:17px;font-family:var(--mono)">/proponer-casos</p></div>
       <div class="tarjeta t-blanco" style="padding:14px 20px;gap:2px"><div class="paso-n">10 · Antes y después</div><h2 style="font-size:22px">El tablero</h2><p style="font-size:17px;font-family:var(--mono)">npm run tablero</p></div>

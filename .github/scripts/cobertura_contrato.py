@@ -183,7 +183,7 @@ def a_html(filas, meta):
         f'<td class="{clase[o.brecha]}">{e(_lectura(o))}</td></tr>'
         for o in filas)
     aviso = "" if meta["api"] and meta["contrato"] else '<p class="sub">Falta uno de los logs: la comparación está incompleta.</p>'
-    return f"""<h2>Cobertura de la API: nuestros escenarios frente a Schemathesis</h2>
+    return f"""<h2 id="cobertura-contrato">Cobertura de la API: nuestros escenarios frente a Schemathesis</h2>
 <p class="sub">{r['operaciones']} de {r['total']} operaciones probadas · {r['nuestras']} con nuestros escenarios ·
 {r['contrato']} con Schemathesis · <strong>{len(r['faltan'])} con casos que nos faltan</strong>.
 Sale de los logs de la app: cada solicitud se lleva a su operación del OpenAPI y se cuentan los códigos HTTP.</p>

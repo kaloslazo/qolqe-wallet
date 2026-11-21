@@ -107,6 +107,7 @@ def main():
                    '<a href="diagnostico/diagnostico.html">diagnóstico</a>') if (sitio / "diagnostico/diagnostico.html").exists() else ""
     tablero = (' · Antes y después de la entrega anterior, con el mapeado, el testing y los defectos: '
                '<a href="tablero/tablero.html">tablero de calidad</a>') if (sitio / "tablero/tablero.html").exists() else ""
+    enlace_cobertura = ' · <a href="#cobertura-contrato">cobertura del contrato</a>' if cobertura else ""
     origen = f'<a href="{e(ctx["url"])}">{e(ctx["run"])}</a>' if ctx["url"] else e(ctx["run"])
     (sitio / "index.html").write_text(f"""<!doctype html>
 <html lang="es">
@@ -140,7 +141,10 @@ def main():
   .tabla {{ overflow-x:auto; }}
   table {{ border-collapse:collapse; width:100%; font-size:14px; margin-bottom:24px; }}
   th, td {{ text-align:left; padding:6px 10px; border-bottom:1px solid var(--borde); vertical-align:top; }}
-  th {{ color:var(--suave); font-weight:600; }}
+  th {{ color:var(--suave); font-weight:600; background:var(--tarjeta); }}
+  tr:nth-child(even) td {{ background:color-mix(in srgb, var(--tarjeta) 55%, transparent); }}
+  h2 {{ margin:34px 0 6px; font-size:21px; }} h3 {{ margin:22px 0 6px; font-size:16px; }}
+  .tabla td:first-child {{ white-space:nowrap; }}
   code {{ font-size:13px; }}
 </style>
 </head>
@@ -154,7 +158,7 @@ def main():
   <div class="tabla">
 {matriz}
   </div>
-  <p class="sub">La misma matriz en Markdown: <a href="trazabilidad.md">trazabilidad.md</a>{diagnostico}{tablero}</p>
+  <p class="sub">Ir a: <a href="#trazabilidad">trazabilidad</a>{enlace_cobertura}{diagnostico}{tablero}</p>
   <div class="tabla">
 {cobertura}
   </div>
