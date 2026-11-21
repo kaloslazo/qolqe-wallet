@@ -219,6 +219,7 @@ jobs:
             mkdir -p sitio/api
             cp -R descargas/api/playwright-report/. sitio/api/
             cp descargas/api/reportes/*.xml descargas/api/reportes/*.json descargas/api/reportes/*.txt sitio/api/
+            python .github/scripts/reporte_bdd_api.py sitio/api/resultados-api.json sitio/api/reporte-bdd.html || echo "sin reporte BDD de la API"
           fi
           if [ -d descargas/contrato ]; then cp -R descargas/contrato sitio/contrato; fi
           for d in descargas/web-*; do

@@ -70,7 +70,7 @@ def main():
                 [("Reporte HTML", p.relative_to(sitio).as_posix()) for p in hall_html]),
         tarjeta("API", "Playwright + playwright-bdd: escenarios Gherkin del G5 y del núcleo.", estados["api"],
                 contar([sitio / "api/resultados-api.json"]),
-                [("Reporte HTML", "api/index.html")] if (sitio / "api/index.html").exists() else []),
+                [(t, f"api/{f}") for t, f in (("Reporte BDD", "reporte-bdd.html"), ("Reporte Playwright", "index.html")) if (sitio / "api" / f).exists()]),
     ]
     for nav in navegadores:
         base = sitio / f"web-{nav}"
