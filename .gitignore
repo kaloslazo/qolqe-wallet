@@ -16,3 +16,4 @@ reportes/
 
 # la demo en vivo de la exposicion no se versiona
 tests/performance/resultados/demo/
+calidad/despues.json

@@ -46,7 +46,7 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     for marca in ("G5", "ui", "happy", "demo", "reloj", "e2e", "ventanas", "dialogos", "datos", "bidi", "red",
-                  "R-G5-04", "defecto", "screenplay", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-0{n}" for n in range(1, 4)),
+                  "R-G5-04", "defecto", "screenplay", "nucleo", *(f"HU-G5-0{n}" for n in range(1, 9)), *(f"DEF-{n:02d}" for n in range(1, 20)),
                   *(f"CP-{n:02d}" for n in range(1, 200)), *(f"HU-N-0{n}" for n in range(1, 10)),
                   *(f"CA-G5-0{h}-{c}" for h in range(1, 9) for c in range(1, 4)),
                   *(f"CA-N-0{h}-{c}" for h in range(1, 10) for c in range(1, 7))):

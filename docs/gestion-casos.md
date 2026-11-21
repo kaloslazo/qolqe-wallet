@@ -37,7 +37,7 @@ Precios y planes revisados el 12 de noviembre de 2026 en las páginas oficiales 
 
 - Guarda 30 días de datos. Los reportes de GitHub Pages y el historial de [`trazabilidad.md`](trazabilidad.md) siguen siendo el registro permanente, y antes de cada entrega se exporta la corrida a PDF.
 - El plan gratis no tiene módulo de requisitos. Las HU quedan como etiquetas y la matriz HU → criterio → caso la sigue generando nuestro script.
-- Admite 5000 resultados al mes. Cada pipeline sube 312 (260 de API, 14 del gate del contrato y 19 por navegador), así que solo se sube desde `main` y el pipeline no corre con cambios de documentación: alcanza para unas 16 corridas al mes.
+- Admite 5000 resultados al mes. Cada pipeline sube 359 (263 de API, 14 del gate del contrato y 41 por navegador), así que solo se sube desde `main` y el pipeline no corre con cambios de documentación: alcanza para unas 13 corridas al mes.
 
 ## Cómo se conecta
 

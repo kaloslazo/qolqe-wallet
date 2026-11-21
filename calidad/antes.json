@@ -1,0 +1,597 @@
+{
+ "nombre": "Entrega Parte 3 (tag parte-3)",
+ "fecha": "2026-11-20 21:48",
+ "escenarios": {
+  "total": 145,
+  "api": 131,
+  "web": 14,
+  "con_defecto": 16
+ },
+ "criterios": {
+  "total": 48,
+  "cubiertos": 48
+ },
+ "historias": {
+  "HU-N-01": {
+   "titulo": "Registrarme",
+   "modulo": "HU-N",
+   "criterios": 6,
+   "cubiertos": 6,
+   "api": 12,
+   "web": 0
+  },
+  "HU-N-02": {
+   "titulo": "Iniciar sesión",
+   "modulo": "HU-N",
+   "criterios": 6,
+   "cubiertos": 6,
+   "api": 12,
+   "web": 0
+  },
+  "HU-N-03": {
+   "titulo": "Cerrar sesión",
+   "modulo": "HU-N",
+   "criterios": 2,
+   "cubiertos": 2,
+   "api": 4,
+   "web": 0
+  },
+  "HU-N-04": {
+   "titulo": "Consultar mi saldo y perfil",
+   "modulo": "HU-N",
+   "criterios": 3,
+   "cubiertos": 3,
+   "api": 7,
+   "web": 1
+  },
+  "HU-N-05": {
+   "titulo": "Editar mi perfil",
+   "modulo": "HU-N",
+   "criterios": 3,
+   "cubiertos": 3,
+   "api": 9,
+   "web": 0
+  },
+  "HU-N-06": {
+   "titulo": "Cerrar mi cuenta",
+   "modulo": "HU-N",
+   "criterios": 4,
+   "cubiertos": 4,
+   "api": 7,
+   "web": 0
+  },
+  "HU-N-07": {
+   "titulo": "Transferir a otro usuario Qolqe",
+   "modulo": "HU-N",
+   "criterios": 5,
+   "cubiertos": 5,
+   "api": 15,
+   "web": 1
+  },
+  "HU-N-08": {
+   "titulo": "Transferir a otro banco",
+   "modulo": "HU-N",
+   "criterios": 3,
+   "cubiertos": 3,
+   "api": 8,
+   "web": 0
+  },
+  "HU-N-09": {
+   "titulo": "Simular la comisión",
+   "modulo": "HU-N",
+   "criterios": 1,
+   "cubiertos": 1,
+   "api": 4,
+   "web": 0
+  },
+  "HU-G1-01": {
+   "titulo": "Recargar un celular",
+   "modulo": "HU-G1",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-02": {
+   "titulo": "Ver mis recargas",
+   "modulo": "HU-G1",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-03": {
+   "titulo": "Programar una recarga",
+   "modulo": "HU-G1",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-04": {
+   "titulo": "Ver mis recargas programadas",
+   "modulo": "HU-G1",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-05": {
+   "titulo": "Editar, pausar o reanudar una programada",
+   "modulo": "HU-G1",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-06": {
+   "titulo": "Eliminar una programada",
+   "modulo": "HU-G1",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G1-07": {
+   "titulo": "Ejecución automática de programadas",
+   "modulo": "HU-G1",
+   "criterios": 5,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-01": {
+   "titulo": "Consultar deudas de un suministro",
+   "modulo": "HU-G2",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-02": {
+   "titulo": "Pagar una deuda",
+   "modulo": "HU-G2",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-03": {
+   "titulo": "Afiliar un servicio",
+   "modulo": "HU-G2",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-04": {
+   "titulo": "Ver mis servicios afiliados",
+   "modulo": "HU-G2",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-05": {
+   "titulo": "Editar una afiliación y su débito automático",
+   "modulo": "HU-G2",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-06": {
+   "titulo": "Desafiliar un servicio",
+   "modulo": "HU-G2",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G2-07": {
+   "titulo": "Ver mis pagos y comprobantes",
+   "modulo": "HU-G2",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-01": {
+   "titulo": "Consultar mis movimientos",
+   "modulo": "HU-G3",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-02": {
+   "titulo": "Ver el detalle de un movimiento",
+   "modulo": "HU-G3",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-03": {
+   "titulo": "Crear una categoría",
+   "modulo": "HU-G3",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-04": {
+   "titulo": "Ver mis categorías",
+   "modulo": "HU-G3",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-05": {
+   "titulo": "Editar una categoría",
+   "modulo": "HU-G3",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-06": {
+   "titulo": "Eliminar una categoría",
+   "modulo": "HU-G3",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-07": {
+   "titulo": "Clasificar un movimiento",
+   "modulo": "HU-G3",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G3-08": {
+   "titulo": "Exportar mis movimientos",
+   "modulo": "HU-G3",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-01": {
+   "titulo": "Agregar un contacto",
+   "modulo": "HU-G4",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-02": {
+   "titulo": "Ver y buscar mis contactos",
+   "modulo": "HU-G4",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-03": {
+   "titulo": "Editar un contacto",
+   "modulo": "HU-G4",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-04": {
+   "titulo": "Eliminar un contacto",
+   "modulo": "HU-G4",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-05": {
+   "titulo": "Transferir a un contacto",
+   "modulo": "HU-G4",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-06": {
+   "titulo": "Solicitar dinero a un contacto",
+   "modulo": "HU-G4",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-07": {
+   "titulo": "Ver mis solicitudes",
+   "modulo": "HU-G4",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-08": {
+   "titulo": "Aceptar una solicitud recibida",
+   "modulo": "HU-G4",
+   "criterios": 4,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-09": {
+   "titulo": "Rechazar una solicitud recibida",
+   "modulo": "HU-G4",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G4-10": {
+   "titulo": "Cancelar una solicitud enviada",
+   "modulo": "HU-G4",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G5-01": {
+   "titulo": "Ver mis límites",
+   "modulo": "HU-G5",
+   "criterios": 1,
+   "cubiertos": 1,
+   "api": 4,
+   "web": 1
+  },
+  "HU-G5-02": {
+   "titulo": "Cambiar mi límite diario",
+   "modulo": "HU-G5",
+   "criterios": 3,
+   "cubiertos": 3,
+   "api": 14,
+   "web": 4
+  },
+  "HU-G5-03": {
+   "titulo": "Respetar el límite al transferir",
+   "modulo": "HU-G5",
+   "criterios": 2,
+   "cubiertos": 2,
+   "api": 11,
+   "web": 2
+  },
+  "HU-G5-04": {
+   "titulo": "Crear una alerta de consumo",
+   "modulo": "HU-G5",
+   "criterios": 2,
+   "cubiertos": 2,
+   "api": 6,
+   "web": 3
+  },
+  "HU-G5-05": {
+   "titulo": "Ver mis alertas",
+   "modulo": "HU-G5",
+   "criterios": 1,
+   "cubiertos": 1,
+   "api": 3,
+   "web": 0
+  },
+  "HU-G5-06": {
+   "titulo": "Editar, pausar o reanudar una alerta",
+   "modulo": "HU-G5",
+   "criterios": 2,
+   "cubiertos": 2,
+   "api": 10,
+   "web": 2
+  },
+  "HU-G5-07": {
+   "titulo": "Eliminar una alerta",
+   "modulo": "HU-G5",
+   "criterios": 1,
+   "cubiertos": 1,
+   "api": 6,
+   "web": 1
+  },
+  "HU-G5-08": {
+   "titulo": "Recibir la notificación de la alerta",
+   "modulo": "HU-G5",
+   "criterios": 3,
+   "cubiertos": 3,
+   "api": 8,
+   "web": 2
+  },
+  "HU-G6-01": {
+   "titulo": "Cambiar mi PIN",
+   "modulo": "HU-G6",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-02": {
+   "titulo": "Bloqueo por intentos fallidos",
+   "modulo": "HU-G6",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-03": {
+   "titulo": "Solicitar un código de desbloqueo",
+   "modulo": "HU-G6",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-04": {
+   "titulo": "Desbloquear mi cuenta con el código",
+   "modulo": "HU-G6",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-05": {
+   "titulo": "Registrar un dispositivo de confianza",
+   "modulo": "HU-G6",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-06": {
+   "titulo": "Ver mis dispositivos",
+   "modulo": "HU-G6",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-07": {
+   "titulo": "Renombrar un dispositivo",
+   "modulo": "HU-G6",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-08": {
+   "titulo": "Eliminar un dispositivo",
+   "modulo": "HU-G6",
+   "criterios": 1,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-09": {
+   "titulo": "Ver mis sesiones activas",
+   "modulo": "HU-G6",
+   "criterios": 2,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  },
+  "HU-G6-10": {
+   "titulo": "Cerrar sesiones",
+   "modulo": "HU-G6",
+   "criterios": 3,
+   "cubiertos": 0,
+   "api": 0,
+   "web": 0
+  }
+ },
+ "defectos": {
+  "DEF-01": {
+   "titulo": "Una reducción del límite diario no cancela el aumento pendiente",
+   "severidad": "Alta"
+  },
+  "DEF-02": {
+   "titulo": "Las transferencias interbancarias no cuentan para el límite diario",
+   "severidad": "Crítica"
+  },
+  "DEF-03": {
+   "titulo": "Una alerta de consumo notifica más de una vez por día",
+   "severidad": "Media"
+  },
+  "DEF-04": {
+   "titulo": "Una transferencia interbancaria deja el saldo en negativo",
+   "severidad": "Crítica"
+  },
+  "DEF-05": {
+   "titulo": "El registro acepta un PIN en secuencia descendente",
+   "severidad": "Media"
+  },
+  "DEF-06": {
+   "titulo": "Se puede transferir a una cuenta cerrada",
+   "severidad": "Crítica"
+  },
+  "DEF-07": {
+   "titulo": "Cerrar sesión no invalida el token",
+   "severidad": "Alta"
+  },
+  "DEF-08": {
+   "titulo": "Un ingreso exitoso no reinicia el conteo de intentos fallidos",
+   "severidad": "Media"
+  },
+  "DEF-09": {
+   "titulo": "Registros simultáneos con el mismo celular responden 500",
+   "severidad": "Media"
+  },
+  "DEF-10": {
+   "titulo": "Desde unos 800 usuarios simultáneos el servicio se traba y responde 500 «database is locked»",
+   "severidad": "Alta"
+  },
+  "DEF-11": {
+   "titulo": "Transferencias simultáneas de la misma cuenta se saltan el límite diario y el saldo",
+   "severidad": "Crítica"
+  },
+  "DEF-12": {
+   "titulo": "Dos transferencias del mismo usuario en el mismo segundo reciben el mismo código de operación",
+   "severidad": "Media"
+  }
+ },
+ "api": {
+  "total": 260,
+  "pasan": 247,
+  "esperados": 13,
+  "fallan": 0,
+  "flaky": 0,
+  "omitidas": 0,
+  "segundos": 80
+ },
+ "web": null,
+ "web_recolectadas": 20,
+ "rendimiento": [
+  {
+   "prueba": "humo",
+   "consultas": 53.1508,
+   "dinero": 91.105,
+   "fallas": 0,
+   "peticiones": 18
+  },
+  {
+   "prueba": "carga",
+   "consultas": 51.7153,
+   "dinero": 126.43549999999999,
+   "fallas": 0,
+   "peticiones": 8869
+  },
+  {
+   "prueba": "pico",
+   "consultas": 48.786,
+   "dinero": 127.17099999999999,
+   "fallas": 0,
+   "peticiones": 20845
+  },
+  {
+   "prueba": "estres",
+   "consultas": 60001.761600000005,
+   "dinero": 60001.4195,
+   "fallas": 0.4529088558500323,
+   "peticiones": 30940
+  },
+  {
+   "prueba": "resistencia",
+   "consultas": 42.31,
+   "dinero": 125.77835,
+   "fallas": 0,
+   "peticiones": 25034
+  },
+  {
+   "prueba": "concurrencia",
+   "consultas": null,
+   "dinero": null,
+   "fallas": 0.058823529411764705,
+   "peticiones": 85
+  }
+ ],
+ "ia": {
+  "propuestas": 0,
+  "skills": []
+ }
+}

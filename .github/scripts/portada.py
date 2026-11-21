@@ -103,6 +103,10 @@ def main():
         cobertura = cobertura_contrato.a_html(filas_cob, meta)
         (sitio / "cobertura-contrato.md").write_text(cobertura_contrato.a_markdown(filas_cob, meta), encoding="utf-8")
 
+    diagnostico = (' · Qué pasó en cada prueba que no pasó limpia, con sus requests y la traza del servidor: '
+                   '<a href="diagnostico/diagnostico.html">diagnóstico</a>') if (sitio / "diagnostico/diagnostico.html").exists() else ""
+    tablero = (' · Antes y después de la entrega anterior, con el mapeado, el testing y los defectos: '
+               '<a href="tablero/tablero.html">tablero de calidad</a>') if (sitio / "tablero/tablero.html").exists() else ""
     origen = f'<a href="{e(ctx["url"])}">{e(ctx["run"])}</a>' if ctx["url"] else e(ctx["run"])
     (sitio / "index.html").write_text(f"""<!doctype html>
 <html lang="es">
@@ -150,7 +154,7 @@ def main():
   <div class="tabla">
 {matriz}
   </div>
-  <p class="sub">La misma matriz en Markdown: <a href="trazabilidad.md">trazabilidad.md</a></p>
+  <p class="sub">La misma matriz en Markdown: <a href="trazabilidad.md">trazabilidad.md</a>{diagnostico}{tablero}</p>
   <div class="tabla">
 {cobertura}
   </div>

@@ -270,3 +270,34 @@
 
 **Evidencia:** las dos respuestas 201 de los pasos 3 y 4 con el mismo `codigo_operacion`; el escenario `@DEF-12` falla en la verificación "las dos transferencias tienen códigos de operación distintos".
 
+
+## DEF-13: La comisión interbancaria no usa redondeo comercial: un monto cuyo 1.5 % termina en 0.005 cobra un céntimo de menos
+
+| Campo | Valor |
+|---|---|
+| Módulo / regla | Núcleo · RN-09 · HU-N-08 CA2 · HU-N-09 CA1 |
+| Severidad | Media |
+| Prioridad | Alta (HU-N-08 es de prioridad Alta) |
+| Entorno | Qolqe Wallet, API REST y web (Selenium) |
+| Prueba que lo detecta | `features/nucleo_transferencias.feature` → CP-161 «La comisión simulada usa redondeo comercial (0.005 sube)» y CP-162 «La transferencia interbancaria cobra la comisión con redondeo comercial»; `features/ui/defectos_ui.feature` → CP-160 (`@DEF-13`) |
+
+**Cómo se encontró:** con la skill de IA `proponer-casos`. No lo detectó una prueba que fallara: apareció al rehacer a mano los valores esperados de la propuesta de casos web del núcleo. Los ejemplos que ya tenía la suite (50, 66.67, 100, 333.33, 400) nunca caen en un `.005` exacto. El tester repitió los pasos, contrastó con RN-09 y lo confirmó (ver `IA.md`).
+
+**Pasos para reproducir**
+1. `POST /api/pruebas/reiniciar` y `PUT /api/pruebas/reloj` con `{"ahora": "2026-11-10T10:00:00"}`.
+2. Iniciar sesión como Ana (987654321 / 4826; saldo S/ 1,500.00).
+3. `GET /api/transferencias/comision?monto=67&tipo=INTERBANCARIA`.
+4. `POST /api/transferencias` con `{"tipo": "INTERBANCARIA", "cci": "00219300123456789012", "monto": "67"}` y luego `GET /api/cuentas/me/saldo`.
+
+**Resultado esperado:** RN-09 pide redondeo comercial («0.005 sube»). El 1.5 % de S/ 67 es 1.005, así que la comisión es **S/ 1.01**, el total S/ 68.01 y el saldo queda en S/ 1,431.99.
+
+**Resultado obtenido:** comisión **S/ 1.00**, total S/ 68.00 y saldo S/ 1,432.00. Con S/ 267 (4.005) cobra S/ 4.00 en lugar de S/ 4.01. En la pantalla, el diálogo de confirmación muestra la misma comisión incorrecta.
+
+**Causa:** `calcular_comision` (`qolqe/reglas/nucleo.py`) redondea con `.quantize(Decimal("0.01"))` sin indicar el modo. `Decimal` usa por defecto `ROUND_HALF_EVEN` (redondeo al par): 1.005 pasa a 1.00 y 4.005 a 4.00. El redondeo comercial es `ROUND_HALF_UP`.
+
+**Evidencia:**
+```json
+GET  /api/transferencias/comision?monto=67&tipo=INTERBANCARIA  → {"monto":"67.00","comision":"1.00","total":"68.00"}
+POST /api/transferencias                                       → {"monto":"67.00","comision":"1.00","total":"68.00", ... ,"saldo":"1432.00"}
+GET  /api/transferencias/comision?monto=267&tipo=INTERBANCARIA → {"monto":"267.00","comision":"4.00","total":"271.00"}
+```

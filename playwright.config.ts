@@ -3,7 +3,7 @@ import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   features: 'features/*.feature',
-  steps: 'tests/api-playwright/*.ts',
+  steps: 'tests/api/*.ts',
 });
 
 const PUERTO = process.env.QOLQE_PUERTO ?? '8000';

@@ -1,12 +1,15 @@
-# Pipeline de pruebas por etapas. Cada etapa corre solo si la anterior pasó, así un error barato
-# detiene el pipeline antes de gastar minutos en las suites largas:
+# Pipeline de pruebas por etapas. La web es lo más lento y lo que más se rompe, así que solo corre si lo barato pasó:
 #
-#   1. verificar + contrato (en paralelo, ~1 min)
+#   1. verificar, contrato y api (los tres en paralelo): ninguno depende de otro.
 #        verificar: los .feature compilan (bddgen falla si falta un paso; pytest recolecta los de Selenium) y la trazabilidad
 #                   está completa (cada escenario con su HU, CP y criterio; cada fallo esperado con su DEF).
 #        contrato:  gate de Schemathesis: la API cumple su OpenAPI (sin 500, esquema, códigos, auth).
-#   2. api + web en Chrome y Firefox (en paralelo)
-#   3. reportes: portada, trazabilidad con el historial de corridas y cobertura del contrato en GitHub Pages
+#        api:       los escenarios de negocio en Gherkin (playwright-bdd). Va junto al contrato porque los dos prueban la
+#                   misma API desde ángulos distintos: uno con los casos que diseñamos, el otro con entradas generadas.
+#   2. web en Chrome y Firefox (en paralelo, Selenium + pytest-bdd): solo si la etapa 1 pasó completa. Selenium prepara sus
+#      datos y su sesión por la API del producto: con la API o su contrato rotos, un fallo web no dice nada.
+#   3. reportes: portada, trazabilidad con el historial de corridas, cobertura del contrato y diagnóstico por prueba
+#      (cada prueba de API que no pasó limpia, con sus requests y la traza del servidor) en GitHub Pages
 #
 # Quality gate (docs/pruebas.md): verificar, el gate del contrato, api y web deben pasar. Los fallos
 # esperados (@fail en Playwright, @defecto en Selenium) son defectos reportados en docs/defectos.md;
@@ -102,7 +105,6 @@ jobs:
 
   api:
     name: api
-    needs: [verificar, contrato]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -148,7 +150,8 @@ jobs:
 
   web:
     name: web (${{ matrix.navegador }})
-    needs: [verificar, contrato]
+    # la web usa la API para preparar datos y sesión: si la API o su contrato fallan, la web no corre (y el reporte lo dice)
+    needs: [verificar, contrato, api]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
@@ -223,7 +226,17 @@ jobs:
           done
           # historial de corridas anteriores (lo publica este mismo job); en la primera no existe
           curl -sf "$PAGINAS/historial.json" -o sitio/historial.json || echo '[]' > sitio/historial.json
+          # diagnóstico: cada prueba que no pasó limpia con los requests que hizo y lo que respondió el servidor
+          python .github/scripts/diagnostico.py --playwright sitio/api/resultados-api.json --log-api sitio/api/log-api.txt \
+            --salida sitio/diagnostico || echo "sin diagnóstico: faltan los resultados de la API"
+          # tablero de calidad: lo de ahora frente a la entrega anterior congelada en calidad/antes.json
+          python .github/scripts/tablero.py instantanea --repo . --nombre "Esta corrida (${GITHUB_SHA::7})" --salida /tmp/despues.json \
+            --api-json sitio/api/resultados-api.json $([ -f sitio/web-chrome/junit.xml ] && echo "--web-junit sitio/web-chrome/junit.xml") \
+            && python .github/scripts/tablero.py tablero --antes calidad/antes.json --despues /tmp/despues.json --salida sitio/tablero/tablero.html \
+              --enlace "Diagnóstico por prueba=../diagnostico/diagnostico.html" --enlace "Trazabilidad=../trazabilidad.md" \
+            || echo "sin tablero: faltan los resultados"
           python .github/scripts/portada.py sitio
+          if [ -f sitio/diagnostico/diagnostico.md ]; then cat sitio/diagnostico/diagnostico.md >> "$GITHUB_STEP_SUMMARY"; fi
           cat sitio/trazabilidad.md >> "$GITHUB_STEP_SUMMARY"
           if [ -f sitio/cobertura-contrato.md ]; then cat sitio/cobertura-contrato.md >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Resultados a Qase (gestión de casos)

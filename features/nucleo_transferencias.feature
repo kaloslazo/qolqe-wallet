@@ -101,6 +101,26 @@ Feature: Transferir dinero
       | 333.33 | 5.00     | 338.33 |
       | 400.00 | 5.00     | 405.00 |
 
+  # RN-09: redondeo comercial (0.005 sube). Los ejemplos de arriba nunca caen en un .005 exacto; 67 × 1.5 % = 1.005
+  @HU-N-09 @api @DEF-13 @fail @CP-161 @CA-N-09-1
+  Scenario Outline: La comisión simulada usa redondeo comercial (0.005 sube)
+    Given que inicié sesión como Ana
+    When simulo la comisión de S/ <monto> a otro banco
+    Then la comisión es S/ <comision> y el total S/ <total>
+
+    Examples:
+      | monto  | comision | total  |
+      | 67.00  | 1.01     | 68.01  |
+      | 267.00 | 4.01     | 271.01 |
+
+  @HU-N-08 @api @DEF-13 @fail @CP-162 @CA-N-08-2
+  Scenario: La transferencia interbancaria cobra la comisión con redondeo comercial
+    Given que inicié sesión como Ana
+    When transfiero S/ 67.00 a otro banco
+    Then el resultado es "exitosa"
+    And la comisión es S/ 1.01 y el total S/ 68.01
+    And mi saldo es S/ 1431.99
+
   @HU-N-07 @api @CP-115 @CA-N-07-1
   Scenario: Transferir eligiendo un contacto en lugar del celular
     Given que inicié sesión como Ana

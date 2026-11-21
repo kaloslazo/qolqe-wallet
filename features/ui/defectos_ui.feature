@@ -32,3 +32,16 @@ Característica: Defectos conocidos del G5 vistos desde la interfaz web
     Cuando transfiere S/ 300 al celular 912345678
     Y transfiere S/ 10 al celular 912345678
     Entonces Ana recibió 1 SMS de alerta de consumo
+
+  # Hallados al proponer casos web del núcleo con IA (propuestas/ia/HU-N-web-2026-11-18.md)
+  @DEF-05 @HU-N-01 @CP-159 @CA-N-01-4
+  Escenario: El registro rechaza un PIN en secuencia descendente
+    Dado que abre la pantalla de registro
+    Cuando se registra con DNI "12345678", nombres "Luis Pérez", celular "911222333" y PIN "4321"
+    Entonces ve el error de registro "El PIN no puede ser una secuencia de dígitos"
+
+  @DEF-13 @HU-N-08 @HU-N-09 @CP-160 @CA-N-08-2 @CA-N-09-1
+  Escenario: La comisión interbancaria usa redondeo comercial
+    Dado que Ana tiene la sesión iniciada
+    Cuando pide transferir S/ 67 a otro banco a la cuenta 00219300123456789012
+    Entonces el diálogo de confirmación muestra monto "S/ 67.00", comisión "S/ 1.01" y total "S/ 68.01"

@@ -283,7 +283,7 @@ Comandos (`scripts/selenium.sh <modo>`):
 cd ~/PruebasTestAutomatizacion/proyecto/qolqe-g5-limites
 /opt/homebrew/bin/python3.12 -m venv .venv          # si no existe
 .venv/bin/pip install -r requirements-e2e.txt
-scripts/selenium.sh todo                             # debe decir: 17 passed, 3 xfailed
+scripts/selenium.sh todo                             # debe decir: 37 passed, 5 xfailed
 ```
 
 - Abrir **Docker Desktop**, esperar a que diga *Engine running* y correr `scripts/selenium.sh grid -m happy`: la primera vez descarga las imágenes de Docker y tarda varios minutos.

@@ -2,8 +2,10 @@
 tiene varios usuarios: aquí no hay selectores."""
 from pytest_bdd import given, parsers, scenarios, then, when
 
+from tests.e2e.pages.inicio_page import InicioPage
 from tests.e2e.pages.limites_page import LimitesPage
 from tests.e2e.pages.login_page import LoginPage, Menu
+from tests.e2e.pages.registro_page import RegistroPage
 from tests.e2e.pages.transferir_page import TransferirPage
 from tests.e2e.screenplay import Actor, NavegarLaWeb
 from tests.e2e.screenplay.tareas import IniciarSesion, MontoDelComprobante, MovimientosRecientes, SaldoDisponible, Transferir
@@ -236,3 +238,96 @@ def actor_ve_saldo(contexto, quien, saldo):
 def actor_ve_movimiento(contexto, quien, monto):
     recientes = contexto["actores"][quien].ve(MovimientosRecientes())
     assert any(monto in m for m in recientes), f"{quien} no ve un movimiento de {monto}: {recientes}"
+
+
+# ---------------------------------------------------------------- Núcleo común: login, registro y transferencia
+# Casos propuestos con la skill proponer-casos (propuestas/ia/HU-N-web-2026-11-18.md); features/ui/nucleo_ui.feature
+@given("que abre la pantalla de login")
+def abre_login(driver):
+    LoginPage(driver).abrir()
+
+
+@given("que abre la pantalla de registro")
+def abre_registro(driver):
+    RegistroPage(driver).abrir()
+
+
+@when(parsers.parse('intenta ingresar con el celular "{celular}" y el PIN "{pin}"'))
+def intenta_ingresar(driver, celular, pin):
+    LoginPage(driver).intentar_ingresar(celular, pin)
+
+
+@when(parsers.parse('se registra con DNI "{dni}", nombres "{nombres}", celular "{celular}" y PIN "{pin}"'))
+def se_registra(driver, dni, nombres, celular, pin):
+    RegistroPage(driver).registrar(dni, nombres, celular, pin)
+
+
+@when(parsers.parse("pide transferir S/ {monto:d} al celular {celular}"))
+def pide_transferir(driver, monto, celular):
+    TransferirPage(driver).abrir().pedir(monto, celular)
+
+
+@when(parsers.parse("pide transferir S/ {monto:d} a otro banco a la cuenta {cci}"))
+def pide_transferir_a_otro_banco(driver, monto, cci):
+    TransferirPage(driver).abrir().pedir_a_otro_banco(monto, cci)
+
+
+@when("confirma la transferencia")
+def confirma_transferencia(driver):
+    TransferirPage(driver).confirmar()
+
+
+@then(parsers.parse('ve el error de ingreso "{texto}"'))
+def error_de_ingreso(driver, texto):
+    real = LoginPage(driver).error(texto)
+    assert real == texto, f"Se esperaba {texto!r} y la pantalla muestra {real!r}"
+
+
+@then("sigue en la pantalla de login")
+def sigue_en_login(driver):
+    assert LoginPage(driver).sigue_en_login(), f"La app salió de la pantalla de login: {driver.current_url}"
+
+
+@then(parsers.parse('ve el aviso de ingreso "{texto}"'))
+def aviso_de_ingreso(driver, texto):
+    real = LoginPage(driver).aviso(texto)
+    assert real == texto, f"Se esperaba {texto!r} y la pantalla muestra {real!r}"
+
+
+@then(parsers.parse('ve el error de registro "{texto}"'))
+def error_de_registro(driver, texto):
+    real = RegistroPage(driver).error(texto)
+    assert real == texto, f"Se esperaba {texto!r} y la pantalla muestra {real!r}"
+
+
+@then(parsers.parse('su saldo disponible es "{saldo}"'))
+def saldo_disponible(driver, saldo):
+    real = InicioPage(driver).saldo(saldo)
+    assert real == saldo, f"Se esperaba {saldo!r} y la pantalla muestra {real!r}"
+
+
+@then(parsers.parse('su saldo disponible es "{saldo}" al volver al inicio'))
+def saldo_al_volver_al_inicio(driver, saldo):
+    real = InicioPage(driver).abrir().saldo(saldo)
+    assert real == saldo, f"Se esperaba {saldo!r} y la pantalla muestra {real!r}"
+
+
+@then(parsers.parse('el diálogo de confirmación muestra monto "{monto}", comisión "{comision}" y total "{total}"'))
+def dialogo_de_confirmacion(driver, monto, comision, total):
+    real = TransferirPage(driver).dialogo()
+    esperado = {"monto": monto, "comision": comision, "total": total}
+    assert real == esperado, f"Se esperaba {esperado} y el diálogo muestra {real}"
+
+
+@then(parsers.parse('el comprobante muestra monto "{monto}", comisión "{comision}", total "{total}" y saldo "{saldo}"'))
+def comprobante_completo(driver, monto, comision, total, saldo):
+    real = TransferirPage(driver).comprobante()
+    esperado = {"monto": monto, "comision": comision, "total": total, "saldo": saldo}
+    assert {k: real[k] for k in esperado} == esperado, f"Se esperaba {esperado} y el comprobante muestra {real}"
+
+
+@then(parsers.parse('el comprobante muestra a "{destino}" como destino y un código de operación'))
+def comprobante_destino_y_codigo(driver, destino):
+    real = TransferirPage(driver).comprobante()
+    assert real["destino"] == destino, f"Se esperaba el destino {destino!r} y el comprobante muestra {real['destino']!r}"
+    assert real["codigo"].strip(), "El comprobante no muestra el código de operación"

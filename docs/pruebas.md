@@ -20,7 +20,7 @@ npm test
 npx playwright show-report
 ```
 
-`npm test` genera los pasos desde `features/`, levanta la app y corre las 260 pruebas (131 casos con sus ejemplos). Resultado esperado: `260 passed`. Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; entre ellos, CP-53 y CP-86 mandan transferencias simultáneas (DEF-11).
+`npm test` genera los pasos desde `features/`, levanta la app y corre las 263 pruebas (133 casos con sus ejemplos). Resultado esperado: `263 passed`. Los resultados de la última corrida (JUnit y resumen por defecto) están en [`tests/api/resultados/`](../tests/api/resultados/resumen.md). Los escenarios `@fail` detectan los defectos de [`defectos.md`](defectos.md) y cuentan como passed; entre ellos, CP-53 y CP-86 mandan transferencias simultáneas (DEF-11).
 
 ## Contrato con Schemathesis
 
@@ -54,14 +54,14 @@ En el pipeline, los jobs `api` y `contrato` guardan el log de su app, y `reporte
 
 ## Interfaz web con Selenium + pytest-bdd
 
-16 escenarios web (`features/ui/`, Gherkin en español) automatizados con Selenium 4 y pytest-bdd: los de la pantalla de límites con Page Objects y uno con dos usuarios a la vez (Ana y Bruno, cada uno en su navegador) con el patrón Screenplay. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
+29 escenarios web (`features/ui/`, Gherkin en español) automatizados con Selenium 4 y pytest-bdd: los de la pantalla de límites y los del núcleo común (registro, ingreso y transferencia) con Page Objects, y uno con dos usuarios a la vez (Ana y Bruno, cada uno en su navegador) con el patrón Screenplay. Basta Python 3.11+ y un navegador; Selenium Manager descarga los drivers (y el navegador si falta).
 
 ```bash
 scripts/selenium.sh todo          # los escenarios web en Chrome sin ventana + reportes/selenium/reporte.html
 scripts/selenium.sh demo          # flujo feliz con Chrome visible, resaltando cada elemento
 ```
 
-Resultado esperado: `17 passed, 3 xfailed` (16 escenarios BDD, uno de ellos con dos usuarios y Screenplay, + 1 ejemplo de Screenplay con un actor; los 3 xfailed son los defectos conocidos de `features/ui/defectos_ui.feature`). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
+Resultado esperado: `37 passed, 5 xfailed` (29 escenarios BDD que se vuelven 41 pruebas por sus ejemplos, uno de ellos con dos usuarios y Screenplay, + 1 prueba de Screenplay con un actor; los 5 xfailed son los defectos conocidos de `features/ui/defectos_ui.feature`: los 3 de límites, DEF-05 y DEF-13). Si la app no está corriendo en `localhost:8000`, la suite la levanta sola con una BD propia en `reportes/selenium/`.
 
 | Modo | Qué hace |
 |---|---|
@@ -91,26 +91,41 @@ tests/performance/correr.sh carga        # humo, demo, carga, pico, estres o res
 
 El detalle de cada escenario está en [`tests/performance/README.md`](../tests/performance/README.md) y el análisis en el informe de rendimiento.
 
+## IA: proponer casos y redactar defectos
+
+Dos skills de Claude Code en `.claude/skills/`. Se usan desde Claude Code abierto en la raíz del repo, y lo que producen es una **propuesta**: queda en `propuestas/ia/`, fuera de `features/` y de `docs/`, y no cuenta como cobertura hasta que una persona lo revisa con [`ia-checklist.md`](ia-checklist.md).
+
+| Skill | Cómo se pide | Qué entrega |
+|---|---|---|
+| `proponer-casos` | «propón casos web para HU-N-07» | `propuestas/ia/<HU>-<fecha>.md`: escenarios Gherkin con técnica, esperado citado del requisito y preguntas sobre lo que el requisito no dice |
+| `reporte-defecto` | «redacta el defecto del escenario CP-NN» | `propuestas/ia/DEF-borrador-<tema>.md`: reporte en el formato de `defectos.md`, reproducido contra la app |
+| `reporte-calidad` | «arma el tablero de calidad con el antes y el después» | `reportes/tablero/tablero.html` (también en Pages): mapeado por historia, testing, defectos y rendimiento frente a la entrega anterior (`calidad/antes.json`). Solo reporta |
+
+Para aceptar una propuesta: pasar los escenarios a `features/`, implementar los pasos nuevos, y correr `npx bddgen`, `python .github/scripts/verificar_etiquetas.py` y la suite. Cada uso se anota en [`IA.md`](../IA.md).
+
 ## Pipeline
 
 `.github/workflows/pruebas.yml` corre en cada push a una rama, en cada pull request y a mano desde la pestaña Actions (`workflow_dispatch`). No corre al subir un tag ni cuando el cambio solo toca documentación (`docs/`, archivos `.md`) o los resultados de rendimiento: antes, cada entrega corría el pipeline dos veces (la rama y el tag).
 
 ```
-           ┌─▶ verificar ─┐      ┌─▶ api ───────────┐
-push / PR ─┤              ├──────┼─▶ web (chrome)   ├─▶ reportes ─▶ GitHub Pages   (solo main)
-           └─▶ contrato ──┘      └─▶ web (firefox) ─┘
-              etapa 1 (~1 min)      etapa 2              etapa 3
+           ┌─▶ verificar ─┐
+push / PR ─┼─▶ contrato ──┼──▶ web (chrome)  ─┐
+           └─▶ api ───────┘    web (firefox) ─┴─▶ reportes ─▶ GitHub Pages   (solo main)
+              etapa 1             etapa 2          etapa 3
+          (en paralelo)       (en paralelo)
 ```
 
 | Etapa | Job | Qué hace | Por qué ahí |
 |---|---|---|---|
-| 1 | `verificar` | Que cada escenario tenga su HU, CP y criterio, que cada fallo esperado tenga su DEF que Playwright tenga todos sus pasos (`bddgen` falla si falta uno) y que pytest pueda recolectar los escenarios de Selenium | No ejecuta nada contra la app: en menos de un minuto detecta un escenario mal escrito |
-| 1 | `contrato` | Gate de Schemathesis: la API cumple su OpenAPI | Si la interfaz de la API está rota, no tiene sentido correr los escenarios que la usan |
-| 2 | `api` | `npm test`: los escenarios de API con Playwright | Corre solo si la etapa 1 pasó |
-| 2 | `web (chrome)`, `web (firefox)` | Los escenarios de interfaz con Selenium | En paralelo con `api`: no depende de sus resultados y así el pipeline dura lo que la suite más lenta |
-| 3 | `reportes` | Publica en Pages la portada, la trazabilidad con el historial de corridas y la cobertura frente a Schemathesis | También cuando algo falla: es cuando más hace falta ver el reporte |
+| 1 | `verificar` | Que cada escenario tenga su HU, CP y criterio, que cada fallo esperado tenga su DEF, que Playwright tenga todos sus pasos (`bddgen` falla si falta uno) y que pytest pueda recolectar los escenarios de Selenium | No ejecuta nada contra la app: en menos de un minuto detecta un escenario mal escrito |
+| 1 | `contrato` | Gate de Schemathesis: la API cumple su OpenAPI | Es una prueba de la API con entradas generadas |
+| 1 | `api` | `npm test`: los escenarios de negocio en Gherkin (playwright-bdd) | Va junto al contrato porque los dos prueban la misma API desde ángulos distintos: nuestros casos y las entradas que no imaginamos. No depende de verificar ni de contrato, así que no espera por ellos |
+| 2 | `web (chrome)`, `web (firefox)` | Los escenarios de interfaz en Gherkin con Selenium + pytest-bdd | En paralelo entre sí (son independientes) y solo si pasó toda la etapa 1: Selenium prepara sus datos y su sesión por la API del producto, y un fallo web con la API rota no aporta información. Es lo más lento y lo que más se rompe |
+| 3 | `reportes` | Publica en Pages la portada, la trazabilidad con el historial de corridas, la cobertura frente a Schemathesis y el [diagnóstico por prueba](reporteria.md) | También cuando algo falla (o la web no corrió): es cuando más hace falta ver el reporte |
 
-Si falla la etapa 1, las suites largas no corren (quedan como skipped) y se ahorran unos 3 minutos de runner por corrida. En una rama o PR, un push nuevo cancela la corrida anterior; en `main` no, porque cada corrida queda en el historial. Cada job tiene un tiempo máximo (5 a 15 minutos) para que uno colgado no consuma minutos.
+**Duración.** La etapa 1 dura lo que dura su job más largo (la API, de 2 a 3 minutos con la instalación) y no la suma de los tres. Respecto de la Parte 2, donde la API corría junto a la web, la web ahora empieza unos dos minutos más tarde.
+
+Si falla algo de la etapa 1 (verificar, contrato o API), la web no corre (queda como skipped) y el reporte lo dice; así se ahorran los minutos de la suite más larga. En una rama o PR, un push nuevo cancela la corrida anterior; en `main` no, porque cada corrida queda en el historial. Cada job tiene un tiempo máximo (5 a 15 minutos) para que uno colgado no consuma minutos.
 
 Cada job deja un resumen en la página del run (`.github/scripts/resumen.py`), sus reportes como artefacto y, desde `main`, el sitio en [kaloslazo.github.io/qolqe-wallet](https://kaloslazo.github.io/qolqe-wallet/).
 
@@ -118,15 +133,17 @@ Cada job deja un resumen en la página del run (`.github/scripts/resumen.py`), s
 
 Un cambio pasa a `main` solo si pasa todos los gates bloqueantes:
 
-| Gate | Job | Criterio | Umbral | Bloquea |
-|---|---|---|---|---|
-| Trazabilidad | `verificar` | Escenarios con `@HU`, `@CP` único y `@CA`; criterios del núcleo y de G5 con al menos un escenario de API; fallos esperados con un `@DEF` que existe en `defectos.md` | 0 faltantes | sí |
-| Gherkin compila | `verificar` | Cada paso de los `.feature` de API tiene su implementación (`bddgen`) y los escenarios de Selenium se recolectan sin errores | 0 pasos sin definir · 0 errores de recolección | sí |
-| Contrato | `contrato` | Respuestas sin 500, con los códigos, tipos, esquema y cabeceras que declara el OpenAPI; ninguna ruta protegida responde sin token (checks `not_a_server_error`, `status_code_conformance`, `content_type_conformance`, `response_schema_conformance`, `response_headers_conformance`, `ignored_auth` y el resto, salvo los cuatro de la fila siguiente) | 0 fallos | sí |
-| Hallazgos de contrato conocidos | `contrato` | `positive_data_acceptance`, `negative_data_rejection`, `unsupported_method`, `allow_header_conformance`: reglas de negocio que el OpenAPI no declara y la cabecera `Allow` de los 405, analizados en el informe | se reportan | no |
-| Funcional API | `api` | Todos los escenarios pasan; un `@fail` solo puede fallar por su defecto y, si empieza a pasar, el job falla para actualizar el escenario | 0 failed · 0 flaky (`failOnFlakyTests`: si pasa al reintentar, falla igual) · 0 `test.only` (`forbidOnly`) | sí |
-| Funcional web | `web` | Lo mismo con `@defecto` (xfail estricto), en Chrome y en Firefox | 0 failed en los dos navegadores | sí |
-| Rendimiento | manual (`tests/performance/correr.sh`) | Umbrales del requerimiento en k6: p95 de consultas y login < 800 ms, p95 de dinero < 1500 ms, fallas < 1 %, dinero cuadrado | k6 sale con error si no se cumplen | antes de cada campaña; no en cada push, porque necesita el contenedor con CPU limitada y 20 minutos o más |
+| Gate | Job | Qué mide (métrica) | Umbral | Valor de referencia (20-nov) | Bloquea |
+|---|---|---|---|---|---|
+| Trazabilidad | `verificar` | Escenarios sin `@HU`, `@CP` único o `@CA`; criterios del núcleo y de G5 sin escenario de API; fallos esperados sin un `@DEF` que exista en `defectos.md` | 0 faltantes | 162 escenarios revisados · **48 de 48** criterios con caso | sí |
+| Gherkin compila | `verificar` | Pasos de los `.feature` de API sin implementar (`bddgen`); errores al recolectar los de Selenium | 0 pasos sin definir · 0 errores | 133 casos de API con sus pasos · 42 pruebas web recolectadas | sí |
+| Contrato | `contrato` | Fallos de los checks de Schemathesis (`not_a_server_error`, `status_code_conformance`, `content_type_conformance`, `response_schema_conformance`, `response_headers_conformance`, `ignored_auth` y el resto, salvo los cuatro de la fila siguiente) en 4 fases: ejemplos, cobertura, fuzzing y flujos con estado | 0 fallos | **13 de 13** operaciones probadas · 4 fases en verde · 31 escenarios con estado | sí |
+| Hallazgos de contrato conocidos | `contrato` | `positive_data_acceptance`, `negative_data_rejection`, `unsupported_method`, `allow_header_conformance`: reglas de negocio que el OpenAPI no declara y la cabecera `Allow` de los 405, analizados en el informe | se reportan | 15 hallazgos (el número varía un poco con la semilla) | no |
+| Funcional API | `api` | Pruebas que fallan, que pasan solo al reintentar (flaky) o que quedaron con `test.only`; un `@fail` que empieza a pasar | 0 failed · 0 flaky (`failOnFlakyTests`) · 0 `test.only` (`forbidOnly`) | **263 de 263** (16 son fallos esperados de defectos) · 0 flaky · 1.4 min | sí |
+| Funcional web | `web` | Lo mismo con `@defecto` (xfail estricto), en Chrome y en Firefox | 0 failed en los dos navegadores | 37 pasan + 5 fallos esperados por navegador (esperado: la web nueva se verificó con Playwright; Actions la corre por primera vez) | sí |
+| Rendimiento | manual (`tests/performance/correr.sh`) | p95 del tiempo de respuesta de consultas e inicio de sesión; p95 de operaciones de dinero; tasa de peticiones fallidas; consistencia del dinero (saldos contra movimientos) | p95 consultas < 800 ms · p95 dinero < 1500 ms · fallas < 1 % · dinero cuadrado | hora punta (100 usuarios): 51 ms · 126 ms · 0 % · cuadrado | antes de cada campaña; no en cada push, porque necesita el contenedor con CPU limitada y 20 minutos o más |
+
+Los ceros son a propósito: en un gate de *calidad*, la regla es «cero fallos», y lo que informa es la columna de valor de referencia (cuánto se revisó). El de rendimiento es el único con umbrales numéricos, porque los fija el requerimiento.
 
 Para que GitHub no deje fusionar un PR con el pipeline en rojo: Settings › Branches › regla para `main` › *Require status checks to pass* con `verificar`, `contrato`, `api`, `web (chrome)` y `web (firefox)`.
 

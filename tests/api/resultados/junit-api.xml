@@ -1,0 +1,682 @@
+<testsuites id="" name="" tests="263" failures="0" skipped="0" errors="0" time="81.68506699999999">
+<testsuite name="features/limites.feature.spec.js" timestamp="2026-11-20T22:54:42.736Z" hostname="" tests="96" failures="0" skipped="0" time="28.762" errors="0">
+<testcase name="Límites y alertas de consumo › Veo mis límites con lo usado y lo disponible del día" classname="features/limites.feature.spec.js" time="0.44">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #1" classname="features/limites.feature.spec.js" time="0.27">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #2" classname="features/limites.feature.spec.js" time="0.271">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #3" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #4" classname="features/limites.feature.spec.js" time="0.249">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #5" classname="features/limites.feature.spec.js" time="0.265">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #6" classname="features/limites.feature.spec.js" time="0.263">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #7" classname="features/limites.feature.spec.js" time="0.25">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo límite diario (valores límite de R-G5-01) › Example #8" classname="features/limites.feature.spec.js" time="0.218">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una reducción del límite es inmediata" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un aumento del límite queda programado para 24 horas después" classname="features/limites.feature.spec.js" time="0.271">
+</testcase>
+<testcase name="Límites y alertas de consumo › El aumento entra en vigencia exactamente a las 24 horas › Example #1" classname="features/limites.feature.spec.js" time="0.317">
+</testcase>
+<testcase name="Límites y alertas de consumo › El aumento entra en vigencia exactamente a las 24 horas › Example #2" classname="features/limites.feature.spec.js" time="0.339">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una reducción cancela el aumento pendiente" classname="features/limites.feature.spec.js" time="0.313">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-limites.feature-L-b7786-ancela-el-aumento-pendiente/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Límites y alertas de consumo › Reducir el límite por debajo del umbral pausa la alerta de transferencias" classname="features/limites.feature.spec.js" time="0.298">
+</testcase>
+<testcase name="Límites y alertas de consumo › Transferir respetando el límite diario vigente › Example #1" classname="features/limites.feature.spec.js" time="0.455">
+</testcase>
+<testcase name="Límites y alertas de consumo › Transferir respetando el límite diario vigente › Example #2" classname="features/limites.feature.spec.js" time="0.353">
+</testcase>
+<testcase name="Límites y alertas de consumo › Transferir respetando el límite diario vigente › Example #3" classname="features/limites.feature.spec.js" time="0.345">
+</testcase>
+<testcase name="Límites y alertas de consumo › La transferencia que supera el límite diario por un céntimo se rechaza" classname="features/limites.feature.spec.js" time="0.386">
+</testcase>
+<testcase name="Límites y alertas de consumo › Las transferencias interbancarias también cuentan para el límite diario" classname="features/limites.feature.spec.js" time="0.508">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-limites.feature-L-1e813-entan-para-el-límite-diario/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #1" classname="features/limites.feature.spec.js" time="0.307">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #2" classname="features/limites.feature.spec.js" time="0.284">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #3" classname="features/limites.feature.spec.js" time="0.257">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #4" classname="features/limites.feature.spec.js" time="0.234">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #5" classname="features/limites.feature.spec.js" time="0.246">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #6" classname="features/limites.feature.spec.js" time="0.254">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del umbral de una alerta (valores límite de R-G5-03) › Example #7" classname="features/limites.feature.spec.js" time="0.232">
+</testcase>
+<testcase name="Límites y alertas de consumo › El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente › Example #1" classname="features/limites.feature.spec.js" time="0.269">
+</testcase>
+<testcase name="Límites y alertas de consumo › El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente › Example #2" classname="features/limites.feature.spec.js" time="0.26">
+</testcase>
+<testcase name="Límites y alertas de consumo › El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente › Example #3" classname="features/limites.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Límites y alertas de consumo › El umbral de TRANSFERENCIAS o TODAS no supera el límite diario vigente › Example #4" classname="features/limites.feature.spec.js" time="0.251">
+</testcase>
+<testcase name="Límites y alertas de consumo › No se permiten dos alertas con el mismo tipo y umbral" classname="features/limites.feature.spec.js" time="0.236">
+</testcase>
+<testcase name="Límites y alertas de consumo › No se puede crear una sexta alerta" classname="features/limites.feature.spec.js" time="0.309">
+</testcase>
+<testcase name="Límites y alertas de consumo › No se puede reanudar una alerta cuyo umbral supera el límite vigente" classname="features/limites.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta notifica al alcanzar o superar el umbral › Example #1" classname="features/limites.feature.spec.js" time="0.377">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta notifica al alcanzar o superar el umbral › Example #2" classname="features/limites.feature.spec.js" time="0.31">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta notifica al alcanzar o superar el umbral › Example #3" classname="features/limites.feature.spec.js" time="0.327">
+</testcase>
+<testcase name="Límites y alertas de consumo › Cada alerta notifica como máximo una vez por día" classname="features/limites.feature.spec.js" time="0.409">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-limites.feature-L-425c7-como-máximo-una-vez-por-día/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Límites y alertas de consumo › Una alerta pausada no notifica" classname="features/limites.feature.spec.js" time="0.348">
+</testcase>
+<testcase name="Límites y alertas de consumo › Veo mis alertas con su gasto de hoy" classname="features/limites.feature.spec.js" time="0.367">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una alerta eliminada deja de notificar" classname="features/limites.feature.spec.js" time="0.338">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin token no puedo consultar mis límites" classname="features/limites.feature.spec.js" time="0.18">
+</testcase>
+<testcase name="Límites y alertas de consumo › Con un token inválido no puedo cambiar mi límite" classname="features/limites.feature.spec.js" time="0.195">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un cuerpo vacío o con un tipo inválido se rechaza sin cambiar el límite › Example #1" classname="features/limites.feature.spec.js" time="0.234">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un cuerpo vacío o con un tipo inválido se rechaza sin cambiar el límite › Example #2" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un cuerpo vacío o con un tipo inválido se rechaza sin cambiar el límite › Example #3" classname="features/limites.feature.spec.js" time="0.257">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un cambio rechazado por regla de negocio no tiene efecto" classname="features/limites.feature.spec.js" time="0.25">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta de otro usuario responde como si no existiera › Example #1" classname="features/limites.feature.spec.js" time="0.37">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta de otro usuario responde como si no existiera › Example #2" classname="features/limites.feature.spec.js" time="0.344">
+</testcase>
+<testcase name="Límites y alertas de consumo › Lo disponible hoy se recalcula al bajar el límite y nunca es negativo › Example #1" classname="features/limites.feature.spec.js" time="0.346">
+</testcase>
+<testcase name="Límites y alertas de consumo › Lo disponible hoy se recalcula al bajar el límite y nunca es negativo › Example #2" classname="features/limites.feature.spec.js" time="0.307">
+</testcase>
+<testcase name="Límites y alertas de consumo › Lo disponible hoy se recalcula al bajar el límite y nunca es negativo › Example #3" classname="features/limites.feature.spec.js" time="0.356">
+</testcase>
+<testcase name="Límites y alertas de consumo › Pedir el mismo límite vigente no programa un aumento" classname="features/limites.feature.spec.js" time="0.247">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un segundo aumento reemplaza al aumento pendiente" classname="features/limites.feature.spec.js" time="0.268">
+</testcase>
+<testcase name="Límites y alertas de consumo › Mientras el aumento está pendiente, al transferir rige el límite anterior" classname="features/limites.feature.spec.js" time="0.423">
+</testcase>
+<testcase name="Límites y alertas de consumo › Con un aumento pendiente, el umbral se compara con el límite vigente" classname="features/limites.feature.spec.js" time="0.26">
+</testcase>
+<testcase name="Límites y alertas de consumo › El límite diario se reinicia al día siguiente" classname="features/limites.feature.spec.js" time="0.529">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo umbral al editar una alerta › Example #1" classname="features/limites.feature.spec.js" time="0.245">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo umbral al editar una alerta › Example #2" classname="features/limites.feature.spec.js" time="0.242">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo umbral al editar una alerta › Example #3" classname="features/limites.feature.spec.js" time="0.246">
+</testcase>
+<testcase name="Límites y alertas de consumo › Validación del nuevo umbral al editar una alerta › Example #4" classname="features/limites.feature.spec.js" time="0.386">
+</testcase>
+<testcase name="Límites y alertas de consumo › El umbral editado no puede superar el límite diario vigente" classname="features/limites.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Límites y alertas de consumo › Editar el umbral a uno que ya existe se rechaza" classname="features/limites.feature.spec.js" time="0.229">
+</testcase>
+<testcase name="Límites y alertas de consumo › Reanudar una alerta pausada que cabe en el límite" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un estado que no es ACTIVA ni PAUSADA se rechaza" classname="features/limites.feature.spec.js" time="0.258">
+</testcase>
+<testcase name="Límites y alertas de consumo › Eliminar una alerta libera un cupo" classname="features/limites.feature.spec.js" time="0.301">
+</testcase>
+<testcase name="Límites y alertas de consumo › Eliminar una alerta con un identificador que no existe › Example #1" classname="features/limites.feature.spec.js" time="0.232">
+</testcase>
+<testcase name="Límites y alertas de consumo › Eliminar una alerta con un identificador que no existe › Example #2" classname="features/limites.feature.spec.js" time="0.258">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin token no puedo usar mis alertas › Example #1" classname="features/limites.feature.spec.js" time="0.227">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin token no puedo usar mis alertas › Example #2" classname="features/limites.feature.spec.js" time="0.214">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin token no puedo usar mis alertas › Example #3" classname="features/limites.feature.spec.js" time="0.191">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin token no puedo usar mis alertas › Example #4" classname="features/limites.feature.spec.js" time="0.21">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una transferencia a otro banco cuenta para la alerta por su monto, sin la comisión" classname="features/limites.feature.spec.js" time="0.307">
+</testcase>
+<testcase name="Límites y alertas de consumo › La alerta TODAS suma recargas y transferencias" classname="features/limites.feature.spec.js" time="0.347">
+</testcase>
+<testcase name="Límites y alertas de consumo › Veo el aumento pendiente con la fecha en que entra en vigencia" classname="features/limites.feature.spec.js" time="0.269">
+</testcase>
+<testcase name="Límites y alertas de consumo › Reducir el límite pausa las alertas TODAS que quedan por encima, pero no las de otros tipos" classname="features/limites.feature.spec.js" time="0.359">
+</testcase>
+<testcase name="Límites y alertas de consumo › Aceptar una solicitud de dinero también respeta el límite diario vigente › Example #1" classname="features/limites.feature.spec.js" time="0.48">
+</testcase>
+<testcase name="Límites y alertas de consumo › Aceptar una solicitud de dinero también respeta el límite diario vigente › Example #2" classname="features/limites.feature.spec.js" time="0.331">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una alerta muestra la fecha de su última notificación" classname="features/limites.feature.spec.js" time="0.36">
+</testcase>
+<testcase name="Límites y alertas de consumo › Pausar una alerta activa" classname="features/limites.feature.spec.js" time="0.247">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia se rechaza y no consume el límite › Example #1" classname="features/limites.feature.spec.js" time="0.328">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia se rechaza y no consume el límite › Example #2" classname="features/limites.feature.spec.js" time="0.31">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia se rechaza y no consume el límite › Example #3" classname="features/limites.feature.spec.js" time="0.349">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un monto faltante o de tipo inválido se rechaza sin consumir el límite › Example #1" classname="features/limites.feature.spec.js" time="0.254">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un monto faltante o de tipo inválido se rechaza sin consumir el límite › Example #2" classname="features/limites.feature.spec.js" time="0.262">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un monto faltante o de tipo inválido se rechaza sin consumir el límite › Example #3" classname="features/limites.feature.spec.js" time="0.228">
+</testcase>
+<testcase name="Límites y alertas de consumo › Un monto faltante o de tipo inválido se rechaza sin consumir el límite › Example #4" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una transferencia rechazada por el límite no cambia ningún saldo ni lo usado hoy" classname="features/limites.feature.spec.js" time="0.482">
+</testcase>
+<testcase name="Límites y alertas de consumo › Lo que transfiere otro usuario no consume mi límite diario, aunque me lo transfiera a mí" classname="features/limites.feature.spec.js" time="0.401">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una transferencia rechazada no cuenta para la alerta ni la dispara › Example #1" classname="features/limites.feature.spec.js" time="0.286">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una transferencia rechazada no cuenta para la alerta ni la dispara › Example #2" classname="features/limites.feature.spec.js" time="0.267">
+</testcase>
+<testcase name="Límites y alertas de consumo › Una transferencia rechazada no cuenta para la alerta ni la dispara › Example #3" classname="features/limites.feature.spec.js" time="0.301">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia no cuenta para la alerta › Example #1" classname="features/limites.feature.spec.js" time="0.287">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia no cuenta para la alerta › Example #2" classname="features/limites.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Límites y alertas de consumo › Sin un token válido la transferencia no cuenta para la alerta › Example #3" classname="features/limites.feature.spec.js" time="0.297">
+</testcase>
+<testcase name="Límites y alertas de consumo › El gasto de otro usuario no dispara mis alertas, aunque me transfiera a mí" classname="features/limites.feature.spec.js" time="0.439">
+</testcase>
+</testsuite>
+<testsuite name="features/nucleo_cuenta.feature.spec.js" timestamp="2026-11-20T22:54:42.736Z" hostname="" tests="45" failures="0" skipped="0" time="12.894" errors="0">
+<testcase name="Mi cuenta: saldo, perfil y cierre › Consulto mi saldo en soles" classname="features/nucleo_cuenta.feature.spec.js" time="0.278">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Mi perfil muestra el DNI enmascarado" classname="features/nucleo_cuenta.feature.spec.js" time="0.258">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin token no puedo consultar mi saldo" classname="features/nucleo_cuenta.feature.spec.js" time="0.21">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Cambiar el correo envía un SMS de aviso" classname="features/nucleo_cuenta.feature.spec.js" time="0.284">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El correo de otra cuenta activa no se puede usar" classname="features/nucleo_cuenta.feature.spec.js" time="0.27">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El DNI y el celular no se pueden modificar" classname="features/nucleo_cuenta.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Reglas para cerrar mi cuenta › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.345">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Reglas para cerrar mi cuenta › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.265">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Reglas para cerrar mi cuenta › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.334">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Reglas para cerrar mi cuenta › Example #4" classname="features/nucleo_cuenta.feature.spec.js" time="0.325">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Tras cerrar la cuenta nadie puede transferirme" classname="features/nucleo_cuenta.feature.spec.js" time="0.381">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_cuenta.fea-ab92f-ta-nadie-puede-transferirme/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El saldo muestra la moneda y la fecha de su última actualización" classname="features/nucleo_cuenta.feature.spec.js" time="0.439">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Mi perfil muestra mis nombres, mi celular, mi correo y el DNI enmascarado" classname="features/nucleo_cuenta.feature.spec.js" time="0.265">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo ver mi saldo ni mi perfil › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo ver mi saldo ni mi perfil › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.254">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo ver mi saldo ni mi perfil › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.271">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo ver mi saldo ni mi perfil › Example #4" classname="features/nucleo_cuenta.feature.spec.js" time="0.285">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo ver mi saldo ni mi perfil › Example #5" classname="features/nucleo_cuenta.feature.spec.js" time="0.272">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El perfil no expone el DNI completo ni el PIN" classname="features/nucleo_cuenta.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Los nombres del perfil tienen de 2 a 80 caracteres › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.274">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Los nombres del perfil tienen de 2 a 80 caracteres › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.266">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Los nombres del perfil tienen de 2 a 80 caracteres › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.276">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Los nombres del perfil tienen de 2 a 80 caracteres › Example #4" classname="features/nucleo_cuenta.feature.spec.js" time="0.263">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El correo del perfil tiene un formato válido y es único entre cuentas activas › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.277">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El correo del perfil tiene un formato válido y es único entre cuentas activas › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.278">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El correo del perfil tiene un formato válido y es único entre cuentas activas › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.249">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › El DNI no se puede modificar" classname="features/nucleo_cuenta.feature.spec.js" time="0.249">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo editar mi perfil y no cambia › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.294">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo editar mi perfil y no cambia › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.232">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo editar mi perfil y no cambia › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.287">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un campo con un tipo inválido se rechaza sin cambiar el perfil › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.287">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un campo con un tipo inválido se rechaza sin cambiar el perfil › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.271">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un campo con un tipo inválido se rechaza sin cambiar el perfil › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.274">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cambio rechazado no aplica ninguno de los campos ni envía el aviso" classname="features/nucleo_cuenta.feature.spec.js" time="0.289">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Al cerrar mi cuenta se cierran todas mis sesiones y no puedo volver a ingresar" classname="features/nucleo_cuenta.feature.spec.js" time="0.406">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo cerrar mi cuenta › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.268">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo cerrar mi cuenta › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.259">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Sin un token válido no puedo cerrar mi cuenta › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.316">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cierre con cuerpo vacío o un PIN de tipo inválido se rechaza y la cuenta sigue activa › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.264">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cierre con cuerpo vacío o un PIN de tipo inválido se rechaza y la cuenta sigue activa › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.234">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cierre con cuerpo vacío o un PIN de tipo inválido se rechaza y la cuenta sigue activa › Example #3" classname="features/nucleo_cuenta.feature.spec.js" time="0.277">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cierre rechazado por una regla no cierra la cuenta › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.269">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Un cierre rechazado por una regla no cierra la cuenta › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.272">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Una solicitud de dinero recibida impide cerrar la cuenta hasta que vence › Example #1" classname="features/nucleo_cuenta.feature.spec.js" time="0.397">
+</testcase>
+<testcase name="Mi cuenta: saldo, perfil y cierre › Una solicitud de dinero recibida impide cerrar la cuenta hasta que vence › Example #2" classname="features/nucleo_cuenta.feature.spec.js" time="0.362">
+</testcase>
+</testsuite>
+<testsuite name="features/nucleo_registro.feature.spec.js" timestamp="2026-11-20T22:54:42.736Z" hostname="" tests="33" failures="0" skipped="0" time="7.243" errors="0">
+<testcase name="Registrarme › Registro exitoso con saldo cero, límite por defecto y SMS de bienvenida" classname="features/nucleo_registro.feature.spec.js" time="0.311">
+</testcase>
+<testcase name="Registrarme › Validación del DNI (RN-01) › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.184">
+</testcase>
+<testcase name="Registrarme › Validación del DNI (RN-01) › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.268">
+</testcase>
+<testcase name="Registrarme › Validación del DNI (RN-01) › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.18">
+</testcase>
+<testcase name="Registrarme › Validación del DNI (RN-01) › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.219">
+</testcase>
+<testcase name="Registrarme › Validación del celular (RN-02) › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.175">
+</testcase>
+<testcase name="Registrarme › Validación del celular (RN-02) › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.2">
+</testcase>
+<testcase name="Registrarme › Validación del celular (RN-02) › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.184">
+</testcase>
+<testcase name="Registrarme › Validación del celular (RN-02) › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.206">
+</testcase>
+<testcase name="Registrarme › Validación del celular (RN-02) › Example #5" classname="features/nucleo_registro.feature.spec.js" time="0.211">
+</testcase>
+<testcase name="Registrarme › Validación del PIN (RN-03) › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.179">
+</testcase>
+<testcase name="Registrarme › Validación del PIN (RN-03) › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.22">
+</testcase>
+<testcase name="Registrarme › Validación del PIN (RN-03) › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.195">
+</testcase>
+<testcase name="Registrarme › Validación del PIN (RN-03) › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.228">
+</testcase>
+<testcase name="Registrarme › Validación del PIN (RN-03) › Example #5" classname="features/nucleo_registro.feature.spec.js" time="0.221">
+</testcase>
+<testcase name="Registrarme › Un PIN en secuencia descendente se rechaza (RN-03)" classname="features/nucleo_registro.feature.spec.js" time="0.245">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_registro.f-fd345-scendente-se-rechaza-RN-03-/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Registrarme › Correo ya usado por otra cuenta activa, sin distinguir mayúsculas" classname="features/nucleo_registro.feature.spec.js" time="0.195">
+</testcase>
+<testcase name="Registrarme › Dos registros simultáneos con el mismo celular responden 201 y 409, nunca 500" classname="features/nucleo_registro.feature.spec.js" time="0.308">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_registro.f-de998-sponden-201-y-409-nunca-500/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Registrarme › Los nombres tienen de 2 a 80 caracteres › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.202">
+</testcase>
+<testcase name="Registrarme › Los nombres tienen de 2 a 80 caracteres › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.252">
+</testcase>
+<testcase name="Registrarme › Los nombres tienen de 2 a 80 caracteres › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.237">
+</testcase>
+<testcase name="Registrarme › Los nombres tienen de 2 a 80 caracteres › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.209">
+</testcase>
+<testcase name="Registrarme › Validación del formato del correo › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.195">
+</testcase>
+<testcase name="Registrarme › Validación del formato del correo › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.215">
+</testcase>
+<testcase name="Registrarme › Validación del formato del correo › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.213">
+</testcase>
+<testcase name="Registrarme › Validación del formato del correo › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.246">
+</testcase>
+<testcase name="Registrarme › El correo de una cuenta cerrada se puede volver a usar" classname="features/nucleo_registro.feature.spec.js" time="0.259">
+</testcase>
+<testcase name="Registrarme › Un registro con cuerpo vacío, un campo faltante o un tipo inválido se rechaza y no crea la cuenta › Example #1" classname="features/nucleo_registro.feature.spec.js" time="0.235">
+</testcase>
+<testcase name="Registrarme › Un registro con cuerpo vacío, un campo faltante o un tipo inválido se rechaza y no crea la cuenta › Example #2" classname="features/nucleo_registro.feature.spec.js" time="0.218">
+</testcase>
+<testcase name="Registrarme › Un registro con cuerpo vacío, un campo faltante o un tipo inválido se rechaza y no crea la cuenta › Example #3" classname="features/nucleo_registro.feature.spec.js" time="0.209">
+</testcase>
+<testcase name="Registrarme › Un registro con cuerpo vacío, un campo faltante o un tipo inválido se rechaza y no crea la cuenta › Example #4" classname="features/nucleo_registro.feature.spec.js" time="0.201">
+</testcase>
+<testcase name="Registrarme › Un registro con cuerpo vacío, un campo faltante o un tipo inválido se rechaza y no crea la cuenta › Example #5" classname="features/nucleo_registro.feature.spec.js" time="0.213">
+</testcase>
+<testcase name="Registrarme › Un registro rechazado por una regla no crea la cuenta ni envía el SMS de bienvenida" classname="features/nucleo_registro.feature.spec.js" time="0.21">
+</testcase>
+</testsuite>
+<testsuite name="features/nucleo_sesion.feature.spec.js" timestamp="2026-11-20T22:54:42.736Z" hostname="" tests="25" failures="0" skipped="0" time="6.584" errors="0">
+<testcase name="Iniciar y cerrar sesión › Ingreso con credenciales correctas" classname="features/nucleo_sesion.feature.spec.js" time="0.246">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Credenciales incorrectas con mensaje genérico › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.28">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Credenciales incorrectas con mensaje genérico › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.195">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Bloqueo al tercer intento fallido consecutivo" classname="features/nucleo_sesion.feature.spec.js" time="0.34">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Durante el bloqueo ni el PIN correcto permite ingresar › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.318">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Durante el bloqueo ni el PIN correcto permite ingresar › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.366">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un ingreso exitoso reinicia el conteo de intentos" classname="features/nucleo_sesion.feature.spec.js" time="0.366">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_sesion.fea-d8f91-nicia-el-conteo-de-intentos/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Una cuenta cerrada no puede iniciar sesión" classname="features/nucleo_sesion.feature.spec.js" time="0.268">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Al cerrar sesión el token deja de ser válido" classname="features/nucleo_sesion.feature.spec.js" time="0.285">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_sesion.fea-f21f3-el-token-deja-de-ser-válido/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Cerrar una sesión no afecta las otras sesiones activas" classname="features/nucleo_sesion.feature.spec.js" time="0.283">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Al ingresar se crea una sesión activa de 30 minutos" classname="features/nucleo_sesion.feature.spec.js" time="0.284">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › El token deja de valer a los 30 minutos › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.245">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › El token deja de valer a los 30 minutos › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.249">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Ingresar desde un dispositivo que no es de confianza envía una alerta por SMS › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.224">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Ingresar desde un dispositivo que no es de confianza envía una alerta por SMS › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.289">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un ingreso con cuerpo vacío, un campo faltante o un tipo inválido se rechaza › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.202">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un ingreso con cuerpo vacío, un campo faltante o un tipo inválido se rechaza › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.221">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un ingreso con cuerpo vacío, un campo faltante o un tipo inválido se rechaza › Example #3" classname="features/nucleo_sesion.feature.spec.js" time="0.196">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un ingreso con cuerpo vacío, un campo faltante o un tipo inválido se rechaza › Example #4" classname="features/nucleo_sesion.feature.spec.js" time="0.226">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Los ingresos con datos inválidos no cuentan como intentos fallidos" classname="features/nucleo_sesion.feature.spec.js" time="0.235">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › La respuesta no revela si falló el celular o el PIN" classname="features/nucleo_sesion.feature.spec.js" time="0.251">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Sin un token válido no puedo cerrar sesión › Example #1" classname="features/nucleo_sesion.feature.spec.js" time="0.29">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Sin un token válido no puedo cerrar sesión › Example #2" classname="features/nucleo_sesion.feature.spec.js" time="0.247">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Sin un token válido no puedo cerrar sesión › Example #3" classname="features/nucleo_sesion.feature.spec.js" time="0.245">
+</testcase>
+<testcase name="Iniciar y cerrar sesión › Un cierre de sesión rechazado no afecta mi sesión" classname="features/nucleo_sesion.feature.spec.js" time="0.233">
+</testcase>
+</testsuite>
+<testsuite name="features/nucleo_transferencias.feature.spec.js" timestamp="2026-11-20T22:54:42.736Z" hostname="" tests="64" failures="0" skipped="0" time="18.529" errors="0">
+<testcase name="Transferir dinero › Transferencia exitosa a un usuario registrado" classname="features/nucleo_transferencias.feature.spec.js" time="0.352">
+</testcase>
+<testcase name="Transferir dinero › Validación del monto por operación (RN-05) › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.239">
+</testcase>
+<testcase name="Transferir dinero › Validación del monto por operación (RN-05) › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.287">
+</testcase>
+<testcase name="Transferir dinero › Validación del monto por operación (RN-05) › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.312">
+</testcase>
+<testcase name="Transferir dinero › Validación del monto por operación (RN-05) › Example #4" classname="features/nucleo_transferencias.feature.spec.js" time="0.246">
+</testcase>
+<testcase name="Transferir dinero › Validación del monto por operación (RN-05) › Example #5" classname="features/nucleo_transferencias.feature.spec.js" time="0.239">
+</testcase>
+<testcase name="Transferir dinero › Destinos no permitidos (RN-07) › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.21">
+</testcase>
+<testcase name="Transferir dinero › Destinos no permitidos (RN-07) › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.25">
+</testcase>
+<testcase name="Transferir dinero › Destinos no permitidos (RN-07) › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.337">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-643ce--permitidos-RN-07-Example-3/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › El saldo debe cubrir el monto (RN-08)" classname="features/nucleo_transferencias.feature.spec.js" time="0.235">
+</testcase>
+<testcase name="Transferir dinero › Transferencias simultáneas no superan el límite diario" classname="features/nucleo_transferencias.feature.spec.js" time="0.343">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-695de-no-superan-el-límite-diario/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › Transferencias simultáneas no dejan el saldo negativo" classname="features/nucleo_transferencias.feature.spec.js" time="0.371">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-c6c96--no-dejan-el-saldo-negativo/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › Validación del CCI › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.258">
+</testcase>
+<testcase name="Transferir dinero › Validación del CCI › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.301">
+</testcase>
+<testcase name="Transferir dinero › Validación del CCI › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.243">
+</testcase>
+<testcase name="Transferir dinero › El saldo debe cubrir el monto más la comisión interbancaria" classname="features/nucleo_transferencias.feature.spec.js" time="0.33">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-a49c0-s-la-comisión-interbancaria/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › Simular la comisión sin realizar la operación (RN-09) › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.276">
+</testcase>
+<testcase name="Transferir dinero › Simular la comisión sin realizar la operación (RN-09) › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.277">
+</testcase>
+<testcase name="Transferir dinero › Simular la comisión sin realizar la operación (RN-09) › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.242">
+</testcase>
+<testcase name="Transferir dinero › Simular la comisión sin realizar la operación (RN-09) › Example #4" classname="features/nucleo_transferencias.feature.spec.js" time="0.281">
+</testcase>
+<testcase name="Transferir dinero › Simular la comisión sin realizar la operación (RN-09) › Example #5" classname="features/nucleo_transferencias.feature.spec.js" time="0.245">
+</testcase>
+<testcase name="Transferir dinero › La comisión simulada usa redondeo comercial (0.005 sube) › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.234">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-847fb-ercial-0-005-sube-Example-1/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › La comisión simulada usa redondeo comercial (0.005 sube) › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.286">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-e83d8-ercial-0-005-sube-Example-2/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › La transferencia interbancaria cobra la comisión con redondeo comercial" classname="features/nucleo_transferencias.feature.spec.js" time="0.32">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-1db02-sión-con-redondeo-comercial/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › Transferir eligiendo un contacto en lugar del celular" classname="features/nucleo_transferencias.feature.spec.js" time="0.336">
+</testcase>
+<testcase name="Transferir dinero › La descripción admite hasta 60 caracteres › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.33">
+</testcase>
+<testcase name="Transferir dinero › La descripción admite hasta 60 caracteres › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.236">
+</testcase>
+<testcase name="Transferir dinero › La transferencia acredita al destinatario y los dos vemos el movimiento con el mismo código" classname="features/nucleo_transferencias.feature.spec.js" time="0.437">
+</testcase>
+<testcase name="Transferir dinero › El comprobante muestra el código, el destinatario enmascarado, los montos, mi nuevo saldo y la fecha" classname="features/nucleo_transferencias.feature.spec.js" time="0.329">
+</testcase>
+<testcase name="Transferir dinero › Dos transferencias en el mismo segundo tienen códigos de operación distintos" classname="features/nucleo_transferencias.feature.spec.js" time="0.428">
+<properties>
+<property name="fail" value="">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/features-nucleo_transferen-9d956-igos-de-operación-distintos/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir y ningún saldo cambia › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.298">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir y ningún saldo cambia › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.307">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir y ningún saldo cambia › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.343">
+</testcase>
+<testcase name="Transferir dinero › Un cuerpo vacío o con un tipo inválido se rechaza indicando el campo y sin mover dinero › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.293">
+</testcase>
+<testcase name="Transferir dinero › Un cuerpo vacío o con un tipo inválido se rechaza indicando el campo y sin mover dinero › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.312">
+</testcase>
+<testcase name="Transferir dinero › Un cuerpo vacío o con un tipo inválido se rechaza indicando el campo y sin mover dinero › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.283">
+</testcase>
+<testcase name="Transferir dinero › Un cuerpo vacío o con un tipo inválido se rechaza indicando el campo y sin mover dinero › Example #4" classname="features/nucleo_transferencias.feature.spec.js" time="0.284">
+</testcase>
+<testcase name="Transferir dinero › Un cuerpo vacío o con un tipo inválido se rechaza indicando el campo y sin mover dinero › Example #5" classname="features/nucleo_transferencias.feature.spec.js" time="0.275">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia rechazada por una regla no mueve dinero ni avisa al destinatario" classname="features/nucleo_transferencias.feature.spec.js" time="0.302">
+</testcase>
+<testcase name="Transferir dinero › No puedo transferir usando el contacto de otro usuario" classname="features/nucleo_transferencias.feature.spec.js" time="0.387">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia a otro banco cobra la comisión de RN-09 › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.308">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia a otro banco cobra la comisión de RN-09 › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.317">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia a otro banco cobra la comisión de RN-09 › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.383">
+</testcase>
+<testcase name="Transferir dinero › El monto de una transferencia a otro banco cumple RN-05 › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.249">
+</testcase>
+<testcase name="Transferir dinero › El monto de una transferencia a otro banco cumple RN-05 › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.367">
+</testcase>
+<testcase name="Transferir dinero › El monto de una transferencia a otro banco cumple RN-05 › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.348">
+</testcase>
+<testcase name="Transferir dinero › El monto de una transferencia a otro banco cumple RN-05 › Example #4" classname="features/nucleo_transferencias.feature.spec.js" time="0.225">
+</testcase>
+<testcase name="Transferir dinero › El monto de una transferencia a otro banco cumple RN-05 › Example #5" classname="features/nucleo_transferencias.feature.spec.js" time="0.242">
+</testcase>
+<testcase name="Transferir dinero › El comprobante y el movimiento muestran el CCI enmascarado" classname="features/nucleo_transferencias.feature.spec.js" time="0.354">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir a otro banco y mi saldo no cambia › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.244">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir a otro banco y mi saldo no cambia › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.224">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo transferir a otro banco y mi saldo no cambia › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.298">
+</testcase>
+<testcase name="Transferir dinero › Un CCI o un monto de tipo inválido se rechaza indicando el campo y sin cobrar nada › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.243">
+</testcase>
+<testcase name="Transferir dinero › Un CCI o un monto de tipo inválido se rechaza indicando el campo y sin cobrar nada › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.253">
+</testcase>
+<testcase name="Transferir dinero › Un CCI o un monto de tipo inválido se rechaza indicando el campo y sin cobrar nada › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.261">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia a otro banco sin CCI o con letras en el CCI se rechaza sin cobrar nada › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.241">
+</testcase>
+<testcase name="Transferir dinero › Una transferencia a otro banco sin CCI o con letras en el CCI se rechaza sin cobrar nada › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.265">
+</testcase>
+<testcase name="Transferir dinero › Simular una transferencia entre cuentas Qolqe no cobra comisión ni mueve dinero" classname="features/nucleo_transferencias.feature.spec.js" time="0.279">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo simular la comisión › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.28">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo simular la comisión › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.289">
+</testcase>
+<testcase name="Transferir dinero › Sin un token válido no puedo simular la comisión › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.251">
+</testcase>
+<testcase name="Transferir dinero › Una simulación sin monto o con parámetros inválidos se rechaza indicando el parámetro › Example #1" classname="features/nucleo_transferencias.feature.spec.js" time="0.237">
+</testcase>
+<testcase name="Transferir dinero › Una simulación sin monto o con parámetros inválidos se rechaza indicando el parámetro › Example #2" classname="features/nucleo_transferencias.feature.spec.js" time="0.242">
+</testcase>
+<testcase name="Transferir dinero › Una simulación sin monto o con parámetros inválidos se rechaza indicando el parámetro › Example #3" classname="features/nucleo_transferencias.feature.spec.js" time="0.235">
+</testcase>
+</testsuite>
+</testsuites>

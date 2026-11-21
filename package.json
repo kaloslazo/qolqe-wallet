@@ -10,7 +10,9 @@
   "scripts": {
     "test": "bddgen && playwright test",
     "report": "playwright show-report",
-    "contrato": "bash scripts/contrato.sh"
+    "contrato": "bash scripts/contrato.sh",
+    "diagnostico": "bash scripts/diagnostico.sh",
+    "tablero": "bash scripts/tablero.sh"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grupo 5 · Entrega final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #fdfdfd; --paper: #f3f3f4; --paper-2: #ebebed; --line: #e6e6e9;
+    --ink: #101011; --copy: #424246; --muted: #66666c; --dark: #0b0b0c; --dark-card: #1d1d1f;
+    --red: #f45454; --yellow: #ffcb3d; --blue: #4487f6; --green: #2fa874; --purple: #9268f5;
+    --sans: "Archivo", "Archivo Variable", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #e9e9ec; font-family: var(--sans); color: var(--ink); }
+  body { overflow: hidden; }
+  .deck { position: absolute; top: 50%; left: 50%; width: 1600px; height: 900px; transform-origin: center center; }
+  .slide { position: absolute; inset: 0; background: var(--canvas); padding: 84px 104px 100px; display: none; flex-direction: column; }
+  .slide.activa { display: flex; }
+  .pie { position: absolute; left: 104px; right: 104px; bottom: 40px; display: flex; justify-content: space-between; font-size: 16px; color: var(--muted); }
+
+  .antetitulo { font-size: 20px; font-weight: 500; color: var(--muted); margin-bottom: 18px; }
+  h1 { font-size: 64px; font-weight: 500; line-height: 1.06; letter-spacing: -0.03em; max-width: 1300px; }
+  h2 { font-size: 30px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
+  p, li { font-size: 27px; line-height: 1.45; color: var(--copy); }
+  .cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 34px; }
+  .tenue { color: var(--muted); }
+  .nota { font-size: 22px; color: var(--muted); line-height: 1.45; max-width: 1300px; }
+  b, strong { font-weight: 600; color: var(--ink); }
+  code, .mono { font-family: var(--mono); font-size: 0.82em; }
+
+  .fila { display: grid; gap: 28px; }
+  .c2 { grid-template-columns: 1fr 1fr; } .c3 { grid-template-columns: repeat(3, 1fr); } .c4 { grid-template-columns: repeat(4, 1fr); }
+  .bloque { background: var(--paper); border-radius: 16px; padding: 30px 34px; }
+  .bloque h2 { margin-bottom: 10px; }
+  .bloque p, .bloque li { font-size: 23px; }
+  .bloque .dato { font-size: 15px; font-weight: 500; color: var(--muted); margin-bottom: 14px; letter-spacing: 0.01em; }
+
+  .cifra b { display: block; font-size: 96px; font-weight: 500; letter-spacing: -0.045em; line-height: 1; }
+  .cifra span { display: block; font-size: 21px; color: var(--copy); margin-top: 14px; line-height: 1.35; }
+  .cifra small { display: block; font-size: 17px; color: var(--muted); margin-top: 6px; }
+  .grande b { font-size: 200px; }
+
+  .medidor { height: 10px; background: var(--paper-2); border-radius: 999px; margin-top: 18px; overflow: hidden; }
+  .medidor i { display: block; height: 100%; border-radius: 999px; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
+  th, td { text-align: left; padding: 15px 22px; font-size: 21px; line-height: 1.3; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; color: var(--copy); }
+  th { background: var(--paper); font-weight: 500; color: var(--ink); font-size: 19px; }
+  tr > :last-child { border-right: 0; } tbody tr:last-child td { border-bottom: 0; }
+  td b { font-weight: 600; }
+  td.mono { font-size: 19px; }
+  .si { color: var(--green); font-weight: 600; } .no { color: var(--red); font-weight: 600; }
+
+  ol.pasos { list-style: none; counter-reset: paso; display: grid; gap: 0; }
+  ol.pasos li { counter-increment: paso; display: grid; grid-template-columns: 64px 1fr; padding: 18px 0; border-top: 1px solid var(--line); font-size: 25px; }
+  ol.pasos li:last-child { border-bottom: 1px solid var(--line); }
+  ol.pasos li::before { content: counter(paso); font-weight: 500; color: var(--muted); font-size: 25px; }
+  ul.lista { list-style: none; display: grid; gap: 12px; }
+  ul.lista li { position: relative; padding-left: 28px; }
+  ul.lista li::before { content: "–"; position: absolute; left: 0; color: var(--muted); }
+
+  .codigo { background: var(--dark); color: #e9e9ec; border-radius: 16px; padding: 28px 32px; font-family: var(--mono); font-size: 22px; line-height: 1.7; white-space: pre; }
+  .codigo .c { color: #8d8d93; } .codigo .k { color: #ffcb3d; } .codigo .s { color: #7fd3a8; } .codigo .v { color: #9fc0ff; }
+  .grafico svg { width: 100%; height: auto; display: block; }
+  .grafico.bajo svg { max-height: 330px; width: auto; max-width: 100%; }
+  .cifras-chicas .cifra b { font-size: 60px; }
+  .cifras-chicas .cifra span { font-size: 19px; margin-top: 10px; }
+  .grafico.marco { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 26px 10px; }
+  .leyenda-en-linea { display: inline-flex; align-items: center; gap: 10px; margin-right: 26px; font-size: 19px; color: var(--copy); }
+  .leyenda-en-linea i { width: 22px; height: 3px; border-radius: 3px; display: block; }
+
+  .oscura { background: var(--dark); }
+  .oscura h1, .oscura b { color: #f3f3f4; }
+  .oscura .antetitulo, .oscura .pie, .oscura .nota { color: #8d8d93; }
+  .oscura p, .oscura li { color: #c9c9ce; }
+  .oscura .bloque { background: var(--dark-card); }
+  .oscura .codigo { background: var(--dark-card); }
+
+  .portada { justify-content: space-between; }
+  .puntos { display: flex; gap: 12px; }
+  .puntos i { width: 18px; height: 18px; border-radius: 50%; display: block; }
+  .portada h1 { font-size: 112px; letter-spacing: -0.04em; line-height: 1.02; max-width: 1250px; }
+  .portada .sub { font-size: 30px; color: var(--copy); margin-top: 26px; max-width: 980px; line-height: 1.4; }
+
+  .notas { display: none; }
+  body.ver-notas .slide.activa .notas { display: block; position: absolute; left: 0; right: 0; bottom: 0; max-height: 46%; overflow: auto;
+    background: rgba(16,16,17,0.94); color: #f3f3f4; padding: 24px 104px 30px; font-size: 21px; line-height: 1.5; }
+  body.ver-notas .notas b { color: #ffcb3d; }
+
+  @media print {
+    @page { size: 1600px 900px; margin: 0; }
+    html, body { background: var(--canvas); overflow: visible; }
+    .deck { position: static; transform: none !important; width: auto; height: auto; }
+    .slide { position: relative; display: flex !important; break-after: page; page-break-after: always; width: 1600px; height: 900px; }
+    .notas { display: none !important; }
+  }
+  .tabla-chica th, .tabla-chica td { font-size: 18px; padding: 11px 16px; }
+  .tabla-chica th { font-size: 17px; }
+  .diap { color: var(--muted); font-size: 0.82em; white-space: nowrap; }
+  .dato, .paso-n { text-transform: uppercase; }
+  .paso-n { font-size: 15px; font-weight: 500; color: var(--muted); letter-spacing: 0.01em; margin-bottom: 10px; }
+  .c5 { grid-template-columns: repeat(5, 1fr); }
+  .parcial { color: #a86b00; font-weight: 600; }
+
+  /* etiqueta de sección con punto de color, como en plezgo.com */
+  .antetitulo { display: flex; align-items: center; gap: 14px; }
+  .tag { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; color: var(--ink);
+         background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 16px 6px 13px; }
+  .tag i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .oscura .tag { background: var(--dark-card); border-color: #2a2a2d; color: #f3f3f4; }
+
+  /* tarjetas con tono pastel */
+  .t-rojo { background: #fde9e9 !important; } .t-amarillo { background: #fff3d1 !important; } .t-azul { background: #e6eefe !important; }
+  .t-verde { background: #e1f4ea !important; } .t-morado { background: #eee8fd !important; } .t-blanco { background: #fff !important; border: 1px solid var(--line); }
+  .tarjeta { border-radius: 18px; padding: 28px 30px; display: flex; flex-direction: column; gap: 12px; }
+  .tarjeta h2 { font-size: 27px; }
+  .tarjeta p, .tarjeta li { font-size: 21px; line-height: 1.4; }
+  .tarjeta .grande { font-size: 54px; font-weight: 500; letter-spacing: -0.035em; line-height: 1; color: var(--ink); }
+  .tarjeta .grande small { font-size: 22px; letter-spacing: 0; color: var(--copy); font-weight: 400; margin-left: 6px; }
+  .ic { width: 56px; height: 56px; display: block; flex: none; }
+  .ic.g { width: 72px; height: 72px; } .ic.c { width: 40px; height: 40px; }
+  .fila-ic { display: flex; align-items: center; gap: 16px; }
+
+  /* gráficos */
+  .grafico svg { width: 100%; height: auto; display: block; }
+  .grafico.alto svg { max-height: 575px; width: auto; max-width: 100%; margin: 0 auto; }
+  .grafico.medio svg { max-height: 440px; width: auto; max-width: 100%; margin: 0 auto; }
+  .chips { display: flex; gap: 14px; flex-wrap: wrap; }
+  .chip { border-radius: 14px; padding: 14px 20px; font-size: 20px; color: var(--copy); line-height: 1.3; }
+  .chip b { display: block; font-size: 34px; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+
+  /* barra de mezcla de operaciones */
+  .mezcla { display: flex; gap: 3px; height: 64px; border-radius: 14px; overflow: hidden; }
+  .mezcla span { display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; }
+  .mezcla .con { background: var(--blue); } .mezcla .din { background: var(--green); }
+
+  /* línea de tiempo de una sesión */
+  .sesion { display: flex; align-items: center; gap: 10px; }
+  .sesion .op { border-radius: 12px; padding: 14px 16px; font-size: 19px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+  .sesion .pausa { flex: 1; text-align: center; font-size: 15px; color: var(--muted); border-top: 2px dashed #c9c9ce; padding-top: 6px; min-width: 60px; }
+
+  /* diagramas con flechas */
+  .flujo { display: grid; align-items: stretch; gap: 0; }
+  .flecha { display: flex; align-items: center; justify-content: center; font-size: 34px; color: var(--muted); }
+  .etapas { display: grid; grid-template-columns: 1fr 44px 1.25fr 44px 1fr; align-items: stretch; }
+  .job { display: flex; justify-content: space-between; gap: 12px; font-size: 21px; padding: 11px 0; border-top: 1px solid rgba(16,16,17,0.12); color: var(--copy); }
+  .job span:last-child { font-family: var(--mono); font-size: 17px; color: var(--muted); white-space: nowrap; }
+
+  /* regla de capacidad */
+  .regla { position: relative; height: 150px; margin: 10px 20px 0; }
+  .regla .barra { position: absolute; left: 0; right: 0; top: 64px; height: 22px; border-radius: 999px; display: flex; overflow: hidden; gap: 3px; }
+  .regla .marca { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font-size: 18px; color: var(--copy); white-space: nowrap; }
+  .regla .marca b { display: block; font-size: 26px; font-weight: 600; color: var(--ink); }
+  .regla .marca::after { content: ""; display: block; width: 2px; height: 30px; background: var(--ink); margin: 6px auto 0; }
+  .regla .eje { position: absolute; top: 96px; transform: translateX(-50%); font-size: 16px; color: var(--muted); }
+
+  /* bocetos chicos */
+  .boceto { width: 100%; height: 70px; display: block; }
+
+  /* preguntas */
+  .pregunta h2 { font-size: 24px; }
+  .pregunta p { font-size: 19px; }
+
+  .comparacion th, .comparacion td { padding: 10px 13px; font-size: 17px; }
+  .comparacion th.elegida, .comparacion td.elegida { background: #eee8fd; }
+  .comparacion td .si, .comparacion td .no, .comparacion td .parcial { margin-right: 6px; }
+  .nota b { color: var(--ink); }
+
+  /* tarjetas de lo que se espera: número, qué dice, qué significa, cómo se mide */
+  .espera { padding: 28px 32px; gap: 16px; }
+  .espera .cabeza { display: flex; align-items: baseline; gap: 18px; }
+  .espera .grande { font-size: 60px; }
+  .espera h2 { font-size: 27px; }
+  .espera p { font-size: 20px; line-height: 1.42; }
+  .espera p.et { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 3px; }
+  /* filas de la retroalimentación: tema, lo que pidió, qué hicimos, resultado */
+  .obs { display: grid; grid-template-columns: 1.05fr 1.45fr 1.5fr 0.95fr; gap: 22px; align-items: center; border-radius: 16px; padding: 14px 22px; }
+  .obs-cabeza { padding: 0 22px; }
+  .obs-cabeza p { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  .obs .obs-tema { display: flex; align-items: center; gap: 12px; }
+  .obs .obs-tema .dato { font-size: 12px; color: var(--muted); }
+  .obs h2 { font-size: 20px; line-height: 1.2; }
+  .obs p { font-size: 16.5px; line-height: 1.35; }
+  .obs .obs-pidio { font-style: italic; color: var(--copy); }
+  .obs .obs-res .grande { font-size: 38px; font-weight: 500; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+  .obs .obs-res .grande small { font-size: 17px; margin-left: 5px; letter-spacing: 0; color: var(--copy); font-weight: 400; }
+  .obs .obs-res p:last-child { font-size: 15px; color: var(--copy); margin-top: 4px; }
+
+  .captura { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 12px 32px rgba(0,0,0,.07); }
+  .captura img { display: block; width: 100%; }
+  .captura.recorte { height: 470px; } .captura.recorte img { height: 100%; object-fit: cover; object-position: top left; }
+  .captura.mini { height: 330px; } .captura.mini img { height: 100%; object-fit: cover; object-position: top left; }
+  .grafico img { width: 100%; height: auto; max-height: 520px; object-fit: contain; display: block; }
+  .tabla-chica .si, .tabla-chica .no { font-weight: 600; }
+  .cifras-mini .cifra b, .cifras-mini b { font-size: 46px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="trazo" fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></g>
+    <symbol id="i-reloj" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16" fill="#ffcb3d"/><path d="M24 17v9l6 4"/><path d="M20 5h8M24 5v5"/></g></symbol>
+    <symbol id="i-calendario" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="31" rx="4" fill="#fff"/><path d="M7 14a4 4 0 0 1 4-4h26a4 4 0 0 1 4 4v5H7z" fill="#f45454"/><path d="M16 6v8M32 6v8M14 26h4M22 26h4M30 26h4M14 33h4M22 33h4"/></g></symbol>
+    <symbol id="i-usuarios" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="15" r="5.5" fill="#39bf84"/><path d="M28 25c7 0 13 4 13 12h-9" fill="#39bf84"/><circle cx="18" cy="17" r="6.5" fill="#4487f6"/><path d="M5 40c0-8 6-12 13-12s13 4 13 12z" fill="#4487f6"/></g></symbol>
+    <symbol id="i-caja" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="32" height="32" rx="5" fill="#4487f6"/><path d="M8 19h32M8 30h32"/><path d="M14 13.5h5M14 24.5h5M14 35h5"/><path d="M33 13.5h.5M33 24.5h.5M33 35h.5"/></g></symbol>
+    <symbol id="i-laptop" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="9" width="28" height="21" rx="3" fill="#e1f4ea"/><path d="M4 35h40l-3 5H7z" fill="#fff"/><path d="M16 22l4-4 3 3 6-6"/></g></symbol>
+    <symbol id="i-rayo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M28 4L10 27h12l-3 17 19-24H26z" fill="#ffcb3d"/></g></symbol>
+    <symbol id="i-codigo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="38" height="32" rx="5" fill="#fff"/><path d="M5 13a5 5 0 0 1 5-5h28a5 5 0 0 1 5 5v3H5z" fill="#9268f5"/><path d="M19 23l-5 5 5 5M29 23l5 5-5 5"/></g></symbol>
+    <symbol id="i-candado" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-6a8 8 0 0 1 16 0v6"/><rect x="10" y="21" width="28" height="21" rx="5" fill="#ffcb3d"/><path d="M24 29v6"/></g></symbol>
+    <symbol id="i-dinero" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="24" rx="4" fill="#39bf84"/><circle cx="24" cy="24" r="6" fill="#fff"/><path d="M11 18h1M36 30h1"/></g></symbol>
+    <symbol id="i-alerta" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6L44 41H4z" fill="#f45454"/><path d="M24 18v11M24 35v.5"/></g></symbol>
+    <symbol id="i-lupa" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 30l11 11" stroke-width="4"/><circle cx="20" cy="20" r="13" fill="#e6eefe"/><path d="M14 19a6 6 0 0 1 6-6"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="36" rx="9" fill="#39bf84"/><path d="M15 25l6 6 12-13"/></g></symbol>
+    <symbol id="i-cruz" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="36" rx="9" fill="#f45454"/><path d="M17 17l14 14M31 17L17 31"/></g></symbol>
+    <symbol id="i-escudo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4l16 6v12c0 10-7 17-16 22C15 39 8 32 8 22V10z" fill="#9268f5"/><path d="M17 24l5 5 9-10"/></g></symbol>
+    <symbol id="i-capas" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 32l19 9 19-9" /><path d="M5 24l19 9 19-9" fill="#e6eefe"/><path d="M24 6l19 9-19 9L5 15z" fill="#4487f6"/></g></symbol>
+    <symbol id="i-lista" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="30" height="35" rx="4" fill="#fff"/><rect x="17" y="4" width="14" height="8" rx="2.5" fill="#f45454"/><path d="M16 21l2 2 4-4M26 21h7M16 31l2 2 4-4M26 31h7"/></g></symbol>
+    <symbol id="i-pregunta" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h36v24H22l-9 8v-8H6z" fill="#ffcb3d"/><path d="M20 16.5a4.5 4.5 0 1 1 6 4.2c-1.3.6-2 1.4-2 2.8M24 28v.5"/></g></symbol>
+    <symbol id="i-botella" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4h8v9l7 8v19a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4V21l7-8z" fill="#4487f6"/><path d="M13 29h22"/><path d="M19 4h10"/></g></symbol>
+    <symbol id="i-arena" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 39c2-6 8-6 8-10 0 4 6 4 8 10z" fill="#ffcb3d" stroke="none"/><path d="M12 5h24M12 43h24"/><path d="M15 5c0 11 9 12 9 19s-9 8-9 19M33 5c0 11-9 12-9 19s9 8 9 19"/></g></symbol>
+    <symbol id="i-cpu" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5v7M24 5v7M30 5v7M18 36v7M24 36v7M30 36v7M5 18h7M5 24h7M5 30h7M36 18h7M36 24h7M36 30h7"/><rect x="12" y="12" width="24" height="24" rx="4" fill="#39bf84"/><rect x="19" y="19" width="10" height="10" rx="2" fill="#fff"/></g></symbol>
+    <symbol id="i-nube" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 37a9 9 0 0 1-1.5-17.9A12 12 0 0 1 35 16.5 10 10 0 0 1 35 37z" fill="#e6eefe"/><path d="M19 29h10"/></g></symbol>
+    <symbol id="i-transferir" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="32" rx="7" fill="#39bf84"/><path d="M12 19h22l-5-5M36 29H14l5 5"/></g></symbol>
+    <symbol id="i-celular" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="4" width="22" height="40" rx="5" fill="#fff"/><path d="M21 38h6"/><path d="M26 11l-7 11h6l-3 9 9-12h-6z" fill="#ffcb3d"/></g></symbol>
+    <symbol id="i-recibo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5h28v38l-4.7-3-4.6 3-4.7-3-4.7 3-4.6-3-4.7 3z" fill="#fff4d4"/><path d="M17 14h14M17 21h14M17 28h8"/></g></symbol>
+    <symbol id="i-llave" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="24" r="10" fill="#ffcb3d"/><circle cx="13" cy="24" r="3" fill="#fff"/><path d="M25 24h19M37 24v7M43 24v5"/></g></symbol>
+    <symbol id="i-fila" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="4" fill="#f45454"/><path d="M4 38v-9a5 5 0 0 1 10 0v9"/><circle cx="24" cy="16" r="4" fill="#f45454"/><path d="M19 38v-9a5 5 0 0 1 10 0v9"/><circle cx="39" cy="16" r="4" fill="#f45454"/><path d="M34 38v-9a5 5 0 0 1 10 0v9"/></g></symbol>
+    <symbol id="i-objetivo" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="26" r="17" fill="#fde9e9"/><circle cx="22" cy="26" r="10" fill="#f45454"/><circle cx="22" cy="26" r="3.5" fill="#fff"/><path d="M22 26L40 8M33 8h7v7"/></g></symbol>
+    <symbol id="i-grafico" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="38" height="34" rx="5" fill="#fff"/><path d="M11 33l8-9 6 5 12-13" stroke="#4487f6" stroke-width="3.2"/><path d="M11 33l8-9 6 5 12-13" stroke="none"/></g></symbol>
+    <symbol id="i-libro" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10c7-2 13-1 19 3 6-4 12-5 19-3v29c-7-2-13-1-19 3-6-4-12-5-19-3z" fill="#fff3d1"/><path d="M24 13v29"/></g></symbol>
+    <symbol id="i-repetir" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="40" height="40" rx="10" fill="#e6eefe"/><path d="M35 19a12 12 0 0 0-21-3M13 29a12 12 0 0 0 21 3"/><path d="M13 9v7h7M35 39v-7h-7"/></g></symbol>
+    <symbol id="i-monitor" viewBox="0 0 48 48"><g fill="none" stroke="#101011" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="38" height="27" rx="4" fill="#eee8fd"/><path d="M10 26l6-7 5 4 6-9 5 6 6-3"/><path d="M17 41h14M24 34v7"/></g></symbol>
+    <symbol id="i-flecha-der" viewBox="0 0 48 48"><g fill="none" stroke="#66666c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24h34M30 14l10 10-10 10"/></g></symbol>
+  </defs>
+</svg>
+<div class="deck" id="deck">
+<section id="s-portada" class="slide portada">
+  <div class="puntos"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i><i style="background:var(--green)"></i></div>
+  <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px">
+    <div>
+      <p class="antetitulo">CS5383 · Proyecto 2 · Presentación final</p>
+      <h1>Qolqe Wallet: cómo probamos, de punta a punta</h1>
+      <p class="sub">API, contrato, web, pipeline, reportería y rendimiento. De cada herramienta: cómo la evaluamos, cómo funciona, cómo la implementamos y qué reporte deja.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,96px);gap:18px"><svg class="ic" style="width:96px;height:96px"><use href="#i-codigo"/></svg><svg class="ic" style="width:96px;height:96px"><use href="#i-escudo"/></svg><svg class="ic" style="width:96px;height:96px"><use href="#i-monitor"/></svg><svg class="ic" style="width:96px;height:96px"><use href="#i-rayo"/></svg></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:24px"><b style="font-weight:500">Grupo 5 · Kalos y Gianpier</b><span class="tenue">UTEC · 2026-2</span></div>
+  <aside class="notas"><b>Los dos.</b> No repetimos las tres presentaciones anteriores: tomamos lo mejor de cada una y lo ordenamos por área, con las mismas cuatro preguntas.</aside>
+</section>
+
+<section id="s-mapa" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>Cómo leer esta presentación</span></div>
+  <div class="cuerpo">
+    <h1>Seis áreas, cuatro preguntas cada una</h1>
+    <div class="fila c3" style="gap:20px">
+      <div class="tarjeta t-verde"><svg class="ic"><use href="#i-codigo"/></svg><h2>API</h2><p>Playwright + playwright-bdd</p></div><div class="tarjeta t-azul"><svg class="ic"><use href="#i-escudo"/></svg><h2>Contrato</h2><p>Schemathesis</p></div><div class="tarjeta t-amarillo"><svg class="ic"><use href="#i-monitor"/></svg><h2>Web</h2><p>Selenium + pytest-bdd</p></div>
+      <div class="tarjeta t-morado"><svg class="ic"><use href="#i-capas"/></svg><h2>Pipeline</h2><p>GitHub Actions · Pages · Qase</p></div><div class="tarjeta t-rojo"><svg class="ic"><use href="#i-lupa"/></svg><h2>Reportería</h2><p>del fallo a la causa</p></div><div class="tarjeta t-blanco"><svg class="ic"><use href="#i-rayo"/></svg><h2>Rendimiento</h2><p>k6</p></div>
+    </div>
+    <p class="nota"><b>Cómo evaluamos</b> · <b>cómo funciona</b> · <b>implementación</b> · <b>reportería</b>. Después: trazabilidad, defectos, IA, el antes y después, y la demo.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Así cada área se compara con las demás y se ve de dónde sale cada punto de la rúbrica.</aside>
+</section>
+
+<section id="s-proyecto" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Arquitectura y herramientas</span></div>
+  <div class="cuerpo">
+    <h1>Una sola trazabilidad para todas las herramientas</h1>
+    <table class="tabla-chica "><thead><tr><th>Área</th><th>Herramienta</th><th>Pregunta que responde</th></tr></thead><tbody><tr><td>API</td><td><b>Playwright + playwright-bdd</b></td><td>¿Se cumple cada regla de negocio de cada historia?</td></tr><tr><td>Contrato</td><td><b>Schemathesis</b></td><td>¿La API cumple su OpenAPI con cualquier entrada?</td></tr><tr><td>Web</td><td><b>Selenium + pytest-bdd</b></td><td>¿El usuario puede hacerlo en pantalla, en Chrome y Firefox?</td></tr><tr><td>Rendimiento</td><td><b>k6</b></td><td>¿Responde a tiempo con 100 y 300 usuarios y dónde se rompe?</td></tr><tr><td>Pipeline y reportes</td><td><b>GitHub Actions · Pages · Qase</b></td><td>¿Se corrió todo, en cada cambio, y qué pasó?</td></tr></tbody></table>
+    <div class="fila c4 cifra cifras-chicas">
+      <div><b>263</b><span>pruebas de API</span></div><div><b>42</b><span>pruebas web</span></div>
+      <div><b>48/48</b><span>criterios con escenario</span></div><div><b>13</b><span>defectos documentados</span></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Todo es Gherkin: la API con playwright-bdd y la web con pytest-bdd, con las mismas etiquetas @HU, @CP, @CA y @DEF. Eso es lo que une las herramientas.</aside>
+</section>
+
+<section id="s-api" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>1 · API</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila-ic" style="gap:20px"><svg class="ic" style="width:64px;height:64px"><use href="#i-codigo"/></svg><h1 style="font-size:46px">API: Playwright + playwright-bdd</h1></div>
+    <div class="fila c2" style="gap:20px">
+      <div class="tarjeta t-azul"><div class="paso-n">Cómo evaluamos</div><ul class="lista"><li>Probar sin navegador, en Gherkin y con un runner que también sirva para el contrato y la trazabilidad</li><li>El requisito es el oráculo, no la app: particiones y valores límite</li><li>Más rápida y menos frágil que la web: aquí van las reglas finas</li></ul></div><div class="tarjeta t-verde"><div class="paso-n">Cómo funciona</div><ul class="lista"><li>Cada <code>.feature</code> es el caso de negocio; cada paso, una función TypeScript que llama a la API</li><li><code>bddgen</code> convierte el Gherkin en specs de Playwright</li><li>Una API de soporte reinicia los datos y fija el reloj antes de cada escenario</li></ul></div>
+      <div class="tarjeta t-amarillo"><div class="paso-n">Implementación</div><ul class="lista"><li><code>features/*.feature</code> y <code>tests/api/</code>: 133 escenarios, 263 pruebas</li><li>Funcionales (RN-01 a RN-09, R-G5-01 a 05) y técnicos <code>@tecnico</code>: 401, 422, tipos, métodos</li><li>16 pruebas <code>@DEF-xx @fail</code> detectan los defectos</li></ul></div><div class="tarjeta t-morado"><div class="paso-n">Reportería</div><ul class="lista"><li>HTML, JUnit y JSON; traza de cada petición con <code>EVIDENCIA=con</code></li><li>Diagnóstico por prueba: requests y traza del servidor</li><li>Resultados guardados en <code>tests/api/resultados/</code></li></ul></div>
+    </div>
+    
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Cobertura funcional y técnica completa (observación de la Parte 2): 48 de 48 criterios de aceptación tienen escenario de API y lo verifica un script en el pipeline. Corrida del 20-nov: 263 passed en 1.4 min, 0 flaky.</aside>
+</section>
+
+<section id="s-api-gherkin" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>1 · API</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <h1 style="font-size:46px">Un escenario, del Gherkin al reporte</h1>
+    <div class="fila" style="grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="codigo" style="font-size:19px;line-height:1.55"><span class="c"># features/nucleo_registro.feature</span>
+<span class="k">@HU-N-01 @api @DEF-09 @fail @CP-32 @CA-N-01-3</span>
+Scenario: Dos registros simultáneos con el
+  mismo celular responden 201 y 409, nunca 500
+  When 4 visitantes se registran a la vez
+       con el celular "987000111"
+  Then una respuesta es 201 y las demás son
+       409 con "CELULAR_REGISTRADO"</div>
+        <div class="fila c3" style="gap:12px">
+          <div class="chip"><b>@HU</b>la historia</div><div class="chip"><b>@CP</b>el caso</div><div class="chip"><b>@CA</b>el criterio</div>
+        </div>
+        <p class="nota" style="font-size:20px">Un <code>@fail</code> es un defecto conocido (<code>@DEF-09</code>): la prueba falla <i>a propósito</i> y, si algún día pasa, el job se pone en rojo.</p>
+      </div>
+      <div class="captura recorte"><img src="img/final2/playwright.png" alt=""></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> A la izquierda el caso de negocio tal como lo lee un analista; a la derecha el reporte HTML de Playwright de la corrida de hoy, con las etiquetas de cada escenario y la traza de cada petición.</aside>
+</section>
+
+<section id="s-contrato" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>2 · Contrato</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila-ic" style="gap:20px"><svg class="ic" style="width:64px;height:64px"><use href="#i-escudo"/></svg><h1 style="font-size:46px">Contrato: Schemathesis</h1></div>
+    <div class="fila c2" style="gap:20px">
+      <div class="tarjeta t-azul"><div class="paso-n">Cómo evaluamos</div><ul class="lista"><li>Pregunta distinta: ¿la API cumple su OpenAPI con entradas que no imaginamos?</li><li>Pruebas basadas en propiedades: genera cientos de casos</li><li>No conoce reglas de negocio: complementa a Playwright, no lo reemplaza</li></ul></div><div class="tarjeta t-verde"><div class="paso-n">Cómo funciona</div><ul class="lista"><li>Lee <code>/openapi.json</code> y genera 20 ejemplos por operación</li><li>Comprueba que no haya 500, que el código y el esquema coincidan y que las rutas protegidas exijan token</li><li>4 fases: ejemplos, cobertura, fuzzing y flujos con estado</li></ul></div>
+      <div class="tarjeta t-amarillo"><div class="paso-n">Implementación</div><ul class="lista"><li><code>scripts/contrato.sh</code>, dos pasadas: <b>gate</b> (bloquea) y <b>hallazgos conocidos</b> (se reportan)</li><li>13 operaciones; usuario de carga; excluye el cierre de cuenta</li><li>Primera etapa del pipeline, junto a <code>verificar</code> y <code>api</code></li></ul></div><div class="tarjeta t-morado"><div class="paso-n">Reportería</div><ul class="lista"><li>HTML y JUnit, con el <code>curl</code> que reproduce cada hallazgo</li><li><code>cobertura_contrato.py</code>: qué códigos provocó cada suite por operación</li><li>Los hallazgos están analizados en el informe; el defecto real que salió es DEF-09</li></ul></div>
+    </div>
+    
+  </div>
+  <aside class="notas"><b>Kalos.</b> El gate solo bloquea si la API rompe su propio contrato; lo demás son reglas de negocio que el OpenAPI no declara y ya están analizadas.</aside>
+</section>
+
+<section id="s-contrato-cap" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>2 · Contrato</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <h1 style="font-size:46px">Las dos pasadas, en la corrida de hoy</h1>
+    <div class="fila c2" style="gap:24px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="captura recorte"><img src="img/final2/contrato-gate.png" alt=""></div><p class="nota" style="font-size:21px"><b>Gate:</b> 0 checks fallidos, 13 de 13 operaciones, 720 casos en 4 fases. Bloquea.</p></div>
+      <div style="display:flex;flex-direction:column;gap:12px"><div class="captura recorte"><img src="img/final2/contrato-hallazgos.png" alt=""></div><p class="nota" style="font-size:21px"><b>Hallazgos conocidos:</b> reglas que el OpenAPI no declara y la cabecera <code>Allow</code>. Se reportan, no bloquean.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Mismo comando, dos objetivos. Separarlas hace que el job ya no salga en rojo en cada corrida por algo ya analizado.</aside>
+</section>
+
+<section id="s-web" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>3 · Web</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila-ic" style="gap:20px"><svg class="ic" style="width:64px;height:64px"><use href="#i-monitor"/></svg><h1 style="font-size:46px">Web: Selenium + pytest-bdd</h1></div>
+    <div class="fila c2" style="gap:20px">
+      <div class="tarjeta t-azul"><div class="paso-n">Cómo evaluamos</div><ul class="lista"><li>Selenium nos tocó; lo justificamos: estándar W3C, Chrome y Firefox reales, Grid y consola del navegador (BiDi)</li><li>Más lento que la API: en la web van los flujos y lo propio de la pantalla</li><li>Escenarios en Gherkin (<code>.feature</code>, obligatorio)</li></ul></div><div class="tarjeta t-verde"><div class="paso-n">Cómo funciona</div><ul class="lista"><li>Page Object por pantalla y Screenplay para varios usuarios</li><li>Datos y sesión se preparan por API, no por la pantalla</li><li>Esperas explícitas, ningún <code>sleep</code>; localizadores <code>data-testid</code></li></ul></div>
+      <div class="tarjeta t-amarillo"><div class="paso-n">Implementación</div><ul class="lista"><li>4 <code>.feature</code> en <code>features/ui/</code>: límites, dos usuarios, <b>núcleo común</b> y defectos</li><li>29 escenarios, 42 pruebas, en Chrome y Firefox</li><li>Núcleo: ingreso, bloqueo, registro, transferencia con diálogo y comprobante</li></ul></div><div class="tarjeta t-morado"><div class="paso-n">Reportería</div><ul class="lista"><li>Reporte BDD propio: cada paso con captura, el error, la traza de nuestro código y la consola del navegador</li><li><code>--evidencia con | fallos | sin</code></li><li>JUnit y pytest-html</li></ul></div>
+    </div>
+    
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Agregamos el núcleo común (registro, ingreso, transferencia): 15 escenarios nuevos que salieron de la skill de IA y aceptamos tras revisarlos. La web de la entrega nueva la verificamos con Playwright; Actions la corre con Selenium.</aside>
+</section>
+
+<section id="s-patron" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>3 · Patrón de diseño</span></div>
+  <div class="cuerpo">
+    <h1>Patrón de diseño: comparado, incluida la escalabilidad</h1>
+    <table class="tabla-chica "><thead><tr><th>Opción</th><th>Un cambio, un lugar</th><th>Pasos de negocio</th><th>Varios usuarios</th><th>Escalabilidad</th><th>Decisión</th></tr></thead><tbody><tr><td>Script lineal</td><td><span class='no'>no</span></td><td><span class='no'>no</span></td><td><span class='no'>no</span></td><td><span class='no'>no</span>: cada escenario copia localizadores</td><td>descartado</td></tr><tr><td><b>Page Object</b></td><td><span class='si'>sí</span></td><td><span class='si'>sí</span></td><td><span class='no'>no</span></td><td><span class='si'>sí</span>: pantalla nueva = clase nueva</td><td><b>pantallas</b></td></tr><tr><td><b>Screenplay</b></td><td><span class='si'>sí</span></td><td><span class='si'>sí, más</span></td><td><span class='si'>sí</span></td><td><span class='si'>sí</span> en usuarios; en uno solo, clases de más</td><td><b>flujos entre usuarios</b></td></tr><tr><td>Page Factory</td><td>sí</td><td>sí</td><td>—</td><td>—</td><td>no existe en Python</td></tr></tbody></table>
+    <div class="fila c3 cifra cifras-chicas">
+      <div><b>20 → 42</b><span>pruebas web al sumar el núcleo</span></div>
+      <div><b>0</b><span>localizadores o pasos existentes cambiados</span></div>
+      <div><b>29</b><span>líneas: la página nueva de registro</span></div>
+    </div>
+    <p class="nota">Lo que no escala: los escenarios comparten BD y reloj, así que no corren en paralelo.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Respondemos a «justificar el patrón» y a «incluir la escalabilidad»: sumamos 22 pruebas y no tocamos nada de lo anterior. Y decimos dónde no escala.</aside>
+</section>
+
+<section id="s-pipeline" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>4 · Pipeline</span></div>
+  <div class="cuerpo" style="gap:26px">
+    <h1 style="font-size:50px">Pipeline: tres etapas, lo lento al final</h1>
+    <div class="fila" style="grid-template-columns:1.25fr 36px 1fr 36px 1fr;gap:14px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:10px"><div class="paso-n">Etapa 1 · en paralelo</div>
+        <div class="tarjeta t-verde" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">verificar</h2><p style="font-size:18px">trazabilidad y Gherkin que compila</p></div><div class="tarjeta t-verde" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">contrato</h2><p style="font-size:18px">gate de Schemathesis</p></div><div class="tarjeta t-verde" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">api</h2><p style="font-size:18px">escenarios de negocio, 263 pruebas</p></div></div>
+      <div style="align-self:center;font-size:34px;color:var(--muted)">→</div>
+      <div style="display:flex;flex-direction:column;gap:10px"><div class="paso-n">Etapa 2 · en paralelo</div>
+        <div class="tarjeta t-amarillo" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">web (chrome)</h2><p style="font-size:18px">Selenium + pytest-bdd</p></div><div class="tarjeta t-amarillo" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">web (firefox)</h2><p style="font-size:18px">Selenium + pytest-bdd</p></div></div>
+      <div style="align-self:center;font-size:34px;color:var(--muted)">→</div>
+      <div style="display:flex;flex-direction:column;gap:10px"><div class="paso-n">Etapa 3 · siempre</div>
+        <div class="tarjeta t-morado" style="padding:16px 22px;gap:2px"><h2 style="font-size:24px">reportes</h2><p style="font-size:18px">Pages, diagnóstico, tablero y Qase</p></div></div>
+    </div>
+    <div class="fila c3">
+      <div class="tarjeta t-blanco"><h2>API junto al contrato</h2><p>Prueban la misma API desde ángulos distintos y no dependen entre sí: corren a la vez y la etapa dura lo que el más largo.</p></div>
+      <div class="tarjeta t-blanco"><h2>La web espera</h2><p>Selenium prepara datos y sesión por la API: con la API rota, un fallo web no dice nada. Es lo más lento, así que va después.</p></div>
+      <div class="tarjeta t-blanco"><h2>Reportes siempre</h2><p>Se publican aunque algo falle, que es cuando más hacen falta.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> En la Parte 2 la API corría junto a la web. Ahora va junto al contrato y la web espera: cuesta unos dos minutos más por corrida y el diagnóstico es más claro. Cada job tiene su justificación, y todo es Gherkin: BDD no cambió.</aside>
+</section>
+
+<section id="s-gates" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--yellow)"></i>4 · Pipeline</span></div>
+  <div class="cuerpo" style="gap:18px">
+    <h1 style="font-size:46px">Quality gates: qué mide cada uno y con qué umbral</h1>
+    <table class="tabla-chica "><thead><tr><th>Gate</th><th>Qué mide</th><th>Umbral</th><th>Valor de referencia</th><th>Bloquea</th></tr></thead><tbody><tr><td>Trazabilidad</td><td>escenarios sin HU, CP o criterio; criterios sin caso</td><td>0 faltantes</td><td>162 escenarios · <b>48 de 48</b> criterios</td><td><span class='si'>sí</span></td></tr><tr><td>Gherkin compila</td><td>pasos sin implementar; escenarios que no se recolectan</td><td>0</td><td>133 casos de API · 42 pruebas web</td><td><span class='si'>sí</span></td></tr><tr><td>Contrato</td><td>fallos de checks de Schemathesis en 4 fases</td><td>0 fallos</td><td><b>13 de 13</b> operaciones · 720 casos</td><td><span class='si'>sí</span></td></tr><tr><td>Hallazgos conocidos</td><td>reglas de negocio que el OpenAPI no declara</td><td>se reportan</td><td>15 hallazgos (varía con la semilla)</td><td>no</td></tr><tr><td>Funcional API</td><td>pruebas que fallan, flaky o con <code>test.only</code></td><td>0 · 0 · 0</td><td><b>263 de 263</b> (16 son defectos esperados)</td><td><span class='si'>sí</span></td></tr><tr><td>Funcional web</td><td>lo mismo, en Chrome y Firefox</td><td>0 failed</td><td>37 pasan + 5 defectos esperados</td><td><span class='si'>sí</span></td></tr><tr><td>Rendimiento</td><td>p95, fallas, sesiones/min, dinero cuadrado</td><td>&lt; 800 ms · &lt; 1500 ms · &lt; 1 %</td><td>51 ms · 126 ms · 0 %</td><td>antes de la campaña</td></tr></tbody></table>
+    <p class="nota">En un gate de calidad la regla es «cero fallos»; lo que informa es el valor de referencia: cuánto se revisó. Solo rendimiento tiene umbrales numéricos, y los fija el requerimiento.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Respuesta a «no hay claridad en los quality gates»: cada gate dice qué métrica mide, su umbral, cuánto se revisó en la última corrida y si bloquea. Un fallo esperado cuenta como verde; un defecto que de pronto pasa pone el job en rojo.</aside>
+</section>
+
+<section id="s-ruta" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>5 · Reportería a detalle</span></div>
+  <div class="cuerpo">
+    <h1>De un job en rojo a la causa</h1>
+    <table class="tabla-chica "><thead><tr><th>Si falla…</th><th>Se abre</th><th>Ahí se ve</th></tr></thead><tbody><tr><td><b>verificar</b></td><td>La salida del job</td><td>Archivo, línea y escenario, con la regla rota</td></tr><tr><td><b>contrato</b></td><td>HTML del gate</td><td>El check que falló y el <code>curl</code> que lo reproduce</td></tr><tr><td><b>api</b></td><td><code>diagnostico.html</code></td><td>La prueba, lo que esperaba, los requests con su código y la traza del servidor si hubo un 500</td></tr><tr><td><b>web</b> <span class='diap'>(solo corre si la etapa 1 pasó)</span></td><td><code>reporte-bdd.html</code></td><td>El paso en rojo, su captura, el error, la traza y la consola del navegador</td></tr><tr><td><b>un defecto «pasa»</b></td><td>El job</td><td>«Se esperaba que fallara y pasó»: se corrigió; hay que retirar la etiqueta</td></tr></tbody></table>
+    <p class="nota">Todo se publica al terminar el último job en GitHub Pages y se resume en la página de la corrida. Con evidencia <code>con</code>, cada paso lleva captura o traza.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> El reporte por defecto dice qué falló; agregamos lo necesario para entender por qué y llegar al fallo en pocos clics.</aside>
+</section>
+
+<section id="s-logs" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>5 · Mapa de logs</span></div>
+  <div class="cuerpo" style="gap:18px">
+    <h1 style="font-size:46px">Logs: cuáles mapeamos y cuáles no</h1>
+    <table class="tabla-chica "><thead><tr><th>Log</th><th>Lo produce</th><th>¿Lo mapeamos?</th><th>Para qué, o por qué no</th></tr></thead><tbody><tr><td>Accesos y trazas de la app durante la API</td><td>herramienta (uvicorn)</td><td><span class='si'>sí</span> · <code>log-api.txt</code></td><td>Diagnóstico por prueba y cobertura frente a Schemathesis</td></tr><tr><td>Hallazgos de Schemathesis (JUnit, <code>curl</code>)</td><td>herramienta</td><td><span class='si'>sí</span></td><td>Se cruzan con la operación del OpenAPI y con nuestros escenarios</td></tr><tr><td>Reporte BDD, capturas y consola BiDi</td><td><b>nosotros</b></td><td><span class='si'>sí</span></td><td>Camino al fallo en la web</td></tr><tr><td>CPU, memoria, hilos y log de Qolqe bajo carga</td><td><b>nosotros</b></td><td><span class='si'>sí</span></td><td>Causa del colapso: 3878 «database is locked»</td></tr><tr><td>Traza de Playwright, cassette de Schemathesis</td><td>herramienta</td><td>no</td><td>Detalle para una persona; el diagnóstico ya resume los requests</td></tr><tr><td>Red del navegador, log de los drivers</td><td>herramienta</td><td>no</td><td>Ruido de estáticos; el driver solo importa si falla él mismo</td></tr></tbody></table>
+    <p class="nota">Se mapea un log cuando se puede unir con algo que identificamos, esa unión se puede validar y responde algo que el reporte por defecto no. Lo demás queda como artefacto u opción.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Respuesta a «cuáles mapeamos y por qué no los demás». Solo ponemos lo que está hecho y validado: la unión log–prueba se validó con DEF-09 y DEF-11 en la API; en la web no se cruza con el log de la app porque un escenario puede abrir dos navegadores. El detalle está en docs/reporteria.md.</aside>
+</section>
+
+<section id="s-diag" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>5 · Reportería a detalle</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <h1 style="font-size:46px">Ejemplo real: DEF-09 en el diagnóstico</h1>
+    <div class="fila" style="grid-template-columns:1.25fr 1fr;gap:30px;align-items:center">
+      <div class="captura recorte"><img src="img/final2/diagnostico-cp32.png" alt=""></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="tarjeta t-azul" style="padding:18px 24px"><div class="paso-n">1 · Lo que dijo la prueba</div><p style="font-size:20px">Esperaba un 201 y tres 409; la comparación no coincidió.</p></div>
+        <div class="tarjeta t-amarillo" style="padding:18px 24px"><div class="paso-n">2 · Lo que hizo contra la app</div><p style="font-size:20px">Un 201 y tres <b>500</b> en <code>POST /api/usuarios</code>.</p></div>
+        <div class="tarjeta t-rojo" style="padding:18px 24px"><div class="paso-n">3 · Traza del servidor</div><p style="font-size:20px"><code>sqlite3.IntegrityError: UNIQUE constraint failed: usuarios.celular</code></p></div>
+      </div>
+    </div>
+    <p class="nota" style="font-size:20px">Cada escenario empieza reiniciando los datos: el tramo N del log es el intento N. La unión solo se acepta si los conteos coinciden (263 = 263) y se comprobó con DEF-09 y DEF-11.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> En segundos pasamos de «falló CP-32» a «cuatro registros simultáneos, tres devolvieron 500 por una restricción UNIQUE sin manejar». Es el reporte de la corrida de hoy.</aside>
+</section>
+
+<section id="s-reportes" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>5 · Reportería</span></div>
+  <div class="cuerpo" style="gap:20px">
+    <h1 style="font-size:46px">Los reportes, funcionando hoy</h1>
+    <div class="fila c4" style="gap:16px;align-items:start">
+      <div><div class="captura mini"><img src="img/final2/portada.png" alt=""></div><p class="nota" style="font-size:18px;margin-top:8px"><b>Portada de Pages:</b> estado de cada job y matriz por historia.</p></div>
+      <div><div class="captura mini"><img src="img/final2/playwright.png" alt=""></div><p class="nota" style="font-size:18px;margin-top:8px"><b>Playwright:</b> 263 passed, con etiquetas y traza.</p></div>
+      <div><div class="captura mini"><img src="img/final2/diagnostico.png" alt=""></div><p class="nota" style="font-size:18px;margin-top:8px"><b>Diagnóstico:</b> 5xx con su excepción.</p></div>
+      <div><div class="captura mini"><img src="img/final2/k6-carga.png" alt=""></div><p class="nota" style="font-size:18px;margin-top:8px"><b>k6:</b> tablero de la prueba de carga.</p></div>
+    </div>
+    <p class="nota">Selenium deja su propio reporte BDD (<code>reporte-bdd.html</code>), con captura de cada paso, que se muestra en la demo.</p>
+  </div>
+  <aside class="notas"><b>Los dos.</b> Capturas de los reportes generados en esta misma entrega. El de Selenium se muestra en vivo porque necesita un navegador real.</aside>
+</section>
+
+<section id="s-k6" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila-ic" style="gap:20px"><svg class="ic" style="width:64px;height:64px"><use href="#i-rayo"/></svg><h1 style="font-size:46px">Rendimiento: k6</h1></div>
+    <div class="fila c2" style="gap:20px">
+      <div class="tarjeta t-azul"><div class="paso-n">Cómo evaluamos</div><ul class="lista"><li>Cinco criterios: umbrales que deciden, poco consumo, modelar la sesión, código en el repo, encaje con el equipo</li><li>k6 cumple 5 de 5; Gatling 4, Locust 2, Artillery 2, JMeter 1</li><li>Capa API: el requerimiento pide tiempos de operaciones</li></ul></div><div class="tarjeta t-verde"><div class="paso-n">Cómo funciona</div><ul class="lista"><li>Un usuario virtual es una sesión: login y 6 operaciones, con los porcentajes del requerimiento</li><li>Los umbrales se escriben tal cual y k6 dice si pasó</li><li>Qolqe en Docker (1 CPU, 1 GB); k6 afuera</li></ul></div>
+      <div class="tarjeta t-amarillo"><div class="paso-n">Implementación</div><ul class="lista"><li>Humo, carga (100), pico (300), estrés, resistencia (60 min) y concurrencia</li><li><code>correr.sh</code> levanta limpio, mide, corre y revisa el dinero</li><li><code>tests/performance/</code></li></ul></div><div class="tarjeta t-morado"><div class="paso-n">Reportería</div><ul class="lista"><li>Tablero HTML, CSV de series y gráficos por prueba</li><li>CPU, memoria e hilos cada segundo; log de la app; <code>integridad.txt</code></li><li>Resultados en <code>resultados/&lt;prueba&gt;/</code></li></ul></div>
+    </div>
+    
+  </div>
+  <aside class="notas"><b>Kalos.</b> Elegimos por criterios y no por costumbre. Las observaciones de la Parte 3 se resuelven en las diapositivas que siguen: qué mide cada métrica, de dónde sale la carga y qué resultó.</aside>
+</section>
+
+<section id="s-metricas" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo" style="gap:18px">
+    <h1 style="font-size:46px">Qué mide cada métrica y por qué ese umbral</h1>
+    <table class="tabla-chica "><thead><tr><th>Métrica</th><th>Qué evalúa</th><th>Cómo se calcula</th><th>Umbral</th><th>Por qué</th></tr></thead><tbody><tr><td><b>p95 del tiempo de respuesta</b></td><td>Qué tan rápido responde a casi todos los usuarios</td><td>El tiempo bajo el cual responde el 95 % de las peticiones</td><td>consultas y login &lt; 800 ms · dinero &lt; 1500 ms</td><td>Lo fija el requerimiento; el p95 no se distorsiona por un valor extremo</td></tr><tr><td><b>Tasa de fallas</b></td><td>Estabilidad: que no haya errores ni timeouts</td><td>Peticiones fallidas ÷ total</td><td>&lt; 1 %</td><td>Lo fija el requerimiento</td></tr><tr><td><b>Sesiones por minuto</b></td><td>Que atienda la demanda de la hora punta</td><td>Sesiones completas en un minuto de régimen</td><td>≥ 50 por minuto</td><td>3000 operaciones por hora entre 60</td></tr><tr><td><b>Integridad del dinero</b></td><td>Corrección bajo concurrencia</td><td>Saldos contra movimientos y operaciones en la BD contra las 201 de k6</td><td>cuadra exacto</td><td>Un sistema rápido que descuadra el dinero no sirve</td></tr><tr><td><b>CPU, memoria e hilos</b></td><td>Por qué responde así (cola o saturación)</td><td>Muestras cada segundo, de Qolqe y de k6</td><td>sin umbral</td><td>Explican las otras métricas; no deciden</td></tr></tbody></table>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Esta diapositiva responde a «no se entiende qué evalúa»: cada métrica con lo que evalúa, cómo se calcula, su umbral y por qué. Los umbrales de pico (el doble) son un supuesto nuestro porque el requerimiento dice «degradación razonable» sin número.</aside>
+</section>
+
+<section id="s-modelo" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo">
+    <h1>Modelo de carga: de dónde sale cada número</h1>
+    <table class="tabla-chica "><thead><tr><th>Parámetro</th><th>Valor</th><th>Cálculo o fuente</th></tr></thead><tbody><tr><td>Hora punta</td><td><b>100 usuarios</b></td><td>Ley de Little: (3000 / 3600 s) × 120 s</td></tr><tr><td>Campaña</td><td><b>300 usuarios</b></td><td>3 × la hora punta (requerimiento)</td></tr><tr><td>Think time</td><td><b>10 a 25 s, promedio 18 s</b></td><td>Dato del requerimiento; triangular 10-19-25 para no sincronizar usuarios</td></tr><tr><td>Ramp-up hora punta</td><td><b>120 s</b></td><td>Una sesión dura 120 s: antes no hay régimen</td></tr><tr><td>Ramp-up campaña</td><td><b>300 s</b></td><td>«La mayoría inicia sesión en los primeros 5 minutos»</td></tr><tr><td>Ramp-up estrés</td><td><b>60 s por escalón, 180 s sostenidos</b></td><td>Evita el golpe de entrada; 180 s son más de una sesión</td></tr></tbody></table>
+    <p class="nota">Con esa pausa, 100 usuarios hacen unas 6.7 peticiones por segundo en régimen. Con una pausa de 5 s serían unas 22: más de tres veces la hora punta real.</p>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Observación de la Parte 3: modelo de carga poco claro, think time y ramp-up sin justificar. El 6.7 está medido en el tramo estable de la prueba de carga (resumen.md).</aside>
+</section>
+
+<section id="s-umbrales" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo" style="gap:20px">
+    <h1 style="font-size:46px">Resultados frente a cada umbral, con su margen</h1>
+    <table class="tabla-chica "><thead><tr><th>Prueba</th><th>Métrica</th><th>Umbral</th><th>Resultado</th><th>Margen</th></tr></thead><tbody><tr><td>Carga · 100</td><td>p95 consultas</td><td>&lt; 800 ms</td><td>51 ms</td><td>15.7 veces mejor</td></tr><tr><td>Carga · 100</td><td>p95 dinero</td><td>&lt; 1500 ms</td><td>126 ms</td><td>11.9 veces mejor</td></tr><tr><td>Carga · 100</td><td>sesiones/min · errores</td><td>≥ 50 · &lt; 1 %</td><td>55.4 · 0 %</td><td>11 % más</td></tr><tr><td>Pico · 300</td><td>p95 consultas · dinero</td><td>&lt; 1600 · 3000 ms (supuesto)</td><td>48 · 127 ms</td><td>33 y 23.6 veces</td></tr><tr><td>Resistencia · 60 min</td><td>p95 consultas · dinero</td><td>&lt; 800 · 1500 ms</td><td>39–45 · 122–129 ms</td><td>sin deriva</td></tr><tr><td>Estrés · 600</td><td>p95</td><td>&lt; 800 ms</td><td>95 ms</td><td>cumple</td></tr><tr><td>Estrés · 800</td><td>p95</td><td>&lt; 800 ms</td><td>60 s</td><td><span class='no'>no cumple · DEF-10</span></td></tr></tbody></table>
+    <p class="nota" style="font-size:20px">Creíble porque no hay cola (CPU 8 %), el p95 es estable en las ventanas de la prueba y se revisó el dinero de cada operación. El límite está entre 600 y 800 usuarios.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Un «cumple» no basta: decimos por cuánto, por qué es creíble y qué no dice. Los números salen de docs/rendimiento.md y de los resumen.md de cada prueba.</aside>
+</section>
+
+<section id="s-quiebre" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>6 · Rendimiento</span></div>
+  <div class="cuerpo" style="gap:18px">
+    <h1 style="font-size:46px">Dónde se rompe: de 600 a 800 usuarios</h1>
+    <div class="fila" style="grid-template-columns:1.5fr 1fr;gap:28px;align-items:center">
+      <div class="grafico alto marco"><img src="img/final/quiebre.svg" alt=""></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="tarjeta t-rojo" style="padding:20px 26px"><div class="paso-n">Qué pasa</div><p style="font-size:21px">El p95 pasa de 0.1 s a 60 s y los hilos de 17 a 51: todos ocupados.</p></div>
+        <div class="tarjeta t-amarillo" style="padding:20px 26px"><div class="paso-n">Por qué</div><p style="font-size:21px">Un candado de SQLite y 40 hilos: <b>3878</b> «database is locked» en el log. El CPU baja.</p></div>
+        <div class="tarjeta t-verde" style="padding:20px 26px"><div class="paso-n">Qué significa</div><p style="font-size:21px">Capacidad estimada de 600 usuarios: el doble de la campaña. Es DEF-10.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Aquí se ve por qué guardamos CPU, hilos y el log de la app: sin ellos solo sabríamos que se puso lento, no que el cuello de botella es el candado de la base de datos.</aside>
+</section>
+
+<section id="s-traza" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>7 · Trazabilidad</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <div class="fila-ic" style="gap:20px"><svg class="ic" style="width:64px;height:64px"><use href="#i-lista"/></svg><h1 style="font-size:46px">Trazabilidad y gestión de casos</h1></div>
+    <div class="fila c2" style="gap:20px">
+      <div class="tarjeta t-azul"><div class="paso-n">Cómo evaluamos</div><ul class="lista"><li>14 herramientas comparadas con 5 criterios: gratis sin vencimiento, resultados desde Actions, historial por caso, defectos ligados, acceso para la profesora</li><li>La única que cumple los cinco: <b>Qase</b></li></ul></div><div class="tarjeta t-verde"><div class="paso-n">Cómo funciona</div><ul class="lista"><li>Cada escenario lleva <code>@HU</code>, <code>@CP</code> y <code>@CA</code></li><li>El pipeline sube los resultados a Qase y cada caso acumula su historial</li></ul></div>
+      <div class="tarjeta t-amarillo"><div class="paso-n">Implementación</div><ul class="lista"><li>Una corrida de Qase por pipeline de <code>main</code>, con <code>qasectl</code></li><li>359 resultados por corrida: 263 de API, 14 de contrato y 41 por navegador</li></ul></div><div class="tarjeta t-morado"><div class="paso-n">Reportería</div><ul class="lista"><li>Matriz en Pages: cobertura por historia y por criterio, y las últimas 30 corridas</li><li><code>passed 28 · failed 2 · último fallo run #45</code>: desde cuándo falla y qué es inestable</li></ul></div>
+    </div>
+    
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Las pruebas se ejecutan muchas veces: lo que importa es el historial por caso, no solo el último resultado. Límite asumido: Qase guarda 30 días; el historial permanente es el de Pages.</aside>
+</section>
+
+<section id="s-defectos" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Defectos</span></div>
+  <div class="cuerpo">
+    <h1>13 defectos, cada uno con su escenario</h1>
+    <div class="fila c4">
+      <div class="tarjeta t-rojo"><h2>Críticos · 4</h2><p>DEF-02 límite sin interbancarias · DEF-04 saldo negativo · DEF-06 cuenta cerrada · DEF-11 concurrencia</p></div>
+      <div class="tarjeta t-amarillo"><h2>Altos · 3</h2><p>DEF-01 · DEF-07 token tras cerrar sesión · DEF-10 colapso con 800 usuarios</p></div>
+      <div class="tarjeta t-azul"><h2>Medios · 6</h2><p>DEF-03 · DEF-05 · DEF-08 · DEF-09 · DEF-12 · <b>DEF-13</b> redondeo de la comisión</p></div>
+      <div class="tarjeta t-verde"><h2>Detección</h2><p>Escenario <code>@DEF-xx</code> en API y web; DEF-10, la prueba de estrés de k6.</p></div>
+    </div>
+    <p class="nota">Estado de la calidad: cumple en rendimiento, pero no es confiable con el dinero. Recomendamos no salir a producción antes de corregir los críticos.</p>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> Detalle, pasos y evidencia de cada uno en docs/defectos.md.</aside>
+</section>
+
+<section id="s-ia" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>8 · Capacidad de IA</span></div>
+  <div class="cuerpo" style="gap:22px">
+    <h1 style="font-size:46px">IA: tres skills y una regla — la IA propone, el tester decide</h1>
+    <div class="fila c3" style="gap:20px">
+      <div class="tarjeta t-morado"><svg class="ic"><use href="#i-lista"/></svg><h2>proponer-casos</h2><p>Escenarios Gherkin con técnica, esperado citado del requisito y preguntas sobre lo que el requisito no dice.</p><p class="nota" style="font-size:18px">→ <code>propuestas/ia/</code></p></div>
+      <div class="tarjeta t-rojo"><svg class="ic"><use href="#i-alerta"/></svg><h2>reporte-defecto</h2><p>Redacta un <code>DEF-NN</code> con el formato del repo, reproduciéndolo antes contra la app.</p><p class="nota" style="font-size:18px">→ borrador en <code>propuestas/ia/</code></p></div>
+      <div class="tarjeta t-azul"><svg class="ic"><use href="#i-grafico"/></svg><h2>reporte-calidad</h2><p>Arma el tablero con mapeado, testing y defectos, y compara con la entrega anterior (antes y después).</p><p class="nota" style="font-size:18px">→ <code>reportes/tablero/</code></p></div>
+    </div>
+    <div class="fila c3 cifra cifras-chicas">
+      <div><b>15</b><span>casos web propuestos y aceptados</span></div>
+      <div><b>DEF-13</b><span>defecto nuevo: redondeo de la comisión</span></div>
+      <div><b>0</b><span>cambios a <code>features/</code> sin una persona que decida</span></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Qué aporta: amplía la cobertura sin escribir a mano cada caso, encuentra lo que se nos escapa y junta los números para decidir. Lo que propone la IA queda fuera de features/ y docs/ hasta que una persona lo acepta.</aside>
+</section>
+
+<section id="s-ia-val" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--purple)"></i>8 · Validación de la IA</span></div>
+  <div class="cuerpo">
+    <h1>Cómo validamos lo que propuso la IA</h1>
+    <div class="fila c2">
+      <div class="tarjeta t-morado"><h2>Checklist antes de aceptar</h2><ul class="lista"><li>El criterio existe en <code>requisitos.md</code></li><li>El esperado sale del requisito, no de la app</li><li>Sin reglas inventadas ni duplicados</li><li>Cuentas rehechas a mano; determinista; sin datos reales</li><li>Pasa <code>bddgen</code> y <code>verificar_etiquetas.py</code></li><li>Un escenario que falla no se «arregla»: se contrasta con el requisito</li></ul></div>
+      <div class="tarjeta t-verde"><h2>Lo que pasó de verdad</h2><ul class="lista"><li><b>DEF-13:</b> S/ 67 → comisión 1.01; la app cobra 1.00</li><li><b>La IA corrigió su dato:</b> 900000001 es usuario de carga; usó 900999999</li><li><b>Dos casos sin escribir:</b> el requisito no los pide</li><li>El equipo decidió el 18-nov: DEF-13 Media y 15 casos aceptados</li></ul></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Gianpier.</b> La IA no es el oráculo. El registro de cada uso está en IA.md y el checklist en docs/ia-checklist.md.</aside>
+</section>
+
+<section id="s-antes" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Antes y después</span></div>
+  <div class="cuerpo" style="gap:20px">
+    <h1 style="font-size:46px">Antes y después: lo que cambió desde la Parte 3</h1>
+    <div class="fila" style="grid-template-columns:1fr 1.15fr;gap:30px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="fila c2 cifra cifras-chicas cifras-mini" style="gap:26px">
+          <div><b>145 → 162</b><span>escenarios Gherkin</span></div><div><b>20 → 42</b><span>pruebas web</span></div>
+          <div><b>260 → 263</b><span>pruebas de API, 0 fallos inesperados</span></div><div><b>12 → 13</b><span>defectos documentados</span></div>
+        </div>
+        <p class="nota" style="font-size:20px">Los criterios con escenario de API no cambian: <b>48 de 48</b> antes y después. La cobertura ya estaba completa; el aporte está en la web, la reportería y el pipeline.</p>
+      </div>
+      <div class="captura recorte"><img src="img/final2/tablero.png" alt=""></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Generado por la skill reporte-calidad con scripts/tablero.sh. Cada número sale de un archivo del repo; el «antes» es el tag parte-3 con sus propios resultados (260 pruebas de API ejecutadas el mismo día). Lo que no se midió aparece como «—».</aside>
+</section>
+
+<section id="s-retro" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--red)"></i>Retroalimentación</span></div>
+  <div class="cuerpo">
+    <h1>Las observaciones de las tres entregas, resueltas</h1>
+    <table class="tabla-chica "><thead><tr><th>Entrega</th><th>Observación</th><th>Qué hicimos</th></tr></thead><tbody><tr><td>Parte 1</td><td>Lista de escenarios de Schemathesis, casos técnicos, justificar herramientas</td><td>Hallazgos leídos uno a uno, <code>@tecnico</code> por HU y tabla «qué responde y qué no ve cada herramienta»</td></tr><tr><td>Parte 2</td><td>Cobertura completa, contrato temprano, gates claros, evidencia, trazabilidad entre corridas, justificar el patrón</td><td>48 de 48 criterios; contrato en la etapa 1; gates con métrica y umbral; evidencia <code>con | fallos | sin</code>; historial y Qase; patrón en 6 criterios</td></tr><tr><td>Parte 3</td><td>Modelo de carga, think time, ramp-up y resultados sin justificar</td><td>Ley de Little, tabla de parámetros, qué mide cada métrica y márgenes frente a cada umbral</td></tr><tr><td>Final</td><td>IA validada; reportería a detalle; todo consolidado</td><td>Tres skills con checklist; diagnóstico por prueba y mapa de logs; tablero antes y después; un informe y un pipeline</td></tr></tbody></table>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Cada fila se vio resuelta en las diapositivas anteriores.</aside>
+</section>
+
+<section id="s-conclusiones" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--blue)"></i>Cierre</span></div>
+  <div class="cuerpo">
+    <h1>Conclusiones y recomendaciones</h1>
+    <div class="fila c2">
+      <div class="tarjeta t-rojo"><h2>Para desarrollo</h2><ul class="lista"><li>Corregir los 4 críticos y DEF-10, en ese orden</li><li>Validar saldo y límite dentro de la transacción y hacer el commit en el endpoint</li><li>Usar ROUND_HALF_UP en la comisión (DEF-13)</li><li>Documentar multipleOf, mínimos y máximos en el OpenAPI</li><li>Repetir el estrés tras cada cambio</li></ul></div>
+      <div class="tarjeta t-amarillo"><h2>Lecciones</h2><ul class="lista"><li>El oráculo es el requisito, no la app</li><li>Lo barato primero y lo lento al final</li><li>Un reporte que dice qué falló no basta: hay que llegar al porqué</li><li>La IA propone, el tester decide</li></ul><p class="nota" style="margin-top:8px">Límites: BD y reloj compartidos, capacidad medida en una laptop, Qase guarda 30 días.</p></div>
+    </div>
+  </div>
+  <aside class="notas"><b>Kalos.</b> Cierre técnico antes de la demo.</aside>
+</section>
+
+<section id="s-demo" class="slide">
+  <div class="antetitulo"><span class="tag"><i style="background:var(--green)"></i>9 · Demo</span></div>
+  <div class="cuerpo" style="gap:18px">
+    <h1 style="font-size:46px">Demo: del requisito al reporte, en unos 10 minutos</h1>
+    <div class="fila c5" style="gap:12px">
+      <div class="tarjeta t-amarillo" style="padding:14px 20px;gap:2px"><div class="paso-n">1 · Pipeline</div><h2 style="font-size:22px">Actions: 3 etapas</h2><p style="font-size:17px;font-family:var(--mono)">pestaña Actions</p></div>
+      <div class="tarjeta t-verde" style="padding:14px 20px;gap:2px"><div class="paso-n">2 · Gate barato</div><h2 style="font-size:22px">Romper y arreglar una etiqueta</h2><p style="font-size:17px;font-family:var(--mono)">verificar_etiquetas.py</p></div>
+      <div class="tarjeta t-verde" style="padding:14px 20px;gap:2px"><div class="paso-n">3 · API</div><h2 style="font-size:22px">CP-32: el defecto detectado</h2><p style="font-size:17px;font-family:var(--mono)">demo.sh suite @CP-32</p></div>
+      <div class="tarjeta t-morado" style="padding:14px 20px;gap:2px"><div class="paso-n">4 · Causa</div><h2 style="font-size:22px">Del fallo al 500</h2><p style="font-size:17px;font-family:var(--mono)">npm run diagnostico</p></div>
+      <div class="tarjeta t-azul" style="padding:14px 20px;gap:2px"><div class="paso-n">5 · Contrato</div><h2 style="font-size:22px">Gate y hallazgos</h2><p style="font-size:17px;font-family:var(--mono)">npm run contrato</p></div>
+      <div class="tarjeta t-azul" style="padding:14px 20px;gap:2px"><div class="paso-n">6 · Web</div><h2 style="font-size:22px">Reporte BDD con capturas</h2><p style="font-size:17px;font-family:var(--mono)">reporte-bdd.html</p></div>
+      <div class="tarjeta t-rojo" style="padding:14px 20px;gap:2px"><div class="paso-n">7 · Rendimiento</div><h2 style="font-size:22px">Carga y quiebre, ya corridos</h2><p style="font-size:17px;font-family:var(--mono)">reporte.html · quiebre</p></div>
+      <div class="tarjeta t-amarillo" style="padding:14px 20px;gap:2px"><div class="paso-n">8 · Historial</div><h2 style="font-size:22px">Matriz en Pages y Qase</h2><p style="font-size:17px;font-family:var(--mono)">kaloslazo.github.io</p></div>
+      <div class="tarjeta t-morado" style="padding:14px 20px;gap:2px"><div class="paso-n">9 · IA</div><h2 style="font-size:22px">Proponer casos y decidir</h2><p style="font-size:17px;font-family:var(--mono)">/proponer-casos</p></div>
+      <div class="tarjeta t-blanco" style="padding:14px 20px;gap:2px"><div class="paso-n">10 · Antes y después</div><h2 style="font-size:22px">El tablero</h2><p style="font-size:17px;font-family:var(--mono)">npm run tablero</p></div>
+    </div>
+    <p class="nota">Lo que tarda (Selenium, k6, el pipeline) se deja corrido y se abre ya hecho. Plan B: el sitio de Pages tiene todos los reportes de la última corrida. Guion completo en <code>docs/demo.md</code>.</p>
+  </div>
+  <aside class="notas"><b>Los dos.</b> Los pasos 1 y 8 necesitan internet; el resto corre en local. Esperado: 263 passed (16 fallos esperados), 37 passed y 5 xfailed en web, trazabilidad 48 de 48.</aside>
+</section>
+
+<section id="s-cierre" class="slide portada">
+  <div class="puntos"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i><i style="background:var(--green)"></i></div>
+  <div>
+    <h1>Gracias</h1>
+    <p class="sub">Qolqe rinde bien bajo carga; lo que hay que arreglar antes de producción es el dinero.</p>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:22px"><span class="tenue">docs/informe.md · docs/reporteria.md · docs/demo.md · IA.md</span><b style="font-weight:500">Grupo 5 · Kalos y Gianpier</b></div>
+  <aside class="notas"><b>Los dos.</b> Abrimos preguntas.</aside>
+</section>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  slides.forEach((s, i) => {
+    if (i === 0 || i === total - 1) return;
+    const pie = document.createElement('div');
+    pie.className = 'pie';
+    pie.innerHTML = '<span>Grupo 5</span><span>' + (i + 1) + ' / ' + total + '</span>';
+    s.appendChild(pie);
+  });
+  let actual = Math.min(Math.max(parseInt(location.hash.slice(1), 10) || 1, 1), total) - 1;
+  function mostrar(n) {
+    actual = Math.min(Math.max(n, 0), total - 1);
+    slides.forEach((s, i) => s.classList.toggle('activa', i === actual));
+    history.replaceState(null, '', '#' + (actual + 1));
+  }
+  function escalar() {
+    const k = Math.min(innerWidth / 1600, innerHeight / 900);
+    document.getElementById('deck').style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === 'Home') mostrar(0);
+    if (e.key === 'End') mostrar(total - 1);
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+    if (e.key === 'n') document.body.classList.toggle('ver-notas');
+  });
+  addEventListener('click', (e) => mostrar(actual + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  addEventListener('resize', escalar);
+  escalar();
+  mostrar(actual);
+</script>
+</body>
+</html>
