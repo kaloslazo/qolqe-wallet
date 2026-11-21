@@ -1,8 +1,9 @@
 # Declaración de uso de IA
 
-Usamos IA (Claude, con Claude Code) en dos tareas del proyecto. En las dos la IA **propone y una persona decide**: lo
-que produce queda en `propuestas/ia/`, fuera de `features/` y de `docs/`, y solo entra al repo si pasa el checklist de
-[`docs/ia-checklist.md`](docs/ia-checklist.md).
+Usamos IA (Claude, con Claude Code) en tres tareas del proyecto, cada una con su skill en `.claude/skills/`: proponer casos
+de prueba, redactar reportes de defecto y armar el tablero de calidad. En las dos primeras la IA **propone y una persona
+decide**: lo que produce queda en `propuestas/ia/`, fuera de `features/` y de `docs/`, y solo entra al repo si pasa el
+checklist de [`docs/ia-checklist.md`](docs/ia-checklist.md). La tercera solo reporta: lee archivos del repo y no modifica nada.
 
 ## Qué aporta y cómo se validó
 

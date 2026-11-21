@@ -1,12 +1,13 @@
 # La IA propone, el tester decide
 
 Todo lo que la IA produce en este proyecto es una **propuesta**. Entra al repo solo después de pasar esta lista, y cada
-decisión queda en [`IA.md`](../IA.md). La IA se usa en dos tareas, cada una con su skill en `.claude/skills/`:
+decisión queda en [`IA.md`](../IA.md). La IA se usa en tres tareas, cada una con su skill en `.claude/skills/`:
 
 | Tarea | Skill | Qué propone | Dónde queda |
 |---|---|---|---|
 | Diseñar casos | `proponer-casos` | Escenarios Gherkin (API o web) para una HU, con valores límite y esperado citado | `propuestas/ia/<HU>-<fecha>.md` |
 | Reportar defectos | `reporte-defecto` | Borrador de `DEF-NN` reproducido contra la app, con severidad propuesta | `propuestas/ia/DEF-borrador-<slug>.md` |
+| Resumir la calidad | `reporte-calidad` | Tablero con el mapeado, el testing, los defectos y el rendimiento, frente a la entrega anterior. No propone casos ni cambia pruebas: solo reporta | `reportes/tablero/tablero.html` (se recalcula con `scripts/tablero.sh`) |
 
 `propuestas/ia/` está fuera de `features/` y de `docs/`: nada de lo que escribe la IA corre en el pipeline ni cuenta como
 cobertura hasta que una persona lo acepta y lo mueve.
